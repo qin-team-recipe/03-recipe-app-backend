@@ -7,7 +7,7 @@
 
 ## セットアップ
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/qin-team-recipe/03-recipe-app-backend)
-1. ↑のボタン押す（初回のビルドは結構時間かかります。）
+1. ↑のボタン押す
 2. 設定はそのままで良いので`Create codespace`ボタンをクリックします
 3. 開発環境のビルドが始まります（ビルド時間はかなり長いです）
 4. ビルドが完了すると、エディタが表示されます
