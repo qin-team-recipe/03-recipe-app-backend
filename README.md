@@ -1,3 +1,6 @@
+## セットアップ
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/qin-team-recipe/03-recipe-app-backend)
+
 ### migration
 ```
 export DATABASE_URL='postgres://postgres:password@localhost:5432/postgres?sslmode=disable'
