@@ -25,6 +25,9 @@ func NewServer(conn *pgx.Conn) *Server {
 
 func (s *Server) MountHandlers() {
 	api := s.r.Group("/api")
+	auth := s.r.Group("/auth")
+	auth.GET("/google/login", s.OauthGoogleLogin)
+	auth.GET("/google/callback", s.OauthGoogleCallback)
 	// api.POST("/users", s.RegisterUser)
 	// api.POST("/users/login", s.LoginUser)
 
