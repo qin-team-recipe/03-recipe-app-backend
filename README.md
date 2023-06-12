@@ -1,7 +1,21 @@
-### migration
+## 使用技術
+- [Go](https://github.com/golang/go)
+- [PostgreSQL](https://www.postgresql.org/)
+- [redis](https://redis.io/)
+- [air](https://github.com/cosmtrek/air)
+- [Gin](https://github.com/gin-gonic/gin)
+- [sqlc](https://github.com/kyleconroy/sqlc)
+
+## セットアップ
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/qin-team-recipe/03-recipe-app-backend)
+1. ↑のボタン押す
+2. 設定はそのままで良いので`Create codespace`ボタンをクリックします
+3. 開発環境のビルドが始まります（ビルド時間はかなり長いです）
+4. ビルドが完了すると、エディタが表示されます
+
+## APIサーバーの起動
 ```
-export DATABASE_URL='postgres://postgres:password@localhost:5432/postgres?sslmode=disable'
-migrate -database ${DATABASE_URL} -path db/migration up
+air
 ```
 
 ## Git コミットルール
