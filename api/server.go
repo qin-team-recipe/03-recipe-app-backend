@@ -3,22 +3,25 @@ package api
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5"
+	"github.com/redis/go-redis/v9"
 
 	db "github.com/aopontann/gin-sqlc/db/sqlc"
 )
 
 type Server struct {
-	r  *gin.Engine
-	db *pgx.Conn
-	q  *db.Queries
+	r   *gin.Engine
+	db  *pgx.Conn
+	q   *db.Queries
+	rbd *redis.Client
 }
 
-func NewServer(conn *pgx.Conn) *Server {
+func NewServer(conn *pgx.Conn, rdb *redis.Client) *Server {
 	engine := gin.Default()
 	server := &Server{
-		r:  engine,
-		db: conn,
-		q:  db.New(conn),
+		r:   engine,
+		db:  conn,
+		q:   db.New(conn),
+		rbd: rdb,
 	}
 	return server
 }
