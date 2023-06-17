@@ -4,16 +4,26 @@ import (
 	"context"
 	"crypto/rand"
 	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/rs/xid"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 )
+
+type userInfo struct {
+	ID            string `json:"id"`
+	Email         string `json:"email"`
+	VerifiedEmail bool   `json:"verified_email"`
+	Picture       string `json:"picture"`
+}
 
 // Scopes: OAuth 2.0 scopes provide a way to limit the amount of access that is granted to an access token.
 var googleOauthConfig = &oauth2.Config{
@@ -60,6 +70,23 @@ func (s *Server) OauthGoogleCallback(c *gin.Context) {
 	// Redirect or response with a token.
 	// More code .....
 	fmt.Printf("UserInfo: %s\n", data)
+
+	var uInfo userInfo
+	if err := json.Unmarshal(data, &uInfo); err != nil {
+		return
+	}
+
+	// セッションIDを生成
+	guid := xid.New()
+
+	// redis に セッションIDをKeyとして、メールアドレスをValue として保存する
+	s.rbd.Set(context.Background(), guid.String(), uInfo.Email, 3600 * time.Second)
+
+	c.SetCookie("session-id", guid.String(), 3600, "/", "localhost", false, true)
+
+	fmt.Println(uInfo.Email)
+
+	c.Redirect(http.StatusTemporaryRedirect, "http://localhost:3000")
 }
 
 func generateStateOauthCookie(c *gin.Context) string {
