@@ -18,6 +18,14 @@
 air
 ```
 
+## マイグレーション
+```
+atlas schema apply \
+  -u ${POSTGRES_URL} \
+  --to file://db/schema.sql \
+  --dev-url "docker://postgres"
+```
+
 ## Git コミットルール
 
 Conventional Commits に従う。
@@ -29,3 +37,11 @@ Conventional Commits に従う。
 - [♻️] refactor: ロジックの変化は行わず、内部構造を整理のみを行う場合
 - [✅] test: テストの追加、及び修正を行う場合
 - [👷] ci: CI ツールのファイルの変更を行う場合
+
+/*
+atlas schema apply \
+  -u "postgres://postgres:password@localhost:5432/postgres?sslmode=disable" \
+  --to file://schema.sql \
+  --dev-url "docker://postgres"
+
+*/
