@@ -4,6 +4,7 @@ go 1.20
 
 require (
 	github.com/gin-gonic/gin v1.9.1
+	github.com/mattn/go-gimei v0.0.4
 	github.com/redis/go-redis/v9 v9.0.5
 	github.com/rs/xid v1.5.0
 	golang.org/x/oauth2 v0.9.0
@@ -19,6 +20,7 @@ require (
 	github.com/kr/text v0.2.0 // indirect
 	github.com/rogpeppe/go-internal v1.10.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
+	gopkg.in/yaml.v2 v2.4.0 // indirect
 
 )
 
