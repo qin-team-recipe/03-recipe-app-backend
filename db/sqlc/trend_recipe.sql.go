@@ -25,7 +25,7 @@ SELECT
     '' AS comment,
     'https://source.unsplash.com/random/300x300?v=1' AS image_url,
     0 AS num_fav,
-    0 AS kpi_trend
+    0 AS score
 FROM
     generate_index
 LIMIT 10
@@ -37,7 +37,7 @@ type FakeListTrendRecipeRow struct {
 	Comment  string `json:"comment"`
 	ImageUrl string `json:"imageUrl"`
 	NumFav   int32  `json:"numFav"`
-	KpiTrend int32  `json:"kpiTrend"`
+	Score    int32  `json:"score"`
 }
 
 func (q *Queries) FakeListTrendRecipe(ctx context.Context) ([]FakeListTrendRecipeRow, error) {
@@ -55,7 +55,7 @@ func (q *Queries) FakeListTrendRecipe(ctx context.Context) ([]FakeListTrendRecip
 			&i.Comment,
 			&i.ImageUrl,
 			&i.NumFav,
-			&i.KpiTrend,
+			&i.Score,
 		); err != nil {
 			return nil, err
 		}
@@ -71,7 +71,7 @@ const listTrendRecipe = `-- name: ListTrendRecipe :many
 WITH
 history AS (
 SELECT
-    SUM(CASE WHEN is_fav THEN 1 ELSE 0 END) - SUM(CASE WHEN is_fav THEN 0 ELSE 1 END) AS kpi_trend,
+    SUM(CASE WHEN is_fav THEN 1 ELSE 0 END) - SUM(CASE WHEN is_fav THEN 0 ELSE 1 END) AS score,
     recipe_id
 FROM
     fav_history
@@ -89,7 +89,7 @@ SELECT
          favoring
      WHERE
          favoring.recipe_id = history.recipe_id) AS num_fav,
-    history.kpi_trend
+    history.score
 FROM
     history
 INNER JOIN
@@ -97,7 +97,7 @@ INNER JOIN
 ON
     history.recipe_id = recipe.id
 ORDER BY
-    kpi_trend DESC
+    score DESC
 `
 
 type ListTrendRecipeRow struct {
@@ -106,7 +106,7 @@ type ListTrendRecipeRow struct {
 	Comment  string      `json:"comment"`
 	ImageUrl pgtype.Text `json:"imageUrl"`
 	NumFav   int64       `json:"numFav"`
-	KpiTrend int32       `json:"kpiTrend"`
+	Score    int32       `json:"score"`
 }
 
 func (q *Queries) ListTrendRecipe(ctx context.Context) ([]ListTrendRecipeRow, error) {
@@ -124,7 +124,7 @@ func (q *Queries) ListTrendRecipe(ctx context.Context) ([]ListTrendRecipeRow, er
 			&i.Comment,
 			&i.ImageUrl,
 			&i.NumFav,
-			&i.KpiTrend,
+			&i.Score,
 		); err != nil {
 			return nil, err
 		}

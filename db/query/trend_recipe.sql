@@ -2,7 +2,7 @@
 WITH
 history AS (
 SELECT
-    SUM(CASE WHEN is_fav THEN 1 ELSE 0 END) - SUM(CASE WHEN is_fav THEN 0 ELSE 1 END) AS kpi_trend,
+    SUM(CASE WHEN is_fav THEN 1 ELSE 0 END) - SUM(CASE WHEN is_fav THEN 0 ELSE 1 END) AS score,
     recipe_id
 FROM
     fav_history
@@ -20,7 +20,7 @@ SELECT
          favoring
      WHERE
          favoring.recipe_id = history.recipe_id) AS num_fav,
-    history.kpi_trend
+    history.score
 FROM
     history
 INNER JOIN
@@ -28,7 +28,7 @@ INNER JOIN
 ON
     history.recipe_id = recipe.id
 ORDER BY
-    kpi_trend DESC;
+    score DESC;
 
 -- name: FakeListTrendRecipe :many
 WITH
@@ -44,7 +44,7 @@ SELECT
     '' AS comment,
     'https://source.unsplash.com/random/300x300?v=1' AS image_url,
     0 AS num_fav,
-    0 AS kpi_trend
+    0 AS score
 FROM
     generate_index
 LIMIT 10;

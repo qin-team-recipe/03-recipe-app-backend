@@ -2,7 +2,7 @@
 WITH
 history AS (
 SELECT
-    SUM(CASE WHEN is_follow THEN 1 ELSE 0 END) - SUM(CASE WHEN is_follow THEN 0 ELSE 1 END) AS kpi_featured,
+    SUM(CASE WHEN is_follow THEN 1 ELSE 0 END) - SUM(CASE WHEN is_follow THEN 0 ELSE 1 END) AS score,
     chef_id
 FROM
     follow_history
@@ -19,7 +19,7 @@ SELECT
          following
      WHERE
          following.chef_id = history.chef_id) AS num_follower,
-    history.kpi_featured
+    history.score
 FROM
     history
 INNER JOIN
@@ -27,7 +27,7 @@ INNER JOIN
 ON
     history.chef_id = chef.id
 ORDER BY
-    kpi_featured DESC;
+    score DESC;
 
 -- name: FakeListFeaturedChef :many
 WITH
@@ -42,7 +42,7 @@ SELECT
     '' AS name,
     'https://source.unsplash.com/random/300x300?v=1' AS image_url,
     0 AS num_follower,
-    0 AS kpi_featured
+    0 AS score
 FROM
     generate_index
 LIMIT 10;
