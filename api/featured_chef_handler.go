@@ -19,7 +19,7 @@ func (s *Server) ListFeaturedChef(c *gin.Context) {
 	for i := 0; i < len(list); i++ {
 		list[i].Name = gimei.NewName().String()
 		list[i].NumFollower = rand.Int31n(1000)
-		list[i].KpiFeatured = rand.Int31n(100)
+		list[i].Score = rand.Int31n(100)
 	}
 	c.JSON(http.StatusOK, list)
 }

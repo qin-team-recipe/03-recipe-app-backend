@@ -20,7 +20,7 @@ func (s *Server) ListTrendRecipe(c *gin.Context) {
 		list[i].Title = gimei.NewName().First.Katakana()
 		list[i].Comment = gimei.NewAddress().String() + "。" + gimei.NewAddress().String() + "。" + gimei.NewAddress().String() + "。" + gimei.NewAddress().String() + "。" + gimei.NewAddress().String() + "。"
 		list[i].NumFav = rand.Int31n(1000)
-		list[i].KpiTrend = rand.Int31n(100)
+		list[i].Score = rand.Int31n(100)
 	}
 	c.JSON(http.StatusOK, list)
 }

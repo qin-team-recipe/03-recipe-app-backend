@@ -24,7 +24,7 @@ SELECT
     '' AS name,
     'https://source.unsplash.com/random/300x300?v=1' AS image_url,
     0 AS num_follower,
-    0 AS kpi_featured
+    0 AS score
 FROM
     generate_index
 LIMIT 10
@@ -35,7 +35,7 @@ type FakeListFeaturedChefRow struct {
 	Name        string `json:"name"`
 	ImageUrl    string `json:"imageUrl"`
 	NumFollower int32  `json:"numFollower"`
-	KpiFeatured int32  `json:"kpiFeatured"`
+	Score       int32  `json:"score"`
 }
 
 func (q *Queries) FakeListFeaturedChef(ctx context.Context) ([]FakeListFeaturedChefRow, error) {
@@ -52,7 +52,7 @@ func (q *Queries) FakeListFeaturedChef(ctx context.Context) ([]FakeListFeaturedC
 			&i.Name,
 			&i.ImageUrl,
 			&i.NumFollower,
-			&i.KpiFeatured,
+			&i.Score,
 		); err != nil {
 			return nil, err
 		}
@@ -67,13 +67,13 @@ func (q *Queries) FakeListFeaturedChef(ctx context.Context) ([]FakeListFeaturedC
 const listFeaturedChef = `-- name: ListFeaturedChef :many
 WITH
 history AS (
-    SELECT
-        SUM(CASE WHEN is_follow THEN 1 ELSE 0 END) - SUM(CASE WHEN is_follow THEN 0 ELSE 1 END) AS kpi_featured,
-        chef_id
-    FROM
-        follow_history
-    GROUP BY
-        chef_id
+SELECT
+    SUM(CASE WHEN is_follow THEN 1 ELSE 0 END) - SUM(CASE WHEN is_follow THEN 0 ELSE 1 END) AS score,
+    chef_id
+FROM
+    follow_history
+GROUP BY
+    chef_id
 )
 SELECT
     history.chef_id,
@@ -85,7 +85,7 @@ SELECT
          following
      WHERE
          following.chef_id = history.chef_id) AS num_follower,
-    history.kpi_featured
+    history.score
 FROM
     history
 INNER JOIN
@@ -93,7 +93,7 @@ INNER JOIN
 ON
     history.chef_id = chef.id
 ORDER BY
-    kpi_featured DESC
+    score DESC
 `
 
 type ListFeaturedChefRow struct {
@@ -101,7 +101,7 @@ type ListFeaturedChefRow struct {
 	Name        string      `json:"name"`
 	ImageUrl    pgtype.Text `json:"imageUrl"`
 	NumFollower int64       `json:"numFollower"`
-	KpiFeatured int32       `json:"kpiFeatured"`
+	Score       int32       `json:"score"`
 }
 
 func (q *Queries) ListFeaturedChef(ctx context.Context) ([]ListFeaturedChefRow, error) {
@@ -118,7 +118,7 @@ func (q *Queries) ListFeaturedChef(ctx context.Context) ([]ListFeaturedChefRow, 
 			&i.Name,
 			&i.ImageUrl,
 			&i.NumFollower,
-			&i.KpiFeatured,
+			&i.Score,
 		); err != nil {
 			return nil, err
 		}
