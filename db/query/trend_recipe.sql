@@ -6,6 +6,8 @@ SELECT
     recipe_id
 FROM
     fav_history
+WHERE
+    CURRENT_TIMESTAMP - INTERVAL '3 days' <= created_at
 GROUP BY
     recipe_id
 )
