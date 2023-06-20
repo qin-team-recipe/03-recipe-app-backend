@@ -60,12 +60,11 @@ DROP TYPE if exists type_shopping_item CASCADE;
 
 CREATE TYPE type_shopping_item AS (
     item VARCHAR,
-    is_on BOOLEAN,
-    is_memo BOOLEAN
-    );
+    is_on BOOLEAN
+);
 
 -- Project Name : チーム03
--- Date/Time    : 2023/06/19
+-- Date/Time    : 2023/06/20 18:57:43
 -- Author       : kaned
 -- RDBMS Type   : PostgreSQL
 -- Application  : A5:SQL Mk-2
@@ -110,6 +109,7 @@ DROP TABLE if exists shopping_list CASCADE;
 CREATE TABLE shopping_list (
                                id CHAR(21) DEFAULT nanoid() NOT NULL
     , usr_id CHAR(21) NOT NULL
+    , recipe_id CHAR(21)
     , is_fair_copy BOOLEAN NOT NULL
     , shopping_item type_shopping_item[] DEFAULT ARRAY[]::type_shopping_item[] NOT NULL
     , created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
@@ -211,6 +211,9 @@ CREATE TABLE chef (
     , CONSTRAINT chef_PKC PRIMARY KEY (id)
 ) ;
 
+ALTER TABLE shopping_list
+    ADD CONSTRAINT shopping_list_FK1 FOREIGN KEY (recipe_id) REFERENCES recipe(id);
+
 ALTER TABLE fav_history
     ADD CONSTRAINT fav_history_FK1 FOREIGN KEY (usr_id) REFERENCES usr(id);
 
@@ -227,7 +230,7 @@ ALTER TABLE recipe
     ADD CONSTRAINT recipe_FK1 FOREIGN KEY (usr_id) REFERENCES usr(id);
 
 ALTER TABLE shopping_list
-    ADD CONSTRAINT shopping_list_FK1 FOREIGN KEY (usr_id) REFERENCES usr(id);
+    ADD CONSTRAINT shopping_list_FK2 FOREIGN KEY (usr_id) REFERENCES usr(id);
 
 ALTER TABLE sns
     ADD CONSTRAINT sns_FK1 FOREIGN KEY (chef_id) REFERENCES chef(id);
@@ -262,6 +265,7 @@ COMMENT ON COLUMN follow_history.created_at IS '';
 COMMENT ON TABLE shopping_list IS '買い物リスト';
 COMMENT ON COLUMN shopping_list.id IS '';
 COMMENT ON COLUMN shopping_list.usr_id IS '';
+COMMENT ON COLUMN shopping_list.recipe_id IS 'NULL=メモ';
 COMMENT ON COLUMN shopping_list.is_fair_copy IS '清書or下書き';
 COMMENT ON COLUMN shopping_list.shopping_item IS '明細';
 COMMENT ON COLUMN shopping_list.created_at IS '';
@@ -318,4 +322,3 @@ COMMENT ON COLUMN chef.image_url IS '登録画像';
 COMMENT ON COLUMN chef.comment IS 'シェフコメント';
 COMMENT ON COLUMN chef.created_at IS '';
 COMMENT ON COLUMN chef.updated_at IS '';
-

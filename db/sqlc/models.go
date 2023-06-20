@@ -86,6 +86,8 @@ type Recipe struct {
 type ShoppingList struct {
 	ID    string `json:"id"`
 	UsrID string `json:"usrID"`
+	// NULL=メモ
+	RecipeID pgtype.Text `json:"recipeID"`
 	// 清書or下書き
 	IsFairCopy bool `json:"isFairCopy"`
 	// 明細

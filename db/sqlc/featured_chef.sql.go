@@ -72,6 +72,8 @@ SELECT
     chef_id
 FROM
     follow_history
+WHERE
+    CURRENT_TIMESTAMP - INTERVAL '3 days' <= created_at
 GROUP BY
     chef_id
 )
