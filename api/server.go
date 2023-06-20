@@ -35,8 +35,8 @@ func (s *Server) MountHandlers() {
 	// api.POST("/users/login", s.LoginUser)
 
 	// user.Use(AuthMiddleware())
-	api.GET("/featured_chef", s.ListFeaturedChef)
-	api.GET("/trend_recipe", s.ListTrendRecipe)
+	api.GET("/featuredChef", s.ListFeaturedChef)
+	api.GET("/trendRecipe", s.ListTrendRecipe)
 }
 
 func (s *Server) Start(addr string) error {
