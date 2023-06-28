@@ -1,7 +1,5 @@
 FROM mcr.microsoft.com/devcontainers/go:0-1.20 as builder
 
-# GitHub Actionsを実行させるためのコミット
-
 RUN apt-get update && apt-get install -y \
     unzip \
     cmake \
