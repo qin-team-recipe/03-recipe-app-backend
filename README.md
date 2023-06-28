@@ -18,6 +18,14 @@
 air
 ```
 
+## マイグレーション
+```
+atlas schema apply \
+  -u ${POSTGRES_URL} \
+  --to file://db/schema.sql \
+  --dev-url "docker://postgres"
+```
+
 ## Git コミットルール
 
 Conventional Commits に従う。

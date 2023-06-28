@@ -8,6 +8,7 @@ RUN curl -sSf https://atlasgo.sh | sh
 # [Optional] Uncomment the next lines to use go get to install anything else you need
 USER vscode
 # RUN go get -x <your-dependency-or-tool>
+
 RUN go install github.com/kyleconroy/sqlc/cmd/sqlc@latest \
     && go install github.com/cosmtrek/air@latest
 # USER root
