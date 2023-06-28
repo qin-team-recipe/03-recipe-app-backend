@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/devcontainers/go:0-1.20
+FROM aopontann/dev_go_opencv:latest
 
 # [Optional] Uncomment this section to install additional OS packages.
 # RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
