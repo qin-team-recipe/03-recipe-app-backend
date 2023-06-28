@@ -33,4 +33,4 @@ jobs:
           context: .
           file: .devcontainer/Dockerfile.opencv
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/qin-recipe-team03:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/dev_go_opencv:latest
