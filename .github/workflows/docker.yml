@@ -31,6 +31,6 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: .
-          file: .devcontainer/Dockerfile.opencv
+          file: .devcontainer/Dockerfile
           push: true
-          tags: qin-recipe-team03/app:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/qin-recipe-team03:latest
