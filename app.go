@@ -8,6 +8,7 @@ import (
 	"github.com/aopontann/gin-sqlc/api"
 
 	"github.com/jackc/pgx/v5"
+	"github.com/redis/go-redis/v9"
 )
 
 func main() {
@@ -18,7 +19,13 @@ func main() {
 	}
 	defer conn.Close(context.Background())
 
-	server := api.NewServer(conn)
+	rdb := redis.NewClient(&redis.Options{
+        Addr:     "localhost:6379",
+        Password: "", // no password set
+        DB:       0,  // use default DB
+    })
+
+	server := api.NewServer(conn, rdb)
 
 	server.MountHandlers()
 
