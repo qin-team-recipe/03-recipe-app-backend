@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/devcontainers/go:0-1.20
+FROM aopontann/dev_go_opencv:latest
 
 # [Optional] Uncomment this section to install additional OS packages.
 # RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
@@ -8,8 +8,9 @@ RUN curl -sSf https://atlasgo.sh | sh
 # [Optional] Uncomment the next lines to use go get to install anything else you need
 USER vscode
 # RUN go get -x <your-dependency-or-tool>
-RUN go install github.com/kyleconroy/sqlc/cmd/sqlc@latest
-RUN go install github.com/cosmtrek/air@latest
+
+RUN go install github.com/kyleconroy/sqlc/cmd/sqlc@latest \
+    && go install github.com/cosmtrek/air@latest
 # USER root
 
 # [Optional] Uncomment this line to install global node packages.
