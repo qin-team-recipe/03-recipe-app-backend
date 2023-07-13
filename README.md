@@ -5,6 +5,7 @@
 - [air](https://github.com/cosmtrek/air)
 - [Gin](https://github.com/gin-gonic/gin)
 - [sqlc](https://github.com/kyleconroy/sqlc)
+- [goose](https://github.com/pressly/goose)
 
 ## セットアップ
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/qin-team-recipe/03-recipe-app-backend)
@@ -19,11 +20,26 @@ air
 ```
 
 ## マイグレーション
+スキーマ、テーブルなどを作成
 ```
-atlas schema apply \
-  -u ${POSTGRES_URL} \
-  --to file://db/schema.sql \
-  --dev-url "docker://postgres"
+migrate -database ${POSTGRES_URL} -path db/migrations up
+```
+スキーマに変更を加える場合
+1. 以下のコマンドを実行
+   ```
+   migrate create -ext sql -dir db/migrations -seq [変更内容]
+   ```
+2. db/migrationsの中に新規で下記のようなファイルが作成されるため、[変更内容].up.sqlに変更するSQLを書き、[変更内容].down.sqlには変更前に戻すSQLを書く
+   ```
+   000001_[変更内容].down.sql
+   000001_[変更内容].up.sql
+   ```
+
+golang-migrateの[チュートリアル](https://github.com/golang-migrate/migrate/blob/master/database/postgres/TUTORIAL.md)も参考にしてください！
+
+psqlを使ってDBにアクセスする場合
+```
+psql ${POSTGRES_URL}
 ```
 
 ## Git コミットルール
