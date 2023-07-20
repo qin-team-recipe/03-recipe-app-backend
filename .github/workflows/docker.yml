@@ -31,6 +31,6 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: .
-          file: .devcontainer/Dockerfile.opencv
+          file: docker/Dockerfile.opencv
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/dev_go_opencv:latest
