@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - 'Dockerfile.opencv'
+      - 'docker/Dockerfile.opencv'
       - '.github/workflows/docker.yml'
 
 jobs:
