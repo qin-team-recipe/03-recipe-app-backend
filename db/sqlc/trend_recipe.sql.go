@@ -20,28 +20,28 @@ RECURSIVE generate_index (ii) AS (
     FROM generate_index
 )
 SELECT
-    nanoid() AS recipe_id,
+    GEN_RANDOM_UUID() AS recipe_id,
     '' AS title,
-    '' AS comment,
+    '' AS introduction,
     'https://source.unsplash.com/random/300x300?v=1' AS image_url,
     0 AS num_fav,
     0 AS score
 FROM
     generate_index
-LIMIT 10
+LIMIT $1
 `
 
 type FakeListTrendRecipeRow struct {
-	RecipeID string `json:"recipeID"`
-	Title    string `json:"title"`
-	Comment  string `json:"comment"`
-	ImageUrl string `json:"imageUrl"`
-	NumFav   int32  `json:"numFav"`
-	Score    int32  `json:"score"`
+	RecipeID     pgtype.UUID `json:"recipeID"`
+	Title        string      `json:"title"`
+	Introduction string      `json:"introduction"`
+	ImageUrl     string      `json:"imageUrl"`
+	NumFav       int32       `json:"numFav"`
+	Score        int32       `json:"score"`
 }
 
-func (q *Queries) FakeListTrendRecipe(ctx context.Context) ([]FakeListTrendRecipeRow, error) {
-	rows, err := q.db.Query(ctx, fakeListTrendRecipe)
+func (q *Queries) FakeListTrendRecipe(ctx context.Context, lim int32) ([]FakeListTrendRecipeRow, error) {
+	rows, err := q.db.Query(ctx, fakeListTrendRecipe, lim)
 	if err != nil {
 		return nil, err
 	}
@@ -52,7 +52,7 @@ func (q *Queries) FakeListTrendRecipe(ctx context.Context) ([]FakeListTrendRecip
 		if err := rows.Scan(
 			&i.RecipeID,
 			&i.Title,
-			&i.Comment,
+			&i.Introduction,
 			&i.ImageUrl,
 			&i.NumFav,
 			&i.Score,
@@ -70,27 +70,22 @@ func (q *Queries) FakeListTrendRecipe(ctx context.Context) ([]FakeListTrendRecip
 const listTrendRecipe = `-- name: ListTrendRecipe :many
 WITH
 history AS (
-SELECT
-    SUM(CASE WHEN is_fav THEN 1 ELSE 0 END) - SUM(CASE WHEN is_fav THEN 0 ELSE 1 END) AS score,
-    recipe_id
-FROM
-    fav_history
-WHERE
-    CURRENT_TIMESTAMP - INTERVAL '3 days' <= created_at
-GROUP BY
-    recipe_id
+    SELECT
+        SUM(CASE WHEN is_fav THEN 1 ELSE 0 END) - SUM(CASE WHEN is_fav THEN 0 ELSE 1 END) AS score,
+        recipe_id
+    FROM
+        fav_history
+    WHERE
+        CURRENT_TIMESTAMP - INTERVAL '3 days' <= created_at
+    GROUP BY
+        recipe_id
 )
 SELECT
     history.recipe_id,
     recipe.title,
-    recipe.comment,
+    recipe.introduction,
     recipe.image_url,
-    (SELECT
-         COUNT(1)
-     FROM
-         favoring
-     WHERE
-         favoring.recipe_id = history.recipe_id) AS num_fav,
+    recipe.num_fav,
     history.score
 FROM
     history
@@ -100,19 +95,20 @@ ON
     history.recipe_id = recipe.id
 ORDER BY
     score DESC
+LIMIT $1
 `
 
 type ListTrendRecipeRow struct {
-	RecipeID string      `json:"recipeID"`
-	Title    string      `json:"title"`
-	Comment  string      `json:"comment"`
-	ImageUrl pgtype.Text `json:"imageUrl"`
-	NumFav   int64       `json:"numFav"`
-	Score    int32       `json:"score"`
+	RecipeID     pgtype.UUID `json:"recipeID"`
+	Title        string      `json:"title"`
+	Introduction string      `json:"introduction"`
+	ImageUrl     pgtype.Text `json:"imageUrl"`
+	NumFav       int32       `json:"numFav"`
+	Score        int32       `json:"score"`
 }
 
-func (q *Queries) ListTrendRecipe(ctx context.Context) ([]ListTrendRecipeRow, error) {
-	rows, err := q.db.Query(ctx, listTrendRecipe)
+func (q *Queries) ListTrendRecipe(ctx context.Context, lim int32) ([]ListTrendRecipeRow, error) {
+	rows, err := q.db.Query(ctx, listTrendRecipe, lim)
 	if err != nil {
 		return nil, err
 	}
@@ -123,7 +119,7 @@ func (q *Queries) ListTrendRecipe(ctx context.Context) ([]ListTrendRecipeRow, er
 		if err := rows.Scan(
 			&i.RecipeID,
 			&i.Title,
-			&i.Comment,
+			&i.Introduction,
 			&i.ImageUrl,
 			&i.NumFav,
 			&i.Score,

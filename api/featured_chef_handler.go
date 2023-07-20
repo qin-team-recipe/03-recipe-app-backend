@@ -11,7 +11,8 @@ import (
 )
 
 func (s *Server) ListFeaturedChef(c *gin.Context) {
-	list, err := s.q.FakeListFeaturedChef(context.Background())
+	const limit int32 = 10
+	list, err := s.q.FakeListFeaturedChef(context.Background(), limit)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

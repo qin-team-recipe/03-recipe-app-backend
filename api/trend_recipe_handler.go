@@ -11,14 +11,15 @@ import (
 )
 
 func (s *Server) ListTrendRecipe(c *gin.Context) {
-	list, err := s.q.FakeListTrendRecipe(context.Background())
+	const limit int32 = 10
+	list, err := s.q.FakeListTrendRecipe(context.Background(), limit)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	for i := 0; i < len(list); i++ {
 		list[i].Title = gimei.NewName().First.Katakana()
-		list[i].Comment = gimei.NewAddress().String() + "。" + gimei.NewAddress().String() + "。" + gimei.NewAddress().String() + "。" + gimei.NewAddress().String() + "。" + gimei.NewAddress().String() + "。"
+		list[i].Introduction = gimei.NewAddress().String() + "。" + gimei.NewAddress().String() + "。" + gimei.NewAddress().String() + "。" + gimei.NewAddress().String() + "。" + gimei.NewAddress().String() + "。"
 		list[i].NumFav = rand.Int31n(1000)
 		list[i].Score = rand.Int31n(100)
 	}
