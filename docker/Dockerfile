@@ -3,6 +3,7 @@ FROM aopontann/dev_go_opencv:latest
 # [Optional] Uncomment this section to install additional OS packages.
 # RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
 #     && apt-get -y install --no-install-recommends <your-package-list-here>
+WORKDIR /workspaces
 
 # [Optional] Uncomment the next lines to use go get to install anything else you need
 USER vscode
@@ -11,6 +12,9 @@ USER vscode
 RUN go install github.com/kyleconroy/sqlc/cmd/sqlc@latest \
     && go install github.com/cosmtrek/air@latest \
     && go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
+
+COPY go.mod go.sum ./
+RUN go mod download
 # USER root
 
 # [Optional] Uncomment this line to install global node packages.
