@@ -8,7 +8,18 @@
 - [golang-migrate](https://github.com/golang-migrate/migrate)
 
 ## セットアップ
-docker compose -f .devcontainer/docker-compose.local.yml up
+- docker compose で起動
+  ```
+  docker compose up --build
+  ```
+- DevContainer で起動
+  1. 拡張機能 [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) をインストール
+  2. VSCode のコマンドパレットを開く
+  3. `>Devcontainers: Reopen in Container` を選択する
+  4. コンテナを起動できたら、ターミナルで以下のコマンドを打ってAPIを起動する
+     ```
+     air
+     ```
 
 ## APIサーバーの起動
 ```
