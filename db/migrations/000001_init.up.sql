@@ -383,6 +383,8 @@ COMMENT ON COLUMN chef.num_follower IS 'フォロワー数';
 -- 参考：https://qiita.com/kanedaq/items/8b47443df2c42a15eaa9
 --
 
+DROP VIEW if exists v_usr CASCADE;
+
 CREATE VIEW v_usr AS
 SELECT
     id,
@@ -399,6 +401,7 @@ SELECT
 FROM
     usr;
 
+DROP VIEW if exists v_recipe CASCADE;
 
 CREATE VIEW v_recipe AS
 SELECT
@@ -415,6 +418,8 @@ SELECT
     updated_at
 FROM
     recipe;
+
+DROP VIEW if exists v_chef CASCADE;
 
 CREATE VIEW v_chef AS
 SELECT
@@ -437,6 +442,8 @@ FROM
 -- TRIGGER関連作成
 -- 参考：https://blog.kumano-te.com/activities/auto-update-last-updated-at-postgresql
 --
+
+DROP FUNCTION if exists refresh_updated_at CASCADE;
 
 CREATE OR REPLACE FUNCTION refresh_updated_at() RETURNS TRIGGER AS $$
 BEGIN
@@ -481,6 +488,7 @@ CREATE TRIGGER t_chef_updated_at
     FOR EACH ROW
     EXECUTE FUNCTION refresh_updated_at();
 
+DROP FUNCTION if exists refresh_num_recipe CASCADE;
 
 CREATE OR REPLACE FUNCTION refresh_num_recipe() RETURNS TRIGGER AS $$
 BEGIN
@@ -606,6 +614,7 @@ CREATE OR REPLACE TRIGGER t_recipe_num_recipe
     FOR EACH ROW
     EXECUTE FUNCTION refresh_num_recipe();
 
+DROP FUNCTION if exists refresh_follow CASCADE;
 
 CREATE OR REPLACE FUNCTION refresh_follow() RETURNS TRIGGER AS $$
 BEGIN
@@ -671,6 +680,7 @@ CREATE OR REPLACE TRIGGER t_recipe_follow
     FOR EACH ROW
     EXECUTE FUNCTION refresh_follow();
 
+DROP FUNCTION if exists refresh_fav CASCADE;
 
 CREATE OR REPLACE FUNCTION refresh_fav() RETURNS TRIGGER AS $$
 BEGIN
@@ -742,6 +752,8 @@ CREATE OR REPLACE TRIGGER t_recipe_fav
 -- 参考：https://qiita.com/kanedaq/items/6c86d8dff79a5fa1dda3
 --
 
+DROP FUNCTION if exists insert_chef CASCADE;
+
 CREATE OR REPLACE FUNCTION insert_chef(
     data JSONB
 )
@@ -801,6 +813,7 @@ BEGIN
 END
 $$;
 
+DROP FUNCTION if exists update_chef CASCADE;
 
 CREATE OR REPLACE FUNCTION update_chef(
     data JSONB
@@ -851,6 +864,7 @@ BEGIN
 END
 $$;
 
+DROP FUNCTION if exists insert_usr CASCADE;
 
 CREATE OR REPLACE FUNCTION insert_usr(
     data JSONB
@@ -910,6 +924,7 @@ BEGIN
 END
 $$;
 
+DROP FUNCTION if exists update_usr CASCADE;
 
 CREATE OR REPLACE FUNCTION update_usr(
     data JSONB
@@ -959,6 +974,7 @@ BEGIN
 END
 $$;
 
+DROP FUNCTION if exists insert_recipe CASCADE;
 
 CREATE OR REPLACE FUNCTION insert_recipe(
     data JSONB
@@ -1020,6 +1036,7 @@ BEGIN
 END
 $$;
 
+DROP FUNCTION if exists update_recipe CASCADE;
 
 CREATE OR REPLACE FUNCTION update_recipe(
     data JSONB
