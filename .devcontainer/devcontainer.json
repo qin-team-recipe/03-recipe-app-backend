@@ -4,7 +4,7 @@
 	"name": "Go & PostgreSQL",
 	"dockerComposeFile": ["../docker-compose.yml", "docker-compose.yml"],
 	"service": "app",
-	// "workspaceFolder": "/workspaces",
+	"workspaceFolder": "/workspaces",
 	"features": {
 		"ghcr.io/devcontainers-contrib/features/postgres-asdf:1": {},
 		"ghcr.io/devcontainers-contrib/features/redis-homebrew:1": {}
