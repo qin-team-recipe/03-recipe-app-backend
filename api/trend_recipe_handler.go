@@ -5,12 +5,14 @@ import (
 	"math/rand"
 	"net/http"
 
+	"github.com/aopontann/gin-sqlc/docs"
+
 	"github.com/gin-gonic/gin"
 
 	"github.com/mattn/go-gimei"
 )
 
-func (s *Server) ListTrendRecipe(c *gin.Context) {
+func (s *Server) ListTrendRecipe(c *gin.Context) []docs.TrendRecipe {
 	const limit int32 = 10
 	list, err := s.q.FakeListTrendRecipe(context.Background(), limit)
 	if err != nil {
