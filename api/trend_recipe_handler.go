@@ -12,7 +12,7 @@ import (
 	"github.com/mattn/go-gimei"
 )
 
-func (s *Server) ListTrendRecipe(c *gin.Context) []docs.TrendRecipe {
+func (s *Server) ListTrendRecipe(c *gin.Context) {
 	const limit int32 = 10
 	list, err := s.q.FakeListTrendRecipe(context.Background(), limit)
 	if err != nil {
@@ -25,5 +25,8 @@ func (s *Server) ListTrendRecipe(c *gin.Context) []docs.TrendRecipe {
 		list[i].NumFav = rand.Int31n(1000)
 		list[i].Score = rand.Int31n(100)
 	}
+
+	s := list.([]docs.TrendRecipe)
+
 	c.JSON(http.StatusOK, list)
 }

@@ -11,7 +11,7 @@ import (
 	"github.com/mattn/go-gimei"
 )
 
-func (s *Server) ListFeaturedChef(c *gin.Context) []docs.FeaturedChef {
+func (s *Server) ListFeaturedChef(c *gin.Context) {
 	const limit int32 = 10
 	list, err := s.q.FakeListFeaturedChef(context.Background(), limit)
 	if err != nil {
@@ -23,5 +23,8 @@ func (s *Server) ListFeaturedChef(c *gin.Context) []docs.FeaturedChef {
 		list[i].NumFollower = rand.Int31n(1000)
 		list[i].Score = rand.Int31n(100)
 	}
+
+	s := list.([]docs.FeaturedChef)
+
 	c.JSON(http.StatusOK, list)
 }
