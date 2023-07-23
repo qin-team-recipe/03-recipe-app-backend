@@ -1,0 +1,43 @@
+version: '3.8'
+
+volumes:
+  postgres-data:
+
+services:
+  app:
+    build: 
+      context: .
+      dockerfile: docker/Dockerfile
+    env_file:
+        # Ensure that the variables in .env match the same variables in devcontainer.json
+        - .env
+
+    volumes:
+      - .:/workspaces:cached
+
+    # Runs app on the same network as the database container, allows "forwardPorts" in devcontainer.json function.
+    # network_mode: service:db
+
+    ports:
+      - 8080:8080
+
+    # Overrides default command so things don't shut down after the process ends.
+    command: air -- -buildvcs=false
+
+  db:
+    image: groonga/pgroonga:3.0.8-alpine-15-slim
+    restart: unless-stopped
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    env_file:
+      # Ensure that the variables in .env match the same variables in devcontainer.json
+      - .env
+    network_mode: service:app
+
+    # Add "forwardPorts": ["5432"] to **devcontainer.json** to forward PostgreSQL locally.
+    # (Adding the "ports" property to this file will not forward from a Codespace.)
+  
+  redis:
+    image: redis:latest
+    restart: unless-stopped
+    network_mode: service:app
