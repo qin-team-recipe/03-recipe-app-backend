@@ -18,13 +18,15 @@ func (s *Server) ListFeaturedChef(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	for i := 0; i < len(list); i++ {
-		list[i].Name = gimei.NewName().String()
-		list[i].NumFollower = rand.Int31n(1000)
-		list[i].Score = rand.Int31n(100)
+	if chefs, ok := list.([]docs.FeaturedChef); ok {
+		for i := 0; i < len(chefs); i++ {
+			chefs[i].Name = gimei.NewName().String()
+			chefs[i].NumFollower = rand.Int31n(1000)
+			chefs[i].Score = rand.Int31n(100)
+		}
+
+		c.JSON(http.StatusOK, chefs)
+	} else {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "list is not of type []docs.FeaturedChef"})
 	}
-
-	s := list.([]docs.FeaturedChef)
-
-	c.JSON(http.StatusOK, list)
 }

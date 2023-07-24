@@ -19,14 +19,17 @@ func (s *Server) ListTrendRecipe(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	for i := 0; i < len(list); i++ {
-		list[i].Title = gimei.NewName().First.Katakana()
-		list[i].Introduction = gimei.NewAddress().String() + "。" + gimei.NewAddress().String() + "。" + gimei.NewAddress().String() + "。" + gimei.NewAddress().String() + "。" + gimei.NewAddress().String() + "。"
-		list[i].NumFav = rand.Int31n(1000)
-		list[i].Score = rand.Int31n(100)
+
+	if recipe, ok := list.([]docs.TrendRecipe); ok {
+		for i := 0; i < len(list); i++ {
+			list[i].Title = gimei.NewName().First.Katakana()
+			list[i].Introduction = gimei.NewAddress().String() + "。" + gimei.NewAddress().String() + "。" + gimei.NewAddress().String() + "。" + gimei.NewAddress().String() + "。" + gimei.NewAddress().String() + "。"
+			list[i].NumFav = rand.Int31n(1000)
+			list[i].Score = rand.Int31n(100)
+		}
+
+		c.JSON(http.StatusOK, recipe)
+	} else {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "list is not of type []docs.TrendRecipe"})
 	}
-
-	s := list.([]docs.TrendRecipe)
-
-	c.JSON(http.StatusOK, list)
 }
