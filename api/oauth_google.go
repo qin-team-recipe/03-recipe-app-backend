@@ -84,9 +84,17 @@ func (s *Server) OauthGoogleCallback(c *gin.Context) {
 
 	c.SetCookie("session-id", guid.String(), 3600, "/", "localhost", false, true)
 
-	fmt.Println(uInfo.Email)
+	isExists, err := s.q.ExistsUser(context.Background(), uInfo.Email)
+	if err != nil {
+		fmt.Printf("ExistsUser Error: %s\n", err.Error())
+		return
+	}
+	if isExists {
+		c.Redirect(http.StatusTemporaryRedirect, "http://localhost:3000")
+		return
+	}
 
-	c.Redirect(http.StatusTemporaryRedirect, "http://localhost:3000")
+	c.Redirect(http.StatusTemporaryRedirect, "http://localhost:3000/createUser")
 }
 
 func generateStateOauthCookie(c *gin.Context) string {
