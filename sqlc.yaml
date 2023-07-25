@@ -8,3 +8,21 @@ sql:
         package: "db"
         sql_package: "pgx/v5"
         out: "./db/sqlc"
+        emit_json_tags: true
+        json_tags_case_style: "camel"
+        overrides:
+          - column: "v_usr.link"
+            go_type:
+              import: "github.com/aopontann/gin-sqlc/db/dto"
+              package: "dto"
+              type: "ChefLinkArrayDto"
+          - column: "v_chef.link"
+            go_type:
+              import: "github.com/aopontann/gin-sqlc/db/dto"
+              package: "dto"
+              type: "ChefLinkArrayDto"
+          - column: "v_recipe.method"
+            go_type:
+              import: "github.com/aopontann/gin-sqlc/db/dto"
+              package: "dto"
+              type: "RecipeMethodArrayDto"

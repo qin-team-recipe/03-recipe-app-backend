@@ -1,0 +1,80 @@
+openapi: 3.1.0
+info:
+  version: '1.0'
+  title: team3-backend API
+  summary: 注目のシェフ一覧を返却
+  description: ''
+servers:
+  - url: 'http://localhost:8080'
+paths:
+  /api/featuredChef:
+    get:
+      summary: ''
+      operationId: get-api-featuredChef
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/featuredChef'
+      servers:
+        - url: 'http://localhost:8080'
+  /api/trendRecipe:
+    get:
+      summary: trendRecipe API：話題のレシピ一覧
+      operationId: get-api-trendRecipe
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/trendRecipe'
+      servers:
+        - url: 'http://localhost:8080'
+components:
+  schemas:
+    featuredChef:
+      type: object
+      title: featuredChef
+      properties:
+        chefID:
+          type: string
+          description: シェフID
+          format: uuid
+        name:
+          type: string
+          description: シェフ登録名
+        imageUrl:
+          type: string
+          description: シェフ登録画像
+        numFollower:
+          type: integer
+          description: フォロワー数
+          minimum: 0
+        score:
+          type: integer
+          description: 注目度→実際のデータはscoreの降順でソートされる
+          minimum: 0
+      required:
+        - chefID
+      x-tags:
+        - chef
+    trendRecipe:
+      type: object
+      title: trendRecipe
+      properties:
+        recipeId:
+          type: string
+          format: uuid
+        title:
+          type: string
+        introduction:
+          type: string
+        imageUrl:
+          type: string
+        numFav:
+          type: integer
+        score:
+          type: integer

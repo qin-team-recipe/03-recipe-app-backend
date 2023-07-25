@@ -23,6 +23,7 @@ services:
 
     # Overrides default command so things don't shut down after the process ends.
     command: air -- -buildvcs=false
+    platform: ${PLATFORM}
 
   db:
     image: groonga/pgroonga:3.0.8-alpine-15-slim

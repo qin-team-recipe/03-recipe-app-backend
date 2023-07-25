@@ -49,6 +49,17 @@ psqlを使ってDBにアクセスする場合
 psql ${POSTGRES_URL}
 ```
 
+## OpenAPI Specification
+
+Stoplight Studioで各APIの仕様は次の[URL](https://project3-shimabu.stoplight.io/docs/project3-backend/branches/main/u788di80n61qf-team3-backend-api)をみてください。
+
+yaml からコード生成
+```
+oapi-codegen -config docs/config.yaml docs/openapi.yaml > docs/openapi.gen.go
+```
+
+docs/openapi.gen.go に作成されるInterfaceに沿ってAPIを開発してください。
+
 ## Git コミットルール
 
 Conventional Commits に従う。
