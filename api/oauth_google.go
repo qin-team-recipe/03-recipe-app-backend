@@ -66,23 +66,15 @@ func (s *Server) OauthGoogleCallback(c *gin.Context) {
 		return
 	}
 
-	// GetOrCreate User in your db.
-	// Redirect or response with a token.
-	// More code .....
-	fmt.Printf("UserInfo: %s\n", data)
+	// セッションIDを生成
+	guid := xid.New()
+
+	c.SetCookie("session_id", guid.String(), 3600, "/", "localhost", false, true)
 
 	var uInfo userInfo
 	if err := json.Unmarshal(data, &uInfo); err != nil {
 		return
 	}
-
-	// セッションIDを生成
-	guid := xid.New()
-
-	// redis に セッションIDをKeyとして、メールアドレスをValue として保存する
-	s.rbd.Set(context.Background(), guid.String(), uInfo.Email, 3600 * time.Second)
-
-	c.SetCookie("session-id", guid.String(), 3600, "/", "localhost", false, true)
 
 	isExists, err := s.q.ExistsUser(context.Background(), uInfo.Email)
 	if err != nil {
@@ -90,10 +82,13 @@ func (s *Server) OauthGoogleCallback(c *gin.Context) {
 		return
 	}
 	if isExists {
+		// redis に セッションIDをKeyとして、ユーザ情報を Value として保存する
+		s.rbd.Set(context.Background(), guid.String(), uInfo.Email, 3600 * time.Second)
 		c.Redirect(http.StatusTemporaryRedirect, "http://localhost:3000")
 		return
 	}
 
+	s.rbd.Set(context.Background(), guid.String(), data, 3600 * time.Second)
 	c.Redirect(http.StatusTemporaryRedirect, "http://localhost:3000/createUser")
 }
 
