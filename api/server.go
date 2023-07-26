@@ -34,6 +34,8 @@ func (s *Server) MountHandlers() {
 	// api.POST("/users", s.RegisterUser)
 	// api.POST("/users/login", s.LoginUser)
 
+	api.POST("/createUser", s.CreateUser)
+
 	// user.Use(AuthMiddleware())
 	api.GET("/featuredChef", s.ListFeaturedChef)
 	api.GET("/trendRecipe", s.ListTrendRecipe)
