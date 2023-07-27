@@ -15,7 +15,7 @@ type Chef struct {
 	// ログインemail
 	Email pgtype.Text `json:"email"`
 	// 登録名
-	Name string `json:"name"`
+	Name pgtype.Text `json:"name"`
 	// プロフィール画像
 	ImageUrl pgtype.Text `json:"imageUrl"`
 	// シェフ紹介
@@ -95,8 +95,8 @@ type Recipe struct {
 	ID     pgtype.UUID `json:"id"`
 	ChefID pgtype.UUID `json:"chefId"`
 	UsrID  pgtype.UUID `json:"usrId"`
-	// レシピタイトル
-	Title string `json:"title"`
+	// レシピ名
+	Name string `json:"name"`
 	// ＊人前
 	Servings int32 `json:"servings"`
 	// 作り方
@@ -104,7 +104,9 @@ type Recipe struct {
 	// 画像
 	ImageUrl pgtype.Text `json:"imageUrl"`
 	// レシピの紹介文
-	Introduction string `json:"introduction"`
+	Introduction pgtype.Text `json:"introduction"`
+	// リンク
+	Link []string `json:"link"`
 	// 公開等:公開、限定公開、非公開、下書き
 	AccessLevel int32              `json:"accessLevel"`
 	CreatedAt   pgtype.Timestamptz `json:"createdAt"`
@@ -144,7 +146,7 @@ type Usr struct {
 	// ログインemail
 	Email string `json:"email"`
 	// ニックネーム
-	Name string `json:"name"`
+	Name pgtype.Text `json:"name"`
 	// プロフィール画像（任意）
 	ImageUrl pgtype.Text `json:"imageUrl"`
 	// 自己紹介（任意）
@@ -164,7 +166,7 @@ type Usr struct {
 type VChef struct {
 	ID           pgtype.UUID          `json:"id"`
 	Email        pgtype.Text          `json:"email"`
-	Name         string               `json:"name"`
+	Name         pgtype.Text          `json:"name"`
 	ImageUrl     pgtype.Text          `json:"imageUrl"`
 	Profile      pgtype.Text          `json:"profile"`
 	Link         dto.ChefLinkArrayDto `json:"link"`
@@ -180,11 +182,12 @@ type VRecipe struct {
 	ID           pgtype.UUID              `json:"id"`
 	ChefID       pgtype.UUID              `json:"chefId"`
 	UsrID        pgtype.UUID              `json:"usrId"`
-	Title        string                   `json:"title"`
+	Name         string                   `json:"name"`
 	Servings     int32                    `json:"servings"`
 	Method       dto.RecipeMethodArrayDto `json:"method"`
 	ImageUrl     pgtype.Text              `json:"imageUrl"`
-	Introduction string                   `json:"introduction"`
+	Introduction pgtype.Text              `json:"introduction"`
+	Link         []string                 `json:"link"`
 	AccessLevel  int32                    `json:"accessLevel"`
 	CreatedAt    pgtype.Timestamptz       `json:"createdAt"`
 	UpdatedAt    pgtype.Timestamptz       `json:"updatedAt"`
@@ -193,7 +196,7 @@ type VRecipe struct {
 type VUsr struct {
 	ID           pgtype.UUID          `json:"id"`
 	Email        string               `json:"email"`
-	Name         string               `json:"name"`
+	Name         pgtype.Text          `json:"name"`
 	ImageUrl     pgtype.Text          `json:"imageUrl"`
 	Profile      pgtype.Text          `json:"profile"`
 	Link         dto.ChefLinkArrayDto `json:"link"`
