@@ -96,7 +96,7 @@ LIMIT $1
 
 type ListFeaturedChefRow struct {
 	ChefID      pgtype.UUID `json:"chefId"`
-	Name        string      `json:"name"`
+	Name        pgtype.Text `json:"name"`
 	ImageUrl    pgtype.Text `json:"imageUrl"`
 	NumFollower int32       `json:"numFollower"`
 	Score       int32       `json:"score"`
