@@ -11,7 +11,7 @@ type ChefLinkArrayDto []ChefLinkDto
 
 type RecipeMethodDto struct {
 	Html       pgtype.Text `json:"html"`
-	Supplement []byte      `json:"supplement"`
+	Supplement any         `json:"supplement"`
 }
 
 type RecipeMethodArrayDto []RecipeMethodDto
