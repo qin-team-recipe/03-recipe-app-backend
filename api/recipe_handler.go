@@ -12,9 +12,9 @@ import (
 	"github.com/mattn/go-gimei"
 )
 
-func (s *Server) ListTrendRecipe(c *gin.Context) {
+func (s *Server) ListFeaturedChef(c *gin.Context) {
 	const limit int32 = 10
-	list, err := s.q.FakeListTrendRecipe(context.Background(), limit)
+	list, err := s.q.FakeListFeaturedChef(context.Background(), limit)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -22,23 +22,22 @@ func (s *Server) ListTrendRecipe(c *gin.Context) {
 
 	// ダミーデータ作成（本番では消す）
 	for i := 0; i < len(list); i++ {
-		list[i].Name = gimei.NewName().First.Katakana()
-		list[i].Introduction = gimei.NewAddress().String() + "。" + gimei.NewAddress().String() + "。" + gimei.NewAddress().String() + "。" + gimei.NewAddress().String() + "。" + gimei.NewAddress().String() + "。"
-		list[i].NumFav = rand.Int31n(1000)
+		list[i].Name = gimei.NewName().String()
+		list[i].NumFollower = rand.Int31n(1000)
 		list[i].Score = rand.Int31n(100)
 	}
 
 	// レスポンス型バリデーション
 	validate := validator.New()
 	for i := 0; i < len(list); i++ {
-		// ListTrendRecipeRow型からJSONに変換
+		// ListFeaturedChefRow型からJSONに変換
 		jsn, err := json.Marshal(list[i])
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
-		// JSONからdocs.TrendRecipe型に変換
-		var obj docs.TrendRecipe
+		// JSONからdocs.FeaturedChef型に変換
+		var obj docs.FeaturedChef
 		if err := json.Unmarshal(jsn, &obj); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return

@@ -21,7 +21,7 @@ RECURSIVE generate_index (ii) AS (
 )
 SELECT
     GEN_RANDOM_UUID() AS recipe_id,
-    '' AS title,
+    '' AS name,
     '' AS introduction,
     'https://source.unsplash.com/random/300x300?v=1' AS image_url,
     0 AS num_fav,
@@ -33,7 +33,7 @@ LIMIT $1
 
 type FakeListTrendRecipeRow struct {
 	RecipeID     pgtype.UUID `json:"recipeId"`
-	Title        string      `json:"title"`
+	Name         string      `json:"name"`
 	Introduction string      `json:"introduction"`
 	ImageUrl     string      `json:"imageUrl"`
 	NumFav       int32       `json:"numFav"`
@@ -51,7 +51,7 @@ func (q *Queries) FakeListTrendRecipe(ctx context.Context, lim int32) ([]FakeLis
 		var i FakeListTrendRecipeRow
 		if err := rows.Scan(
 			&i.RecipeID,
-			&i.Title,
+			&i.Name,
 			&i.Introduction,
 			&i.ImageUrl,
 			&i.NumFav,
@@ -82,7 +82,7 @@ history AS (
 )
 SELECT
     history.recipe_id,
-    recipe.title,
+    recipe.name,
     recipe.introduction,
     recipe.image_url,
     recipe.num_fav,
@@ -100,8 +100,8 @@ LIMIT $1
 
 type ListTrendRecipeRow struct {
 	RecipeID     pgtype.UUID `json:"recipeId"`
-	Title        string      `json:"title"`
-	Introduction string      `json:"introduction"`
+	Name         string      `json:"name"`
+	Introduction pgtype.Text `json:"introduction"`
 	ImageUrl     pgtype.Text `json:"imageUrl"`
 	NumFav       int32       `json:"numFav"`
 	Score        int32       `json:"score"`
@@ -118,7 +118,7 @@ func (q *Queries) ListTrendRecipe(ctx context.Context, lim int32) ([]ListTrendRe
 		var i ListTrendRecipeRow
 		if err := rows.Scan(
 			&i.RecipeID,
-			&i.Title,
+			&i.Name,
 			&i.Introduction,
 			&i.ImageUrl,
 			&i.NumFav,

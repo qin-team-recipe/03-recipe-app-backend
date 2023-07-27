@@ -13,7 +13,7 @@ history AS (
 )
 SELECT
     history.recipe_id,
-    recipe.title,
+    recipe.name,
     recipe.introduction,
     recipe.image_url,
     recipe.num_fav,
@@ -38,7 +38,7 @@ RECURSIVE generate_index (ii) AS (
 )
 SELECT
     GEN_RANDOM_UUID() AS recipe_id,
-    '' AS title,
+    '' AS name,
     '' AS introduction,
     'https://source.unsplash.com/random/300x300?v=1' AS image_url,
     0 AS num_fav,
