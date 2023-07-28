@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"regexp"
+	"time"
 
 	db "github.com/aopontann/gin-sqlc/db/sqlc"
 	"github.com/gin-gonic/gin"
@@ -37,6 +38,9 @@ func (s *Server) CreateUser(c *gin.Context) {
 		return
 	}
 
+	// redisに保存されているユーザ情報をメールアドレスで上書きする
+	s.rbd.Set(context.Background(), sid, uInfo.Email, 24*time.Hour)
+
 	// メールアドレスが google かチェック
 	var authServer string
 	re := regexp.MustCompile(`@gmail.com$`)
@@ -49,7 +53,7 @@ func (s *Server) CreateUser(c *gin.Context) {
 	}
 
 	// DBにユーザ情報を保存する
-	res, err := s.q.CreateUser(context.Background(), db.CreateUserParams{Name: "aopontan", Email: uInfo.Email, AuthServer: authServer, AuthUserinfo: []byte(data)})
+	res, err := s.q.CreateUser(context.Background(), db.CreateUserParams{Name: reqb.Name, Email: uInfo.Email, AuthServer: authServer, AuthUserinfo: []byte(data)})
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
