@@ -28,7 +28,7 @@ CREATE TYPE type_recipe_method AS (
 );
 
 -- Project Name : チーム03
--- Date/Time    : 2023/07/27 18:22:57
+-- Date/Time    : 2023/07/28 22:39:47
 -- Author       : kaned
 -- RDBMS Type   : PostgreSQL
 -- Application  : A5:SQL Mk-2
@@ -159,7 +159,7 @@ DROP TABLE if exists usr CASCADE;
 CREATE TABLE usr (
   id UUID DEFAULT GEN_RANDOM_UUID() NOT NULL
   , email TEXT NOT NULL
-  , name TEXT
+  , name TEXT NOT NULL
   , image_url TEXT
   , profile TEXT
   , link type_chef_link[] DEFAULT ARRAY[]::type_chef_link[] NOT NULL
@@ -170,6 +170,9 @@ CREATE TABLE usr (
   , num_recipe INTEGER DEFAULT 0 NOT NULL
   , CONSTRAINT usr_PKC PRIMARY KEY (id)
 ) ;
+
+CREATE UNIQUE INDEX usr_IX1
+  ON usr(email);
 
 -- シェフのレシピ＆マイレシピ
 -- * BackupToTempTable
@@ -201,7 +204,7 @@ DROP TABLE if exists chef CASCADE;
 CREATE TABLE chef (
   id UUID DEFAULT GEN_RANDOM_UUID() NOT NULL
   , email TEXT
-  , name TEXT
+  , name TEXT NOT NULL
   , image_url TEXT
   , profile TEXT
   , link type_chef_link[] DEFAULT ARRAY[]::type_chef_link[] NOT NULL
@@ -213,6 +216,9 @@ CREATE TABLE chef (
   , num_follower INTEGER DEFAULT 0 NOT NULL
   , CONSTRAINT chef_PKC PRIMARY KEY (id)
 ) ;
+
+CREATE UNIQUE INDEX chef_IX1
+  ON chef(email);
 
 ALTER TABLE shopping_list
   ADD CONSTRAINT shopping_list_FK1 FOREIGN KEY (recipe_id) REFERENCES recipe(id)

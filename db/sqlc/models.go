@@ -15,7 +15,7 @@ type Chef struct {
 	// ログインemail
 	Email pgtype.Text `json:"email"`
 	// 登録名
-	Name pgtype.Text `json:"name"`
+	Name string `json:"name"`
 	// プロフィール画像
 	ImageUrl pgtype.Text `json:"imageUrl"`
 	// シェフ紹介
@@ -146,7 +146,7 @@ type Usr struct {
 	// ログインemail
 	Email string `json:"email"`
 	// ニックネーム
-	Name pgtype.Text `json:"name"`
+	Name string `json:"name"`
 	// プロフィール画像（任意）
 	ImageUrl pgtype.Text `json:"imageUrl"`
 	// 自己紹介（任意）
@@ -166,7 +166,7 @@ type Usr struct {
 type VChef struct {
 	ID           pgtype.UUID          `json:"id"`
 	Email        pgtype.Text          `json:"email"`
-	Name         pgtype.Text          `json:"name"`
+	Name         string               `json:"name"`
 	ImageUrl     pgtype.Text          `json:"imageUrl"`
 	Profile      pgtype.Text          `json:"profile"`
 	Link         dto.ChefLinkArrayDto `json:"link"`
@@ -196,7 +196,7 @@ type VRecipe struct {
 type VUsr struct {
 	ID           pgtype.UUID          `json:"id"`
 	Email        string               `json:"email"`
-	Name         pgtype.Text          `json:"name"`
+	Name         string               `json:"name"`
 	ImageUrl     pgtype.Text          `json:"imageUrl"`
 	Profile      pgtype.Text          `json:"profile"`
 	Link         dto.ChefLinkArrayDto `json:"link"`
