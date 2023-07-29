@@ -33,6 +33,164 @@ paths:
                 $ref: '#/components/schemas/trendRecipe'
       servers:
         - url: 'http://localhost:8080'
+  /api/createUsrRecipe:
+    post:
+      summary: createUsrRecipe：マイレシピ登録
+      operationId: post-api-createUsrRecipe
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                usrId:
+                  type: string
+                  description: ユーザーID
+                  format: uuid
+                name:
+                  type: string
+                  description: レシピ名
+                servings:
+                  type: integer
+                  description: ＊人前
+                method:
+                  type: array
+                  description: 作り方
+                  items:
+                    type: object
+                    properties:
+                      html:
+                        type: string
+                      supplement:
+                        type: object
+                        description: 補足
+                imageUrl:
+                  type: string
+                  description: 画像
+                introduction:
+                  type: string
+                  description: レシピの紹介文
+                link:
+                  type: array
+                  description: リンク
+                  items:
+                    type: string
+                accessLevel:
+                  type: integer
+                  description: 公開、限定公開、非公開、下書き
+              required:
+                - usrId
+                - name
+                - servings
+                - method
+                - accessLevel
+              x-examples:
+                Example 1:
+                  usrId: 8080411a-5482-4cee-b03b-6bb570a28f9a
+                  name: ラーメン
+                  servings: 2
+                  method:
+                    - html: <h1>作り方1</h1>
+                      supplement:
+                        image: 1.webp
+                    - html: <h1>作り方2</h1>
+                      supplement:
+                        link: 'https://youtu.be/uCkkCRcs81I'
+                  imageUrl: 'https://pbs.twimg.com/media/Er7dlbJVQAIWVsW?format=jpg&name=small'
+                  introduction: 私のラーメン
+                  link:
+                    - 'https://youtu.be/RGZNv1_oVK0'
+                    - 'https://youtu.be/viAP4lzks7k'
+                    - 'https://youtu.be/QM22Tc8PdKI'
+                  accessLevel: 0
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/createUsrRecipe'
+      servers:
+        - url: 'http://localhost:8080'
+  /api/createChefRecipe:
+    post:
+      summary: createChefRecipe：シェフレシピ登録
+      operationId: post-api-createChefRecipe
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                chefId:
+                  type: string
+                  description: シェフID
+                  format: uuid
+                name:
+                  type: string
+                  description: レシピ名
+                servings:
+                  type: integer
+                  description: ＊人前
+                method:
+                  type: array
+                  description: 作り方
+                  items:
+                    type: object
+                    properties:
+                      html:
+                        type: string
+                      supplement:
+                        type: object
+                        description: 補足
+                imageUrl:
+                  type: string
+                  description: 画像
+                introduction:
+                  type: string
+                  description: レシピの紹介文
+                link:
+                  type: array
+                  description: リンク
+                  items:
+                    type: string
+                accessLevel:
+                  type: integer
+                  description: 公開、限定公開、非公開、下書き
+              required:
+                - chefId
+                - name
+                - servings
+                - method
+                - accessLevel
+              x-examples:
+                Example 1:
+                  chefId: 5c6f635e-6b17-4834-b9ff-a971ff595271
+                  name: グラタン
+                  servings: 2
+                  method:
+                    - html: <h1>作り方1</h1>
+                      supplement:
+                        image: 1.webp
+                    - html: <h1>作り方2</h1>
+                      supplement:
+                        link: 'https://youtu.be/uCkkCRcs81I'
+                  imageUrl: 'https://pbs.twimg.com/media/Er7dlbJVQAIWVsW?format=jpg&name=small'
+                  introduction: 二人に捧げるグラタン
+                  link:
+                    - 'https://youtu.be/RGZNv1_oVK0'
+                    - 'https://youtu.be/viAP4lzks7k'
+                    - 'https://youtu.be/QM22Tc8PdKI'
+                  accessLevel: 0
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/createChefRecipe'
+      servers:
+        - url: 'http://localhost:8080'
 components:
   schemas:
     featuredChef:
@@ -220,5 +378,175 @@ components:
               imageUrl: 'https://source.unsplash.com/random/300x300?v=1'
               numFav: 40
               score: 46
+      x-tags:
+        - recipe
+    createUsrRecipe:
+      type: object
+      title: createUsrRecipe
+      properties:
+        id:
+          type: string
+          description: レシピID
+          format: uuid
+        chefId:
+          type: string
+          description: シェフID
+          format: uuid
+        usrId:
+          type: string
+          description: ユーザーID
+          format: uuid
+        name:
+          type: string
+          description: レシピ名
+        servings:
+          type: integer
+          description: ＊人前
+        method:
+          type: array
+          description: 作り方
+          items:
+            type: object
+            properties:
+              html:
+                type: string
+              supplement:
+                type: object
+                description: 補足
+        imageUrl:
+          type: string
+          description: 画像
+        introduction:
+          type: string
+          description: レシピの紹介文
+        link:
+          type: array
+          description: リンク
+          items:
+            type: string
+        accessLevel:
+          type: integer
+          description: 公開、限定公開、非公開、下書き
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+      required:
+        - id
+        - usrId
+        - name
+        - servings
+        - method
+        - accessLevel
+        - createdAt
+        - updatedAt
+      x-examples:
+        Example 1:
+          id: 5b34aa63-6c35-424c-bfc2-6cec8010707f
+          chefId: null
+          usrId: 8080411a-5482-4cee-b03b-6bb570a28f9a
+          name: ラーメン
+          servings: 2
+          method:
+            - html: <h1>作り方1</h1>
+              supplement:
+                image: 1.webp
+            - html: <h1>作り方2</h1>
+              supplement:
+                link: 'https://youtu.be/uCkkCRcs81I'
+          imageUrl: 'https://pbs.twimg.com/media/Er7dlbJVQAIWVsW?format=jpg&name=small'
+          introduction: 私のラーメン
+          link:
+            - 'https://youtu.be/RGZNv1_oVK0'
+            - 'https://youtu.be/viAP4lzks7k'
+            - 'https://youtu.be/QM22Tc8PdKI'
+          accessLevel: 0
+          createdAt: '2023-07-29T23:08:45.4666+09:00'
+          updatedAt: '2023-07-29T23:08:45.4666+09:00'
+      x-tags:
+        - recipe
+    createChefRecipe:
+      type: object
+      title: createChefRecipe
+      properties:
+        id:
+          type: string
+          description: レシピID
+          format: uuid
+        chefId:
+          type: string
+          description: シェフID
+          format: uuid
+        usrId:
+          type: string
+          description: ユーザーID
+          format: uuid
+        name:
+          type: string
+          description: レシピ名
+        servings:
+          type: integer
+          description: ＊人前
+        method:
+          type: array
+          description: 作り方
+          items:
+            type: object
+            properties:
+              html:
+                type: string
+              supplement:
+                type: object
+                description: 補足
+        imageUrl:
+          type: string
+          description: 画像
+        introduction:
+          type: string
+          description: レシピの紹介文
+        link:
+          type: array
+          description: リンク
+          items:
+            type: string
+        accessLevel:
+          type: integer
+          description: 公開、限定公開、非公開、下書き
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+      required:
+        - id
+        - chefId
+        - name
+        - servings
+        - method
+        - accessLevel
+        - createdAt
+        - updatedAt
+      x-examples:
+        Example 1:
+          id: c7adb3eb-383e-43f4-b2d2-0bc915a16aa6
+          chefId: 5c6f635e-6b17-4834-b9ff-a971ff595271
+          usrId: null
+          name: グラタン
+          servings: 2
+          method:
+            - html: <h1>作り方1</h1>
+              supplement:
+                image: 1.webp
+            - html: <h1>作り方2</h1>
+              supplement:
+                link: 'https://youtu.be/uCkkCRcs81I'
+          imageUrl: 'https://pbs.twimg.com/media/Er7dlbJVQAIWVsW?format=jpg&name=small'
+          introduction: 二人に捧げるグラタン
+          link:
+            - 'https://youtu.be/RGZNv1_oVK0'
+            - 'https://youtu.be/viAP4lzks7k'
+            - 'https://youtu.be/QM22Tc8PdKI'
+          accessLevel: 0
+          createdAt: '2023-07-29T23:59:06.838145+09:00'
+          updatedAt: '2023-07-29T23:59:06.838145+09:00'
       x-tags:
         - recipe

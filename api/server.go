@@ -35,9 +35,8 @@ func (s *Server) MountHandlers() {
 	// api.POST("/users/login", s.LoginUser)
 
 	api.POST("/createUser", s.CreateUser)
-	// TODO: ハンドラを分ける
-	api.POST("/createChefRecipe", s.CreateRecipe)
-	api.POST("/createUsrRecipe", s.CreateRecipe)
+	api.POST("/createChefRecipe", s.CreateChefRecipe)
+	api.POST("/createUsrRecipe", s.CreateChefRecipe)
 
 	// user.Use(AuthMiddleware())
 	api.GET("/featuredChef", s.ListFeaturedChef)

@@ -2,12 +2,13 @@ package api
 
 import (
 	"context"
-	"github.com/aopontann/gin-sqlc/common"
 	"math/rand"
 	"net/http"
 
+	"github.com/aopontann/gin-sqlc/common"
 	db "github.com/aopontann/gin-sqlc/db/sqlc"
 	"github.com/aopontann/gin-sqlc/docs"
+
 	"github.com/gin-gonic/gin"
 	"github.com/mattn/go-gimei"
 )

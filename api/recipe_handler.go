@@ -45,7 +45,7 @@ func (s *Server) ListTrendRecipe(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
-func (s *Server) CreateRecipe(c *gin.Context) {
+func (s *Server) CreateChefRecipe(c *gin.Context) {
 	// TODO: リクエストボディのバリデーション
 
 	data, err := c.GetRawData()
@@ -54,13 +54,45 @@ func (s *Server) CreateRecipe(c *gin.Context) {
 		return
 	}
 
+	// 新規登録
 	row, err := s.q.CreateRecipe(context.Background(), data)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	// TODO: レスポンスのバリデーション
+	// レスポンス型バリデーション
+	err = common.ValidateStructTwoWay[db.VRecipe, docs.CreateChefRecipe](&row)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, row)
+}
+
+func (s *Server) CreateUsrRecipe(c *gin.Context) {
+	// TODO: リクエストボディのバリデーション
+
+	data, err := c.GetRawData()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// 新規登録
+	row, err := s.q.CreateRecipe(context.Background(), data)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// レスポンス型バリデーション
+	err = common.ValidateStructTwoWay[db.VRecipe, docs.CreateUsrRecipe](&row)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 
 	c.JSON(http.StatusOK, row)
 }
