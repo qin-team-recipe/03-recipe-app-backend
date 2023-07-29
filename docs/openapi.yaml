@@ -9,7 +9,7 @@ servers:
 paths:
   /api/featuredChef:
     get:
-      summary: ''
+      summary: featuredChef API：注目のシェフ一覧
       operationId: get-api-featuredChef
       responses:
         '200':
@@ -39,42 +39,186 @@ components:
       type: object
       title: featuredChef
       properties:
-        chefID:
-          type: string
-          description: シェフID
-          format: uuid
-        name:
-          type: string
-          description: シェフ登録名
-        imageUrl:
-          type: string
-          description: シェフ登録画像
-        numFollower:
-          type: integer
-          description: フォロワー数
-          minimum: 0
-        score:
-          type: integer
-          description: 注目度→実際のデータはscoreの降順でソートされる
-          minimum: 0
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              chefId:
+                type: string
+                description: シェフID
+                format: uuid
+              name:
+                type: string
+                description: シェフ登録名
+              imageUrl:
+                type: string
+                description: プロフィール画像
+              numFollower:
+                type: integer
+                description: フォロワー数
+              score:
+                type: integer
+                description: 注目度→実際のデータはscoreの降順でソートされる
+            required:
+              - chefId
+              - name
+              - numFollower
+              - score
       required:
-        - chefID
+        - data
+      x-examples:
+        Example 1:
+          data:
+            - chefId: 6083beb0-5543-4a2d-9101-6ce5b7b2d124
+              name: 岩井 優二
+              imageUrl: 'https://source.unsplash.com/random/300x300?v=1'
+              numFollower: 805
+              score: 81
+            - chefId: 4d35e05f-3f72-4e3f-b80f-1e054ee8a7ff
+              name: 大川 優希
+              imageUrl: 'https://source.unsplash.com/random/300x300?v=1'
+              numFollower: 631
+              score: 63
+            - chefId: 5dfebb01-8386-4adb-b76f-fb0c8830155f
+              name: 吉川 正悟
+              imageUrl: 'https://source.unsplash.com/random/300x300?v=1'
+              numFollower: 219
+              score: 59
+            - chefId: e853f33b-be2e-44f0-b904-87dd518cb090
+              name: 吉川 理貴
+              imageUrl: 'https://source.unsplash.com/random/300x300?v=1'
+              numFollower: 618
+              score: 36
+            - chefId: 45552e82-94c0-455d-b220-c65677c4fe9d
+              name: 豊田 登志雄
+              imageUrl: 'https://source.unsplash.com/random/300x300?v=1'
+              numFollower: 194
+              score: 65
+            - chefId: 66a07493-0c05-44dd-8370-eb33c28f4723
+              name: 星 暁
+              imageUrl: 'https://source.unsplash.com/random/300x300?v=1'
+              numFollower: 0
+              score: 90
+            - chefId: 430cb7b4-14c2-460e-9854-8869efa0f3ee
+              name: 熊谷 雄哉
+              imageUrl: 'https://source.unsplash.com/random/300x300?v=1'
+              numFollower: 997
+              score: 90
+            - chefId: 0d6a0431-c4e5-42e3-be82-cbfaebcbbfe4
+              name: 森岡 純奈
+              imageUrl: 'https://source.unsplash.com/random/300x300?v=1'
+              numFollower: 501
+              score: 13
+            - chefId: a37d4629-bcac-416b-9bad-23f509965898
+              name: 荻野 紗芸
+              imageUrl: 'https://source.unsplash.com/random/300x300?v=1'
+              numFollower: 497
+              score: 62
+            - chefId: 18980f30-53a3-47fa-9284-244aec726513
+              name: 長沢 祥太郎
+              imageUrl: 'https://source.unsplash.com/random/300x300?v=1'
+              numFollower: 458
+              score: 2
       x-tags:
         - chef
     trendRecipe:
       type: object
       title: trendRecipe
       properties:
-        recipeId:
-          type: string
-          format: uuid
-        title:
-          type: string
-        introduction:
-          type: string
-        imageUrl:
-          type: string
-        numFav:
-          type: integer
-        score:
-          type: integer
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              recipeId:
+                type: string
+                description: レシピID
+                format: uuid
+              name:
+                type: string
+                description: レシピ名
+              introduction:
+                type: string
+                description: レシピの紹介文
+              imageUrl:
+                type: string
+                description: レシピ画像
+              numFav:
+                type: integer
+                description: ファボられ数
+              score:
+                type: integer
+                description: 話題度→実際のデータはscoreの降順でソートされる
+            required:
+              - recipeId
+              - name
+              - numFav
+              - score
+      required:
+        - data
+      x-examples:
+        Example 1:
+          data:
+            - recipeId: 163f18f2-a7ca-44d2-830a-fa317d0954ec
+              name: ユウタ
+              introduction: 群馬県久遠郡せたな町蛸井興屋。新潟県能美市春野町内ノ谷。京都府南河内郡河南町飯島道東。富山県利根郡昭和村円山町。静岡県野洲市飯島道東。
+              imageUrl: 'https://source.unsplash.com/random/300x300?v=1'
+              numFav: 570
+              score: 44
+            - recipeId: f1359d70-1b2e-4e9c-8130-40c0e2bf0979
+              name: ナギサ
+              introduction: 鳥取県坂東市長瀬。秋田県伊達郡桑折町岩崎。広島県湯沢市豊郷。大阪府児玉郡神川町白木。広島県和歌山市壬生甲。
+              imageUrl: 'https://source.unsplash.com/random/300x300?v=1'
+              numFav: 4
+              score: 57
+            - recipeId: b169a04e-85a5-4e93-bf5e-78b8854956db
+              name: ユキミ
+              introduction: 山梨県海部郡海陽町稲木町。青森県京丹後市北町。鹿児島県児湯郡川南町螺湾。兵庫県西牟婁郡上富田町千代川町今津。長崎県渋谷区辰巳町。
+              imageUrl: 'https://source.unsplash.com/random/300x300?v=1'
+              numFav: 955
+              score: 96
+            - recipeId: 621e5e3c-65bb-43bf-b7a8-da7855bcdf1f
+              name: ハルキ
+              introduction: 静岡県越谷市松山。岩手県大島郡宇検村愛の杜。広島県高砂市厳木町牧瀬。高知県紋別郡遠軽町中町。宮崎県中新川郡立山町白根日の出町。
+              imageUrl: 'https://source.unsplash.com/random/300x300?v=1'
+              numFav: 990
+              score: 79
+            - recipeId: 43aafae7-a3d5-4947-8b2b-188a913c1892
+              name: マキ
+              introduction: 秋田県浜松市東区御坊山。東京都下伊那郡喬木村麻生。福井県札幌市手稲区西方町金井。岩手県新城市婦中町麦島。高知県対馬市吉田町川手。
+              imageUrl: 'https://source.unsplash.com/random/300x300?v=1'
+              numFav: 569
+              score: 54
+            - recipeId: fd2b8bb2-2a46-4faa-a139-f004d373f572
+              name: ユキナ
+              introduction: 宮城県金沢市西鴻池町。熊本県東白川郡鮫川村木落。三重県枝幸郡浜頓別町大原。広島県伊都郡かつらぎ町宮川町小谷。三重県瀬戸内市木葉下町。
+              imageUrl: 'https://source.unsplash.com/random/300x300?v=1'
+              numFav: 578
+              score: 89
+            - recipeId: 763d4fcf-4784-4f8f-8f42-181c423767c8
+              name: シンイチ
+              introduction: 高知県文京区御田。京都府三島郡島本町森戸。徳島県虻田郡洞爺湖町園原。東京都魚津市桂町。鳥取県鎌ケ谷市天王下。
+              imageUrl: 'https://source.unsplash.com/random/300x300?v=1'
+              numFav: 45
+              score: 6
+            - recipeId: 51190a00-03cb-433f-8a82-3e5bbf53be6f
+              name: トモエ
+              introduction: 奈良県練馬区園原。山口県備前市滝本。滋賀県帯広市南中山。山口県神戸市垂水区大野町代三五。愛知県邑楽郡明和町南高鍋。
+              imageUrl: 'https://source.unsplash.com/random/300x300?v=1'
+              numFav: 75
+              score: 69
+            - recipeId: e437d6e5-911d-48e3-81fa-d78a407b63f9
+              name: キナ
+              introduction: 長崎県利根郡川場村宮浦。愛知県木曽郡大桑村波多津町津留主屋。山形県南松浦郡新上五島町宮川町小谷。滋賀県吉野郡十津川村下白岩町。鳥取県浜松市天竜区高津。
+              imageUrl: 'https://source.unsplash.com/random/300x300?v=1'
+              numFav: 546
+              score: 3
+            - recipeId: 73903e01-856a-4a6d-857a-87feb0bbc9f4
+              name: アキカ
+              introduction: 長野県飯塚市平田。滋賀県秩父郡小鹿野町御供町。鹿児島県海津市光地園。山梨県大阪市住吉区佐田町八幡原。三重県長岡市磯部。
+              imageUrl: 'https://source.unsplash.com/random/300x300?v=1'
+              numFav: 40
+              score: 46
+      x-tags:
+        - recipe

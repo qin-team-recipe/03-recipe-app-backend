@@ -9,28 +9,43 @@ import (
 
 // FeaturedChef defines model for featuredChef.
 type FeaturedChef struct {
-	// ChefID シェフID
-	ChefID openapi_types.UUID `json:"chefID"`
+	Data []struct {
+		// ChefId シェフID
+		ChefId openapi_types.UUID `json:"chefId"`
 
-	// ImageUrl シェフ登録画像
-	ImageUrl *string `json:"imageUrl,omitempty"`
+		// ImageUrl プロフィール画像
+		ImageUrl *string `json:"imageUrl,omitempty"`
 
-	// Name シェフ登録名
-	Name *string `json:"name,omitempty"`
+		// Name シェフ登録名
+		Name string `json:"name"`
 
-	// NumFollower フォロワー数
-	NumFollower *int `json:"numFollower,omitempty"`
+		// NumFollower フォロワー数
+		NumFollower int `json:"numFollower"`
 
-	// Score 注目度→実際のデータはscoreの降順でソートされる
-	Score *int `json:"score,omitempty"`
+		// Score 注目度→実際のデータはscoreの降順でソートされる
+		Score int `json:"score"`
+	} `json:"data"`
 }
 
 // TrendRecipe defines model for trendRecipe.
 type TrendRecipe struct {
-	ImageUrl     *string             `json:"imageUrl,omitempty"`
-	Introduction *string             `json:"introduction,omitempty"`
-	NumFav       *int                `json:"numFav,omitempty"`
-	RecipeId     *openapi_types.UUID `json:"recipeId,omitempty"`
-	Score        *int                `json:"score,omitempty"`
-	Title        *string             `json:"title,omitempty"`
+	Data []struct {
+		// ImageUrl レシピ画像
+		ImageUrl *string `json:"imageUrl,omitempty"`
+
+		// Introduction レシピの紹介文
+		Introduction *string `json:"introduction,omitempty"`
+
+		// Name レシピ名
+		Name string `json:"name"`
+
+		// NumFav ファボられ数
+		NumFav int `json:"numFav"`
+
+		// RecipeId レシピID
+		RecipeId openapi_types.UUID `json:"recipeId"`
+
+		// Score 話題度→実際のデータはscoreの降順でソートされる
+		Score int `json:"score"`
+	} `json:"data"`
 }
