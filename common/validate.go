@@ -7,6 +7,22 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
+func ValidateStruct[T any](data []byte) error {
+	validate := validator.New()
+
+	// JSONからtwoT型に変換
+	var obj T
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	decoder.DisallowUnknownFields()
+	err := decoder.Decode(&obj)
+	if err != nil {
+		return err
+	}
+
+	// T型でバリデーション
+	return validate.Struct(&obj)
+}
+
 func ValidateStructTwoWay[oneT any, twoT any](data *oneT) error {
 	validate := validator.New()
 

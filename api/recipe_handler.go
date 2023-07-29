@@ -46,9 +46,15 @@ func (s *Server) ListTrendRecipe(c *gin.Context) {
 }
 
 func (s *Server) CreateChefRecipe(c *gin.Context) {
-	// TODO: リクエストボディのバリデーション
-
+	// リクエストボディーをJSONとして取り出し
 	data, err := c.GetRawData()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// JSONのバリデーション
+	err = common.ValidateStruct[docs.PostApiCreateChefRecipeJSONRequestBody](data)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -72,9 +78,15 @@ func (s *Server) CreateChefRecipe(c *gin.Context) {
 }
 
 func (s *Server) CreateUsrRecipe(c *gin.Context) {
-	// TODO: リクエストボディのバリデーション
-
+	// リクエストボディーをJSONとして取り出し
 	data, err := c.GetRawData()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// JSONのバリデーション
+	err = common.ValidateStruct[docs.PostApiCreateUsrRecipeJSONRequestBody](data)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
