@@ -825,6 +825,7 @@ $$;
 DROP FUNCTION if exists update_chef CASCADE;
 
 CREATE OR REPLACE FUNCTION update_chef(
+    id UUID,
     data JSONB
 )
     RETURNS v_chef
@@ -844,17 +845,17 @@ BEGIN
     END LOOP;
 
     UPDATE chef SET
-        email         = data->>'email',
+--         email         = data->>'email',
         name          = data->>'name',
         image_url     = data->>'imageUrl',
         profile       = data->>'profile',
-        link          = updating_link,
-        auth_server   = data->>'authServer',
-        auth_userinfo = data->'authUserinfo'
+        link          = updating_link
+--         auth_server   = data->>'authServer',
+--         auth_userinfo = data->'authUserinfo'
     WHERE
-        id = (data->>'id')::UUID
+        chef.id = update_chef.id
     RETURNING
-        id,
+        chef.id,
         email,
         name,
         image_url,
@@ -936,6 +937,7 @@ $$;
 DROP FUNCTION if exists update_usr CASCADE;
 
 CREATE OR REPLACE FUNCTION update_usr(
+    id UUID,
     data JSONB
 )
     RETURNS v_usr
@@ -955,17 +957,17 @@ BEGIN
     END LOOP;
 
     UPDATE usr SET
-        email         = data->>'email',
+--         email         = data->>'email',
         name          = data->>'name',
         image_url     = data->>'imageUrl',
         profile       = data->>'profile',
-        link          = updating_link,
-        auth_server   = data->>'authServer',
-        auth_userinfo = data->'authUserinfo'
+        link          = updating_link
+--         auth_server   = data->>'authServer',
+--         auth_userinfo = data->'authUserinfo'
     WHERE
-        id = (data->>'id')::UUID
+        usr.id = update_usr.id
     RETURNING
-        id,
+        usr.id,
         email,
         name,
         image_url,
@@ -1051,6 +1053,7 @@ $$;
 DROP FUNCTION if exists update_recipe CASCADE;
 
 CREATE OR REPLACE FUNCTION update_recipe(
+    id UUID,
     data JSONB
 )
     RETURNS v_recipe
@@ -1070,8 +1073,8 @@ BEGIN
     END LOOP;
 
     UPDATE recipe SET
-        chef_id      = (data->>'chefId')::UUID,
-        usr_id       = (data->>'usrId')::UUID,
+--         chef_id      = (data->>'chefId')::UUID,
+--         usr_id       = (data->>'usrId')::UUID,
         name         = data->>'name',
         servings     = (data->'servings')::INTEGER,
         method       = updating_method,
@@ -1080,9 +1083,9 @@ BEGIN
         link         = (SELECT ARRAY_AGG(value) FROM JSONB_ARRAY_ELEMENTS_TEXT(data->'link')),
         access_level = (data->'accessLevel')::INTEGER
     WHERE
-        id = (data->>'id')::UUID
+        recipe.id = update_recipe.id
     RETURNING
-        id,
+        recipe.id,
         chef_id,
         usr_id,
         name,

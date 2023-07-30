@@ -37,6 +37,7 @@ func (s *Server) MountHandlers() {
 	api.POST("/createUser", s.CreateUser)
 	api.POST("/createChefRecipe", s.CreateChefRecipe)
 	api.POST("/createUsrRecipe", s.CreateUsrRecipe)
+	api.PUT("/updateRecipe/:id", s.UpdateRecipe)
 
 	// user.Use(AuthMiddleware())
 	api.GET("/featuredChef", s.ListFeaturedChef)

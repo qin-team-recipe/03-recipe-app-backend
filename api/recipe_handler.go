@@ -3,12 +3,11 @@ package api
 import (
 	"context"
 	"encoding/json"
-	"math/rand"
-	"net/http"
-
 	"github.com/aopontann/gin-sqlc/common"
 	db "github.com/aopontann/gin-sqlc/db/sqlc"
 	"github.com/aopontann/gin-sqlc/docs"
+	"math/rand"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/mattn/go-gimei"
@@ -104,6 +103,47 @@ func (s *Server) CreateUsrRecipe(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
+
+	c.JSON(http.StatusOK, row)
+}
+
+func (s *Server) UpdateRecipe(c *gin.Context) {
+	var param db.UpdateRecipeParams
+	var err error
+	param.ID, err = common.StrToUUID(c.Param("id"))
+
+	//// リクエストボディを構造体にバインド
+	//reqb := docs.PostApiUpdateRecipeJSONRequestBody{}
+	//if err := c.ShouldBind(&reqb); err != nil {
+	//	c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	//	return
+	//}
+	//
+	//// 構造体からJSONに変換
+	//jsn, err := json.Marshal(&reqb)
+	//if err != nil {
+	//	c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	//}
+
+	param.Data, err = c.GetRawData()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// 更新
+	row, err := s.q.UpdateRecipe(context.Background(), param)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	//// レスポンス型バリデーション
+	//err = common.ValidateStructTwoWay[db.VRecipe, docs.UpdateRecipe](&row)
+	//if err != nil {
+	//	c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	//	return
+	//}
 
 	c.JSON(http.StatusOK, row)
 }

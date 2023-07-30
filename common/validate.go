@@ -10,7 +10,7 @@ import (
 func ValidateStruct[T any](data []byte) error {
 	validate := validator.New()
 
-	// JSONからtwoT型に変換
+	// JSONからT型に変換
 	var obj T
 	decoder := json.NewDecoder(bytes.NewReader(data))
 	decoder.DisallowUnknownFields()
