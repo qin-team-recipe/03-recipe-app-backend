@@ -27,21 +27,28 @@ func NewServer(conn *pgx.Conn, rdb *redis.Client) *Server {
 }
 
 func (s *Server) MountHandlers() {
-	api := s.r.Group("/api")
 	auth := s.r.Group("/auth")
-	auth.GET("/google/login", s.OauthGoogleLogin)
-	auth.GET("/google/callback", s.OauthGoogleCallback)
+	api := s.r.Group("/api")
+
 	// api.POST("/users", s.RegisterUser)
 	// api.POST("/users/login", s.LoginUser)
+	// user.Use(AuthMiddleware())
 
+	// 認証認可関連
+	auth.GET("/google/login", s.OauthGoogleLogin)
+	auth.GET("/google/callback", s.OauthGoogleCallback)
+
+	// シェフ関連
+	api.GET("/featuredChef", s.ListFeaturedChef)
+
+	// ユーザー関連
 	api.POST("/createUser", s.CreateUser)
+
+	// レシピ関連
+	api.GET("/trendRecipe", s.ListTrendRecipe)
 	api.POST("/createChefRecipe", s.CreateChefRecipe)
 	api.POST("/createUsrRecipe", s.CreateUsrRecipe)
 	api.PUT("/updateRecipe/:id", s.UpdateRecipe)
-
-	// user.Use(AuthMiddleware())
-	api.GET("/featuredChef", s.ListFeaturedChef)
-	api.GET("/trendRecipe", s.ListTrendRecipe)
 }
 
 func (s *Server) Start(addr string) error {
