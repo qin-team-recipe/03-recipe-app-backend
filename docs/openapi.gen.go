@@ -133,10 +133,10 @@ type TrendRecipe struct {
 // PostApiCreateChefRecipeJSONBody defines parameters for PostApiCreateChefRecipe.
 type PostApiCreateChefRecipeJSONBody struct {
 	// AccessLevel 公開、限定公開、非公開、下書き
-	AccessLevel int `json:"accessLevel"`
+	AccessLevel int `binding:"required" json:"accessLevel"`
 
 	// ChefId シェフID
-	ChefId openapi_types.UUID `json:"chefId"`
+	ChefId openapi_types.UUID `binding:"required" json:"chefId"`
 
 	// ImageUrl 画像
 	ImageUrl *string `json:"imageUrl,omitempty"`
@@ -145,7 +145,7 @@ type PostApiCreateChefRecipeJSONBody struct {
 	Introduction *string `json:"introduction,omitempty"`
 
 	// Link リンク
-	Link *[]string `json:"link,omitempty"`
+	Link []string `binding:"required" json:"link"`
 
 	// Method 作り方
 	Method []struct {
@@ -153,19 +153,19 @@ type PostApiCreateChefRecipeJSONBody struct {
 
 		// Supplement 補足
 		Supplement *map[string]interface{} `json:"supplement,omitempty"`
-	} `json:"method"`
+	} `binding:"required" json:"method"`
 
 	// Name レシピ名
-	Name string `json:"name"`
+	Name string `binding:"required" json:"name"`
 
 	// Servings ＊人前
-	Servings int `json:"servings"`
+	Servings int `binding:"required" json:"servings"`
 }
 
 // PostApiCreateUsrRecipeJSONBody defines parameters for PostApiCreateUsrRecipe.
 type PostApiCreateUsrRecipeJSONBody struct {
 	// AccessLevel 公開、限定公開、非公開、下書き
-	AccessLevel int `json:"accessLevel"`
+	AccessLevel int `binding:"required" json:"accessLevel"`
 
 	// ImageUrl 画像
 	ImageUrl *string `json:"imageUrl,omitempty"`
@@ -174,7 +174,7 @@ type PostApiCreateUsrRecipeJSONBody struct {
 	Introduction *string `json:"introduction,omitempty"`
 
 	// Link リンク
-	Link *[]string `json:"link,omitempty"`
+	Link []string `binding:"required" json:"link"`
 
 	// Method 作り方
 	Method []struct {
@@ -182,16 +182,16 @@ type PostApiCreateUsrRecipeJSONBody struct {
 
 		// Supplement 補足
 		Supplement *map[string]interface{} `json:"supplement,omitempty"`
-	} `json:"method"`
+	} `binding:"required" json:"method"`
 
 	// Name レシピ名
-	Name string `json:"name"`
+	Name string `binding:"required" json:"name"`
 
 	// Servings ＊人前
-	Servings int `json:"servings"`
+	Servings int `binding:"required" json:"servings"`
 
 	// UsrId ユーザーID
-	UsrId openapi_types.UUID `json:"usrId"`
+	UsrId openapi_types.UUID `binding:"required" json:"usrId"`
 }
 
 // PostApiCreateChefRecipeJSONRequestBody defines body for PostApiCreateChefRecipe for application/json ContentType.

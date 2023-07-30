@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"encoding/json"
 	"math/rand"
 	"net/http"
 
@@ -46,22 +47,21 @@ func (s *Server) ListTrendRecipe(c *gin.Context) {
 }
 
 func (s *Server) CreateChefRecipe(c *gin.Context) {
-	// リクエストボディーをJSONとして取り出し
-	data, err := c.GetRawData()
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	// リクエストボディを構造体にバインド
+	reqb := docs.PostApiCreateChefRecipeJSONRequestBody{}
+	if err := c.ShouldBind(&reqb); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	// JSONのバリデーション
-	err = common.ValidateStruct[docs.PostApiCreateChefRecipeJSONRequestBody](data)
+	// 構造体からJSONに変換
+	jsn, err := json.Marshal(&reqb)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
 
 	// 新規登録
-	row, err := s.q.CreateRecipe(context.Background(), data)
+	row, err := s.q.CreateRecipe(context.Background(), jsn)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -78,22 +78,21 @@ func (s *Server) CreateChefRecipe(c *gin.Context) {
 }
 
 func (s *Server) CreateUsrRecipe(c *gin.Context) {
-	// リクエストボディーをJSONとして取り出し
-	data, err := c.GetRawData()
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	// リクエストボディを構造体にバインド
+	reqb := docs.PostApiCreateUsrRecipeJSONRequestBody{}
+	if err := c.ShouldBind(&reqb); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	// JSONのバリデーション
-	err = common.ValidateStruct[docs.PostApiCreateUsrRecipeJSONRequestBody](data)
+	// 構造体からJSONに変換
+	jsn, err := json.Marshal(&reqb)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
 
 	// 新規登録
-	row, err := s.q.CreateRecipe(context.Background(), data)
+	row, err := s.q.CreateRecipe(context.Background(), jsn)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

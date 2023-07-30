@@ -47,12 +47,18 @@ paths:
                   type: string
                   description: ユーザーID
                   format: uuid
+                  x-oapi-codegen-extra-tags:
+                    binding: required
                 name:
                   type: string
                   description: レシピ名
+                  x-oapi-codegen-extra-tags:
+                    binding: required
                 servings:
                   type: integer
                   description: ＊人前
+                  x-oapi-codegen-extra-tags:
+                    binding: required
                 method:
                   type: array
                   description: 作り方
@@ -64,6 +70,8 @@ paths:
                       supplement:
                         type: object
                         description: 補足
+                  x-oapi-codegen-extra-tags:
+                    binding: required
                 imageUrl:
                   type: string
                   description: 画像
@@ -75,14 +83,19 @@ paths:
                   description: リンク
                   items:
                     type: string
+                  x-oapi-codegen-extra-tags:
+                    binding: required
                 accessLevel:
                   type: integer
                   description: 公開、限定公開、非公開、下書き
+                  x-oapi-codegen-extra-tags:
+                    binding: required
               required:
                 - usrId
                 - name
                 - servings
                 - method
+                - link
                 - accessLevel
               x-examples:
                 Example 1:
@@ -102,7 +115,7 @@ paths:
                     - 'https://youtu.be/RGZNv1_oVK0'
                     - 'https://youtu.be/viAP4lzks7k'
                     - 'https://youtu.be/QM22Tc8PdKI'
-                  accessLevel: 0
+                  accessLevel: 1
       responses:
         '200':
           description: OK
@@ -126,12 +139,18 @@ paths:
                   type: string
                   description: シェフID
                   format: uuid
+                  x-oapi-codegen-extra-tags:
+                    binding: required
                 name:
                   type: string
                   description: レシピ名
+                  x-oapi-codegen-extra-tags:
+                    binding: required
                 servings:
                   type: integer
                   description: ＊人前
+                  x-oapi-codegen-extra-tags:
+                    binding: required
                 method:
                   type: array
                   description: 作り方
@@ -143,6 +162,8 @@ paths:
                       supplement:
                         type: object
                         description: 補足
+                  x-oapi-codegen-extra-tags:
+                    binding: required
                 imageUrl:
                   type: string
                   description: 画像
@@ -154,14 +175,19 @@ paths:
                   description: リンク
                   items:
                     type: string
+                  x-oapi-codegen-extra-tags:
+                    binding: required
                 accessLevel:
                   type: integer
                   description: 公開、限定公開、非公開、下書き
+                  x-oapi-codegen-extra-tags:
+                    binding: required
               required:
                 - chefId
                 - name
                 - servings
                 - method
+                - link
                 - accessLevel
               x-examples:
                 Example 1:
@@ -181,7 +207,7 @@ paths:
                     - 'https://youtu.be/RGZNv1_oVK0'
                     - 'https://youtu.be/viAP4lzks7k'
                     - 'https://youtu.be/QM22Tc8PdKI'
-                  accessLevel: 0
+                  accessLevel: 1
       responses:
         '200':
           description: OK
