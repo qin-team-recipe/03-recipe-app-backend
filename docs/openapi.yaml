@@ -217,6 +217,97 @@ paths:
                 $ref: '#/components/schemas/createChefRecipe'
       servers:
         - url: 'http://localhost:8080'
+  '/api/updateRecipe/{id}':
+    put:
+      summary: updateRecipe：レシピ更新
+      operationId: put-api-updateRecipe
+      parameters:
+        - name: id
+          in: path
+          description: レシピID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: レシピ名
+                  x-oapi-codegen-extra-tags:
+                    binding: required
+                servings:
+                  type: integer
+                  description: ＊人前
+                  x-oapi-codegen-extra-tags:
+                    binding: required
+                method:
+                  type: array
+                  description: 作り方
+                  items:
+                    type: object
+                    properties:
+                      html:
+                        type: string
+                      supplement:
+                        type: object
+                        description: 補足
+                  x-oapi-codegen-extra-tags:
+                    binding: required
+                imageUrl:
+                  type: string
+                  description: 画像
+                introduction:
+                  type: string
+                  description: レシピの紹介文
+                link:
+                  type: array
+                  description: リンク
+                  items:
+                    type: string
+                  x-oapi-codegen-extra-tags:
+                    binding: required
+                accessLevel:
+                  type: integer
+                  description: 公開、限定公開、非公開、下書き
+                  x-oapi-codegen-extra-tags:
+                    binding: required
+              required:
+                - name
+                - servings
+                - method
+                - link
+                - accessLevel
+              x-examples:
+                Example 1:
+                  name: 平べったいたこ焼き
+                  servings: 4
+                  method:
+                    - html: <p>作り方1</p>
+                      supplement:
+                        image: 1.webp
+                    - html: <p>作り方2</p>
+                      supplement:
+                        link: 'https://youtu.be/uCkkCRcs81I'
+                  imageUrl: 'https://pbs.twimg.com/media/Er7dlbJVQAIWVsW?format=jpg&name=small'
+                  introduction: お好み焼き
+                  link:
+                    - 'https://youtu.be/RGZNv1_oVK0'
+                    - 'https://youtu.be/viAP4lzks7k'
+                    - 'https://youtu.be/QM22Tc8PdKI'
+                  accessLevel: 2
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/updateRecipe'
+      servers:
+        - url: 'http://localhost:8080'
 components:
   schemas:
     featuredChef:
@@ -574,5 +665,90 @@ components:
           accessLevel: 0
           createdAt: '2023-07-29T23:59:06.838145+09:00'
           updatedAt: '2023-07-29T23:59:06.838145+09:00'
+      x-tags:
+        - recipe
+    updateRecipe:
+      type: object
+      title: updateRecipe
+      properties:
+        id:
+          type: string
+          description: レシピID
+          format: uuid
+        chefId:
+          type: string
+          description: シェフID
+          format: uuid
+        usrId:
+          type: string
+          description: ユーザーID
+          format: uuid
+        name:
+          type: string
+          description: レシピ名
+        servings:
+          type: integer
+          description: ＊人前
+        method:
+          type: array
+          description: 作り方
+          items:
+            type: object
+            properties:
+              html:
+                type: string
+              supplement:
+                type: object
+                description: 補足
+        imageUrl:
+          type: string
+          description: 画像
+        introduction:
+          type: string
+          description: レシピの紹介文
+        link:
+          type: array
+          description: リンク
+          items:
+            type: string
+        accessLevel:
+          type: integer
+          description: 公開、限定公開、非公開、下書き
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+      required:
+        - id
+        - chefId
+        - name
+        - servings
+        - method
+        - accessLevel
+        - createdAt
+        - updatedAt
+      x-examples:
+        Example 1:
+          id: dcfa1310-de06-4333-8f32-1fad484e7a68
+          chefId: 64de3de5-8481-47c8-ad49-b765791b6a77
+          usrId: null
+          name: 平べったいたこ焼き
+          servings: 4
+          method:
+            - html: <p>作り方1</p>
+              supplement:
+                image: 1.webp
+            - html: <p>作り方2</p>
+              supplement:
+                link: 'https://youtu.be/uCkkCRcs81I'
+          imageUrl: 'https://pbs.twimg.com/media/Er7dlbJVQAIWVsW?format=jpg&name=small'
+          introduction: お好み焼き
+          link:
+            - 'https://youtu.be/RGZNv1_oVK0'
+            - 'https://youtu.be/viAP4lzks7k'
+            - 'https://youtu.be/QM22Tc8PdKI'
+          accessLevel: 2
+          createdAt: '2023-07-30T14:56:12.981361+09:00'
+          updatedAt: '2023-07-30T14:56:44.803972+09:00'
       x-tags:
         - recipe

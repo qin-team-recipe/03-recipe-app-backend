@@ -130,6 +130,46 @@ type TrendRecipe struct {
 	} `json:"data"`
 }
 
+// UpdateRecipe defines model for updateRecipe.
+type UpdateRecipe struct {
+	// AccessLevel 公開、限定公開、非公開、下書き
+	AccessLevel int `json:"accessLevel"`
+
+	// ChefId シェフID
+	ChefId    openapi_types.UUID `json:"chefId"`
+	CreatedAt string             `json:"createdAt"`
+
+	// Id レシピID
+	Id openapi_types.UUID `json:"id"`
+
+	// ImageUrl 画像
+	ImageUrl *string `json:"imageUrl,omitempty"`
+
+	// Introduction レシピの紹介文
+	Introduction *string `json:"introduction,omitempty"`
+
+	// Link リンク
+	Link *[]string `json:"link,omitempty"`
+
+	// Method 作り方
+	Method []struct {
+		Html *string `json:"html,omitempty"`
+
+		// Supplement 補足
+		Supplement *map[string]interface{} `json:"supplement,omitempty"`
+	} `json:"method"`
+
+	// Name レシピ名
+	Name string `json:"name"`
+
+	// Servings ＊人前
+	Servings  int    `json:"servings"`
+	UpdatedAt string `json:"updatedAt"`
+
+	// UsrId ユーザーID
+	UsrId *openapi_types.UUID `json:"usrId,omitempty"`
+}
+
 // PostApiCreateChefRecipeJSONBody defines parameters for PostApiCreateChefRecipe.
 type PostApiCreateChefRecipeJSONBody struct {
 	// AccessLevel 公開、限定公開、非公開、下書き
@@ -194,8 +234,40 @@ type PostApiCreateUsrRecipeJSONBody struct {
 	UsrId openapi_types.UUID `binding:"required" json:"usrId"`
 }
 
+// PutApiUpdateRecipeJSONBody defines parameters for PutApiUpdateRecipe.
+type PutApiUpdateRecipeJSONBody struct {
+	// AccessLevel 公開、限定公開、非公開、下書き
+	AccessLevel int `binding:"required" json:"accessLevel"`
+
+	// ImageUrl 画像
+	ImageUrl *string `json:"imageUrl,omitempty"`
+
+	// Introduction レシピの紹介文
+	Introduction *string `json:"introduction,omitempty"`
+
+	// Link リンク
+	Link []string `binding:"required" json:"link"`
+
+	// Method 作り方
+	Method []struct {
+		Html *string `json:"html,omitempty"`
+
+		// Supplement 補足
+		Supplement *map[string]interface{} `json:"supplement,omitempty"`
+	} `binding:"required" json:"method"`
+
+	// Name レシピ名
+	Name string `binding:"required" json:"name"`
+
+	// Servings ＊人前
+	Servings int `binding:"required" json:"servings"`
+}
+
 // PostApiCreateChefRecipeJSONRequestBody defines body for PostApiCreateChefRecipe for application/json ContentType.
 type PostApiCreateChefRecipeJSONRequestBody PostApiCreateChefRecipeJSONBody
 
 // PostApiCreateUsrRecipeJSONRequestBody defines body for PostApiCreateUsrRecipe for application/json ContentType.
 type PostApiCreateUsrRecipeJSONRequestBody PostApiCreateUsrRecipeJSONBody
+
+// PutApiUpdateRecipeJSONRequestBody defines body for PutApiUpdateRecipe for application/json ContentType.
+type PutApiUpdateRecipeJSONRequestBody PutApiUpdateRecipeJSONBody

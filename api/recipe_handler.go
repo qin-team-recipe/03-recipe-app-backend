@@ -59,7 +59,7 @@ func (s *Server) CreateChefRecipe(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
 
-	// 新規登録
+	// 新規登録処理
 	row, err := s.q.CreateRecipe(context.Background(), jsn)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -90,7 +90,7 @@ func (s *Server) CreateUsrRecipe(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
 
-	// 新規登録
+	// 新規登録処理
 	row, err := s.q.CreateRecipe(context.Background(), jsn)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -110,40 +110,39 @@ func (s *Server) CreateUsrRecipe(c *gin.Context) {
 func (s *Server) UpdateRecipe(c *gin.Context) {
 	var param db.UpdateRecipeParams
 	var err error
+
+	// パスパラメータ取り出し
 	param.ID, err = common.StrToUUID(c.Param("id"))
-
-	//// リクエストボディを構造体にバインド
-	//reqb := docs.PostApiUpdateRecipeJSONRequestBody{}
-	//if err := c.ShouldBind(&reqb); err != nil {
-	//	c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-	//	return
-	//}
-	//
-	//// 構造体からJSONに変換
-	//jsn, err := json.Marshal(&reqb)
-	//if err != nil {
-	//	c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-	//}
-
-	param.Data, err = c.GetRawData()
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	}
+
+	// リクエストボディを構造体にバインド
+	reqb := docs.PutApiUpdateRecipeJSONRequestBody{}
+	if err := c.ShouldBind(&reqb); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	// 更新
+	// 構造体からJSONに変換
+	param.Data, err = json.Marshal(&reqb)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	}
+
+	// 更新処理
 	row, err := s.q.UpdateRecipe(context.Background(), param)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	//// レスポンス型バリデーション
-	//err = common.ValidateStructTwoWay[db.VRecipe, docs.UpdateRecipe](&row)
-	//if err != nil {
-	//	c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-	//	return
-	//}
+	// レスポンス型バリデーション
+	err = common.ValidateStructTwoWay[db.VRecipe, docs.UpdateRecipe](&row)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 
 	c.JSON(http.StatusOK, row)
 }
