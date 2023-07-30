@@ -28,7 +28,7 @@ CREATE TYPE type_recipe_method AS (
 );
 
 -- Project Name : チーム03
--- Date/Time    : 2023/07/17 10:25:59
+-- Date/Time    : 2023/07/28 22:39:47
 -- Author       : kaned
 -- RDBMS Type   : PostgreSQL
 -- Application  : A5:SQL Mk-2
@@ -171,6 +171,9 @@ CREATE TABLE usr (
   , CONSTRAINT usr_PKC PRIMARY KEY (id)
 ) ;
 
+CREATE UNIQUE INDEX usr_IX1
+  ON usr(email);
+
 -- シェフのレシピ＆マイレシピ
 -- * BackupToTempTable
 DROP TABLE if exists recipe CASCADE;
@@ -180,11 +183,12 @@ CREATE TABLE recipe (
   id UUID DEFAULT GEN_RANDOM_UUID() NOT NULL
   , chef_id UUID
   , usr_id UUID
-  , title TEXT NOT NULL
+  , name TEXT NOT NULL
   , servings INTEGER NOT NULL
   , method type_recipe_method[] DEFAULT ARRAY[]::type_recipe_method[] NOT NULL
   , image_url TEXT
-  , introduction TEXT NOT NULL
+  , introduction TEXT
+  , link TEXT[] DEFAULT ARRAY[]::TEXT[] NOT NULL
   , access_level INTEGER NOT NULL
   , created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL
   , updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL
@@ -212,6 +216,9 @@ CREATE TABLE chef (
   , num_follower INTEGER DEFAULT 0 NOT NULL
   , CONSTRAINT chef_PKC PRIMARY KEY (id)
 ) ;
+
+CREATE UNIQUE INDEX chef_IX1
+  ON chef(email);
 
 ALTER TABLE shopping_list
   ADD CONSTRAINT shopping_list_FK1 FOREIGN KEY (recipe_id) REFERENCES recipe(id)
@@ -354,11 +361,12 @@ COMMENT ON TABLE recipe IS 'シェフのレシピ＆マイレシピ';
 COMMENT ON COLUMN recipe.id IS '';
 COMMENT ON COLUMN recipe.chef_id IS '';
 COMMENT ON COLUMN recipe.usr_id IS '';
-COMMENT ON COLUMN recipe.title IS 'レシピタイトル';
+COMMENT ON COLUMN recipe.name IS 'レシピ名';
 COMMENT ON COLUMN recipe.servings IS '＊人前';
 COMMENT ON COLUMN recipe.method IS '作り方';
 COMMENT ON COLUMN recipe.image_url IS '画像';
 COMMENT ON COLUMN recipe.introduction IS 'レシピの紹介文';
+COMMENT ON COLUMN recipe.link IS 'リンク';
 COMMENT ON COLUMN recipe.access_level IS '公開等:公開、限定公開、非公開、下書き';
 COMMENT ON COLUMN recipe.created_at IS '';
 COMMENT ON COLUMN recipe.updated_at IS '';
@@ -408,11 +416,12 @@ SELECT
     id,
     chef_id,
     usr_id,
-    title,
+    name,
     servings,
     TO_JSONB(method) AS method,
     image_url,
     Introduction,
+    link,
     access_level,
     created_at,
     updated_at
@@ -816,6 +825,7 @@ $$;
 DROP FUNCTION if exists update_chef CASCADE;
 
 CREATE OR REPLACE FUNCTION update_chef(
+    id UUID,
     data JSONB
 )
     RETURNS v_chef
@@ -835,17 +845,17 @@ BEGIN
     END LOOP;
 
     UPDATE chef SET
-        email         = data->>'email',
+--         email         = data->>'email',
         name          = data->>'name',
         image_url     = data->>'imageUrl',
         profile       = data->>'profile',
-        link          = updating_link,
-        auth_server   = data->>'authServer',
-        auth_userinfo = data->'authUserinfo'
+        link          = updating_link
+--         auth_server   = data->>'authServer',
+--         auth_userinfo = data->'authUserinfo'
     WHERE
-        id = (data->>'id')::UUID
+        chef.id = update_chef.id
     RETURNING
-        id,
+        chef.id,
         email,
         name,
         image_url,
@@ -927,6 +937,7 @@ $$;
 DROP FUNCTION if exists update_usr CASCADE;
 
 CREATE OR REPLACE FUNCTION update_usr(
+    id UUID,
     data JSONB
 )
     RETURNS v_usr
@@ -946,17 +957,17 @@ BEGIN
     END LOOP;
 
     UPDATE usr SET
-        email         = data->>'email',
+--         email         = data->>'email',
         name          = data->>'name',
         image_url     = data->>'imageUrl',
         profile       = data->>'profile',
-        link          = updating_link,
-        auth_server   = data->>'authServer',
-        auth_userinfo = data->'authUserinfo'
+        link          = updating_link
+--         auth_server   = data->>'authServer',
+--         auth_userinfo = data->'authUserinfo'
     WHERE
-        id = (data->>'id')::UUID
+        usr.id = update_usr.id
     RETURNING
-        id,
+        usr.id,
         email,
         name,
         image_url,
@@ -999,33 +1010,36 @@ BEGIN
     (
         chef_id,
         usr_id,
-        title,
+        name,
         servings,
         method,
         image_url,
         introduction,
+        link,
         access_level
     )
     VALUES
     (
         (data->>'chefId')::UUID,
         (data->>'usrId')::UUID,
-        data->>'title',
+        data->>'name',
         (data->'servings')::INTEGER,
         inserting_method,
         data->>'imageUrl',
         data->>'introduction',
+        (SELECT ARRAY_AGG(value) FROM JSONB_ARRAY_ELEMENTS_TEXT(data->'link')),
         (data->'accessLevel')::INTEGER
     )
     RETURNING
         id,
         chef_id,
         usr_id,
-        title,
+        name,
         servings,
         TO_JSONB(method) AS method,
         image_url,
         introduction,
+        link,
         access_level,
         created_at,
         updated_at
@@ -1039,6 +1053,7 @@ $$;
 DROP FUNCTION if exists update_recipe CASCADE;
 
 CREATE OR REPLACE FUNCTION update_recipe(
+    id UUID,
     data JSONB
 )
     RETURNS v_recipe
@@ -1058,25 +1073,27 @@ BEGIN
     END LOOP;
 
     UPDATE recipe SET
-        chef_id      = (data->>'chefId')::UUID,
-        usr_id       = (data->>'usrId')::UUID,
-        title        = data->>'title',
+--         chef_id      = (data->>'chefId')::UUID,
+--         usr_id       = (data->>'usrId')::UUID,
+        name         = data->>'name',
         servings     = (data->'servings')::INTEGER,
         method       = updating_method,
         image_url    = data->>'imageUrl',
         introduction = data->>'introduction',
+        link         = (SELECT ARRAY_AGG(value) FROM JSONB_ARRAY_ELEMENTS_TEXT(data->'link')),
         access_level = (data->'accessLevel')::INTEGER
     WHERE
-        id = (data->>'id')::UUID
+        recipe.id = update_recipe.id
     RETURNING
-        id,
+        recipe.id,
         chef_id,
         usr_id,
-        title,
+        name,
         servings,
         TO_JSONB(method) AS method,
         image_url,
         introduction,
+        link,
         access_level,
         created_at,
         updated_at
