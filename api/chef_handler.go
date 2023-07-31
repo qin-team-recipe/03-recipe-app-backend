@@ -5,9 +5,9 @@ import (
 	"math/rand"
 	"net/http"
 
-	"github.com/aopontann/gin-sqlc/common"
 	db "github.com/aopontann/gin-sqlc/db/sqlc"
 	"github.com/aopontann/gin-sqlc/docs"
+	"github.com/aopontann/gin-sqlc/utils"
 
 	"github.com/gin-gonic/gin"
 	"github.com/mattn/go-gimei"
@@ -35,7 +35,7 @@ func (s *Server) ListFeaturedChef(c *gin.Context) {
 	}
 
 	// レスポンス型バリデーション
-	err = common.ValidateStructTwoWay[featuredChefResponse, docs.FeaturedChef](&response)
+	err = utils.ValidateStructTwoWay[featuredChefResponse, docs.FeaturedChef](&response)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

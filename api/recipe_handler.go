@@ -3,9 +3,9 @@ package api
 import (
 	"context"
 	"encoding/json"
-	"github.com/aopontann/gin-sqlc/common"
 	db "github.com/aopontann/gin-sqlc/db/sqlc"
 	"github.com/aopontann/gin-sqlc/docs"
+	"github.com/aopontann/gin-sqlc/utils"
 	"math/rand"
 	"net/http"
 
@@ -36,7 +36,7 @@ func (s *Server) ListTrendRecipe(c *gin.Context) {
 	}
 
 	// レスポンス型バリデーション
-	err = common.ValidateStructTwoWay[trendRecipeResponse, docs.TrendRecipe](&response)
+	err = utils.ValidateStructTwoWay[trendRecipeResponse, docs.TrendRecipe](&response)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -67,7 +67,7 @@ func (s *Server) CreateChefRecipe(c *gin.Context) {
 	}
 
 	// レスポンス型バリデーション
-	err = common.ValidateStructTwoWay[db.VRecipe, docs.CreateChefRecipe](&row)
+	err = utils.ValidateStructTwoWay[db.VRecipe, docs.CreateChefRecipe](&row)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -98,7 +98,7 @@ func (s *Server) CreateUsrRecipe(c *gin.Context) {
 	}
 
 	// レスポンス型バリデーション
-	err = common.ValidateStructTwoWay[db.VRecipe, docs.CreateUsrRecipe](&row)
+	err = utils.ValidateStructTwoWay[db.VRecipe, docs.CreateUsrRecipe](&row)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -112,7 +112,7 @@ func (s *Server) UpdateRecipe(c *gin.Context) {
 	var err error
 
 	// パスパラメータ取り出し
-	param.ID, err = common.StrToUUID(c.Param("id"))
+	param.ID, err = utils.StrToUUID(c.Param("id"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
@@ -138,7 +138,7 @@ func (s *Server) UpdateRecipe(c *gin.Context) {
 	}
 
 	// レスポンス型バリデーション
-	err = common.ValidateStructTwoWay[db.VRecipe, docs.UpdateRecipe](&row)
+	err = utils.ValidateStructTwoWay[db.VRecipe, docs.UpdateRecipe](&row)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
