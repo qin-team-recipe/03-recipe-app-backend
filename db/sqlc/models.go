@@ -95,8 +95,8 @@ type Recipe struct {
 	ID     pgtype.UUID `json:"id"`
 	ChefID pgtype.UUID `json:"chefId"`
 	UsrID  pgtype.UUID `json:"usrId"`
-	// レシピタイトル
-	Title string `json:"title"`
+	// レシピ名
+	Name string `json:"name"`
 	// ＊人前
 	Servings int32 `json:"servings"`
 	// 作り方
@@ -104,7 +104,9 @@ type Recipe struct {
 	// 画像
 	ImageUrl pgtype.Text `json:"imageUrl"`
 	// レシピの紹介文
-	Introduction string `json:"introduction"`
+	Introduction pgtype.Text `json:"introduction"`
+	// リンク
+	Link []string `json:"link"`
 	// 公開等:公開、限定公開、非公開、下書き
 	AccessLevel int32              `json:"accessLevel"`
 	CreatedAt   pgtype.Timestamptz `json:"createdAt"`
@@ -180,11 +182,12 @@ type VRecipe struct {
 	ID           pgtype.UUID              `json:"id"`
 	ChefID       pgtype.UUID              `json:"chefId"`
 	UsrID        pgtype.UUID              `json:"usrId"`
-	Title        string                   `json:"title"`
+	Name         string                   `json:"name"`
 	Servings     int32                    `json:"servings"`
 	Method       dto.RecipeMethodArrayDto `json:"method"`
 	ImageUrl     pgtype.Text              `json:"imageUrl"`
-	Introduction string                   `json:"introduction"`
+	Introduction pgtype.Text              `json:"introduction"`
+	Link         []string                 `json:"link"`
 	AccessLevel  int32                    `json:"accessLevel"`
 	CreatedAt    pgtype.Timestamptz       `json:"createdAt"`
 	UpdatedAt    pgtype.Timestamptz       `json:"updatedAt"`

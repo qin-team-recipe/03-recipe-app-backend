@@ -7,30 +7,267 @@ import (
 	openapi_types "github.com/deepmap/oapi-codegen/pkg/types"
 )
 
-// FeaturedChef defines model for featuredChef.
-type FeaturedChef struct {
-	// ChefID シェフID
-	ChefID openapi_types.UUID `json:"chefID"`
+// CreateChefRecipe defines model for createChefRecipe.
+type CreateChefRecipe struct {
+	// AccessLevel 公開、限定公開、非公開、下書き
+	AccessLevel int `json:"accessLevel"`
 
-	// ImageUrl シェフ登録画像
+	// ChefId シェフID
+	ChefId    openapi_types.UUID `json:"chefId"`
+	CreatedAt string             `json:"createdAt"`
+
+	// Id レシピID
+	Id openapi_types.UUID `json:"id"`
+
+	// ImageUrl 画像
 	ImageUrl *string `json:"imageUrl,omitempty"`
 
-	// Name シェフ登録名
-	Name *string `json:"name,omitempty"`
+	// Introduction レシピの紹介文
+	Introduction *string `json:"introduction,omitempty"`
 
-	// NumFollower フォロワー数
-	NumFollower *int `json:"numFollower,omitempty"`
+	// Link リンク
+	Link *[]string `json:"link,omitempty"`
 
-	// Score 注目度→実際のデータはscoreの降順でソートされる
-	Score *int `json:"score,omitempty"`
+	// Method 作り方
+	Method []struct {
+		Html *string `json:"html,omitempty"`
+
+		// Supplement 補足
+		Supplement *map[string]interface{} `json:"supplement,omitempty"`
+	} `json:"method"`
+
+	// Name レシピ名
+	Name string `json:"name"`
+
+	// Servings ＊人前
+	Servings  int    `json:"servings"`
+	UpdatedAt string `json:"updatedAt"`
+
+	// UsrId ユーザーID
+	UsrId *openapi_types.UUID `json:"usrId,omitempty"`
+}
+
+// CreateUsrRecipe defines model for createUsrRecipe.
+type CreateUsrRecipe struct {
+	// AccessLevel 公開、限定公開、非公開、下書き
+	AccessLevel int `json:"accessLevel"`
+
+	// ChefId シェフID
+	ChefId    *openapi_types.UUID `json:"chefId,omitempty"`
+	CreatedAt string              `json:"createdAt"`
+
+	// Id レシピID
+	Id openapi_types.UUID `json:"id"`
+
+	// ImageUrl 画像
+	ImageUrl *string `json:"imageUrl,omitempty"`
+
+	// Introduction レシピの紹介文
+	Introduction *string `json:"introduction,omitempty"`
+
+	// Link リンク
+	Link *[]string `json:"link,omitempty"`
+
+	// Method 作り方
+	Method []struct {
+		Html *string `json:"html,omitempty"`
+
+		// Supplement 補足
+		Supplement *map[string]interface{} `json:"supplement,omitempty"`
+	} `json:"method"`
+
+	// Name レシピ名
+	Name string `json:"name"`
+
+	// Servings ＊人前
+	Servings  int    `json:"servings"`
+	UpdatedAt string `json:"updatedAt"`
+
+	// UsrId ユーザーID
+	UsrId openapi_types.UUID `json:"usrId"`
+}
+
+// FeaturedChef defines model for featuredChef.
+type FeaturedChef struct {
+	Data []struct {
+		// ChefId シェフID
+		ChefId openapi_types.UUID `json:"chefId"`
+
+		// ImageUrl プロフィール画像
+		ImageUrl *string `json:"imageUrl,omitempty"`
+
+		// Name シェフ登録名
+		Name string `json:"name"`
+
+		// NumFollower フォロワー数
+		NumFollower int `json:"numFollower"`
+
+		// Score 注目度→実際のデータはscoreの降順でソートされる
+		Score int `json:"score"`
+	} `json:"data"`
 }
 
 // TrendRecipe defines model for trendRecipe.
 type TrendRecipe struct {
-	ImageUrl     *string             `json:"imageUrl,omitempty"`
-	Introduction *string             `json:"introduction,omitempty"`
-	NumFav       *int                `json:"numFav,omitempty"`
-	RecipeId     *openapi_types.UUID `json:"recipeId,omitempty"`
-	Score        *int                `json:"score,omitempty"`
-	Title        *string             `json:"title,omitempty"`
+	Data []struct {
+		// ImageUrl レシピ画像
+		ImageUrl *string `json:"imageUrl,omitempty"`
+
+		// Introduction レシピの紹介文
+		Introduction *string `json:"introduction,omitempty"`
+
+		// Name レシピ名
+		Name string `json:"name"`
+
+		// NumFav ファボられ数
+		NumFav int `json:"numFav"`
+
+		// RecipeId レシピID
+		RecipeId openapi_types.UUID `json:"recipeId"`
+
+		// Score 話題度→実際のデータはscoreの降順でソートされる
+		Score int `json:"score"`
+	} `json:"data"`
 }
+
+// UpdateRecipe defines model for updateRecipe.
+type UpdateRecipe struct {
+	// AccessLevel 公開、限定公開、非公開、下書き
+	AccessLevel int `json:"accessLevel"`
+
+	// ChefId シェフID
+	ChefId    openapi_types.UUID `json:"chefId"`
+	CreatedAt string             `json:"createdAt"`
+
+	// Id レシピID
+	Id openapi_types.UUID `json:"id"`
+
+	// ImageUrl 画像
+	ImageUrl *string `json:"imageUrl,omitempty"`
+
+	// Introduction レシピの紹介文
+	Introduction *string `json:"introduction,omitempty"`
+
+	// Link リンク
+	Link *[]string `json:"link,omitempty"`
+
+	// Method 作り方
+	Method []struct {
+		Html *string `json:"html,omitempty"`
+
+		// Supplement 補足
+		Supplement *map[string]interface{} `json:"supplement,omitempty"`
+	} `json:"method"`
+
+	// Name レシピ名
+	Name string `json:"name"`
+
+	// Servings ＊人前
+	Servings  int    `json:"servings"`
+	UpdatedAt string `json:"updatedAt"`
+
+	// UsrId ユーザーID
+	UsrId *openapi_types.UUID `json:"usrId,omitempty"`
+}
+
+// PostApiCreateChefRecipeJSONBody defines parameters for PostApiCreateChefRecipe.
+type PostApiCreateChefRecipeJSONBody struct {
+	// AccessLevel 公開、限定公開、非公開、下書き
+	AccessLevel int `binding:"required" json:"accessLevel"`
+
+	// ChefId シェフID
+	ChefId openapi_types.UUID `binding:"required" json:"chefId"`
+
+	// ImageUrl 画像
+	ImageUrl *string `json:"imageUrl,omitempty"`
+
+	// Introduction レシピの紹介文
+	Introduction *string `json:"introduction,omitempty"`
+
+	// Link リンク
+	Link []string `binding:"required" json:"link"`
+
+	// Method 作り方
+	Method []struct {
+		Html *string `json:"html,omitempty"`
+
+		// Supplement 補足
+		Supplement *map[string]interface{} `json:"supplement,omitempty"`
+	} `binding:"required" json:"method"`
+
+	// Name レシピ名
+	Name string `binding:"required" json:"name"`
+
+	// Servings ＊人前
+	Servings int `binding:"required" json:"servings"`
+}
+
+// PostApiCreateUsrRecipeJSONBody defines parameters for PostApiCreateUsrRecipe.
+type PostApiCreateUsrRecipeJSONBody struct {
+	// AccessLevel 公開、限定公開、非公開、下書き
+	AccessLevel int `binding:"required" json:"accessLevel"`
+
+	// ImageUrl 画像
+	ImageUrl *string `json:"imageUrl,omitempty"`
+
+	// Introduction レシピの紹介文
+	Introduction *string `json:"introduction,omitempty"`
+
+	// Link リンク
+	Link []string `binding:"required" json:"link"`
+
+	// Method 作り方
+	Method []struct {
+		Html *string `json:"html,omitempty"`
+
+		// Supplement 補足
+		Supplement *map[string]interface{} `json:"supplement,omitempty"`
+	} `binding:"required" json:"method"`
+
+	// Name レシピ名
+	Name string `binding:"required" json:"name"`
+
+	// Servings ＊人前
+	Servings int `binding:"required" json:"servings"`
+
+	// UsrId ユーザーID
+	UsrId openapi_types.UUID `binding:"required" json:"usrId"`
+}
+
+// PutApiUpdateRecipeJSONBody defines parameters for PutApiUpdateRecipe.
+type PutApiUpdateRecipeJSONBody struct {
+	// AccessLevel 公開、限定公開、非公開、下書き
+	AccessLevel int `binding:"required" json:"accessLevel"`
+
+	// ImageUrl 画像
+	ImageUrl *string `json:"imageUrl,omitempty"`
+
+	// Introduction レシピの紹介文
+	Introduction *string `json:"introduction,omitempty"`
+
+	// Link リンク
+	Link []string `binding:"required" json:"link"`
+
+	// Method 作り方
+	Method []struct {
+		Html *string `json:"html,omitempty"`
+
+		// Supplement 補足
+		Supplement *map[string]interface{} `json:"supplement,omitempty"`
+	} `binding:"required" json:"method"`
+
+	// Name レシピ名
+	Name string `binding:"required" json:"name"`
+
+	// Servings ＊人前
+	Servings int `binding:"required" json:"servings"`
+}
+
+// PostApiCreateChefRecipeJSONRequestBody defines body for PostApiCreateChefRecipe for application/json ContentType.
+type PostApiCreateChefRecipeJSONRequestBody PostApiCreateChefRecipeJSONBody
+
+// PostApiCreateUsrRecipeJSONRequestBody defines body for PostApiCreateUsrRecipe for application/json ContentType.
+type PostApiCreateUsrRecipeJSONRequestBody PostApiCreateUsrRecipeJSONBody
+
+// PutApiUpdateRecipeJSONRequestBody defines body for PutApiUpdateRecipe for application/json ContentType.
+type PutApiUpdateRecipeJSONRequestBody PutApiUpdateRecipeJSONBody

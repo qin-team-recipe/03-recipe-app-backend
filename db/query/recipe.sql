@@ -13,7 +13,7 @@ history AS (
 )
 SELECT
     history.recipe_id,
-    recipe.title,
+    recipe.name,
     recipe.introduction,
     recipe.image_url,
     recipe.num_fav,
@@ -28,21 +28,14 @@ ORDER BY
     score DESC
 LIMIT @lim;
 
--- name: FakeListTrendRecipe :many
-WITH
-RECURSIVE generate_index (ii) AS (
-    SELECT 0
-    UNION ALL
-    SELECT ii + 1
-    FROM generate_index
-)
+-- name: CreateRecipe :one
 SELECT
-    GEN_RANDOM_UUID() AS recipe_id,
-    '' AS title,
-    '' AS introduction,
-    'https://source.unsplash.com/random/300x300?v=1' AS image_url,
-    0 AS num_fav,
-    0 AS score
+    *
 FROM
-    generate_index
-LIMIT @lim;
+    insert_recipe(@data);
+
+-- name: UpdateRecipe :one
+SELECT
+    *
+FROM
+    update_recipe(@id, @data);
