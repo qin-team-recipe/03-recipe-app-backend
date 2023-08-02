@@ -61,3 +61,15 @@ func (s *Server) CreateUser(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"id": res.ID, "name": res.Name, "email": res.Email})
 }
+
+// 仮で作成したハンドラ関数
+func (s *Server) GetUserId(c *gin.Context) {
+	// Authentication()でセットしたメールアドレスを取得
+	email := c.MustGet("email").(string)
+	uid, err := s.q.GetUserId(context.Background(), email)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"id": uid, "email": email})
+}

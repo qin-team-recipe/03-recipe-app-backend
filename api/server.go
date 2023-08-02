@@ -44,6 +44,14 @@ func (s *Server) MountHandlers() {
 	// ユーザー関連
 	api.POST("/createUser", s.CreateUser)
 
+	//// 仮で作成　セッションの説明用 ////
+	// グループを作成
+	usr := api.Group("/user")
+	// /api/user/* リンクにアクセスしたとき、登録したハンドラ関数(ここではGetUserId)を実行する前に Authentication() を実行するようにする処理
+	usr.Use(s.Authentication())
+	// ユーザIDのみ返すAPI
+	usr.GET("/id", s.GetUserId)
+
 	// レシピ関連
 	api.GET("/trendRecipe", s.ListTrendRecipe)
 	api.POST("/createChefRecipe", s.CreateChefRecipe)

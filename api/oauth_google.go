@@ -83,12 +83,12 @@ func (s *Server) OauthGoogleCallback(c *gin.Context) {
 	}
 	if isExists {
 		// redis に セッションIDをKeyとして、ユーザ情報を Value として保存する
-		s.rbd.Set(context.Background(), guid.String(), uInfo.Email, 3600 * time.Second)
+		s.rbd.Set(context.Background(), guid.String(), uInfo.Email, 3600*time.Second)
 		c.Redirect(http.StatusTemporaryRedirect, "http://localhost:3000")
 		return
 	}
 
-	s.rbd.Set(context.Background(), guid.String(), data, 3600 * time.Second)
+	s.rbd.Set(context.Background(), guid.String(), data, 3600*time.Second)
 	c.Redirect(http.StatusTemporaryRedirect, "http://localhost:3000/createUser")
 }
 
@@ -118,4 +118,18 @@ func getUserDataFromGoogle(code string) ([]byte, error) {
 		return nil, fmt.Errorf("failed read response: %s", err.Error())
 	}
 	return contents, nil
+}
+
+func (s *Server) Authentication() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		// CookieにセットされたセッションIDを使い、redisからユーザのメールアドレスを取得する
+		sid, _ := c.Cookie("session_id")
+		email, err := s.rbd.Get(context.Background(), sid).Result()
+		if err != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+			c.Abort()
+		}
+		// 次に実行されるハンドラ関数で取得したメールアドレスを使うための処理
+		c.Set("email", email)
+	}
 }
