@@ -9,9 +9,9 @@ WORKDIR /workspaces
 USER vscode
 # RUN go get -x <your-dependency-or-tool>
 
-RUN go install github.com/kyleconroy/sqlc/cmd/sqlc@latest \
-    && go install github.com/cosmtrek/air@latest \
-    && go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
+RUN go install github.com/sqlc-dev/sqlc/cmd/sqlc@v1.20.0 \
+    && go install github.com/cosmtrek/air@v1.44.0 \
+    && go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@v4.16.2
 
 COPY go.mod go.sum ./
 RUN go mod download
