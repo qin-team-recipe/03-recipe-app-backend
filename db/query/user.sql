@@ -8,3 +8,6 @@ INSERT INTO usr (
   $1, $2, $3, $4
 )
 RETURNING id, name, email;
+
+-- name: GetUserId :one
+SELECT id FROM usr WHERE email = $1;

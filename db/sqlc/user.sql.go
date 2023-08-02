@@ -55,3 +55,14 @@ func (q *Queries) ExistsUser(ctx context.Context, email string) (bool, error) {
 	err := row.Scan(&exists)
 	return exists, err
 }
+
+const getUserId = `-- name: GetUserId :one
+SELECT id FROM usr WHERE email = $1
+`
+
+func (q *Queries) GetUserId(ctx context.Context, email string) (pgtype.UUID, error) {
+	row := q.db.QueryRow(ctx, getUserId, email)
+	var id pgtype.UUID
+	err := row.Scan(&id)
+	return id, err
+}
