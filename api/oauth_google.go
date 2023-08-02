@@ -122,13 +122,14 @@ func getUserDataFromGoogle(code string) ([]byte, error) {
 
 func (s *Server) Authentication() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// CookieにセットされたセッションIDを使い、redisから認証を行ったユーザのメールアドレスを取得する
+		// CookieにセットされたセッションIDを使い、redisからユーザのメールアドレスを取得する
 		sid, _ := c.Cookie("session_id")
-		data, err := s.rbd.Get(context.Background(), sid).Result()
+		email, err := s.rbd.Get(context.Background(), sid).Result()
 		if err != nil {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 			c.Abort()
 		}
-		c.Set("email", data)
+		// 次に実行されるハンドラ関数で取得したメールアドレスを使うための処理
+		c.Set("email", email)
 	}
 }
