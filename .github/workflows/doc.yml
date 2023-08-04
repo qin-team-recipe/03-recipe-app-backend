@@ -1,0 +1,50 @@
+name: redoc_deploy_pages
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ["main"]
+    paths:
+      - 'docs/openapi.yaml'
+      - '.github/workflows/doc.yml'
+
+jobs:
+  # Single deploy job no building
+  deploy:
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{steps.deployment.outputs.page_url}}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20.x]
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: install redoc # Redocのインストール
+        run: npm i -g @redocly/cli@latest
+
+      - name: build openAPI file # OpenAPIの定義をHTMLに変換
+        run: redocly build-docs ./docs/openapi.yaml --output=index.html
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v3
+        
+      - name: Upload Artifact
+        uses: actions/upload-pages-artifact@v2
+        with:
+          # upload entire directory
+          path: './index.html'
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2
