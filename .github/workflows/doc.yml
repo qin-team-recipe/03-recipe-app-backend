@@ -35,7 +35,7 @@ jobs:
         run: npm i -g @redocly/cli@latest
 
       - name: build openAPI file # OpenAPIの定義をHTMLに変換
-        run: redocly build-docs ./docs/openapi.yaml --output=index.html
+        run: redocly build-docs ./docs/openapi.yaml --output=./docs/out/index.html
 
       - name: Setup Pages
         uses: actions/configure-pages@v3
@@ -44,7 +44,7 @@ jobs:
         uses: actions/upload-pages-artifact@v2
         with:
           # upload entire directory
-          path: './index.html'
+          path: './docs/out'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2
