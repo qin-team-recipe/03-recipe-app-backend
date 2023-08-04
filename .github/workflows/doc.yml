@@ -3,6 +3,7 @@ name: redoc_deploy_pages
 on:
   workflow_dispatch:
   push:
+    branches: ["main"]
     paths:
       - 'docs/openapi.yaml'
       - '.github/workflows/doc.yml'
