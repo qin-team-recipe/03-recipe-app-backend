@@ -1,10 +1,11 @@
-name: build_and_push_docker_image
+name: redoc_deploy_pages
 
 on:
   workflow_dispatch:
   push:
     paths:
       - 'docs/openapi.yaml'
+      - '.github/workflows/doc.yml'
 
 jobs:
   # Single deploy job no building
