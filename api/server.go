@@ -39,7 +39,7 @@ func (s *Server) MountHandlers() {
 	auth.GET("/google/callback", s.OauthGoogleCallback)
 
 	// シェフ関連
-	api.GET("/featuredChef", s.ListFeaturedChef)
+	api.GET("/featured-chefs", s.ListFeaturedChef)
 
 	// ユーザー関連
 	api.POST("/createUser", s.CreateUser)
@@ -53,10 +53,10 @@ func (s *Server) MountHandlers() {
 	usr.GET("/id", s.GetUserId)
 
 	// レシピ関連
-	api.GET("/trendRecipe", s.ListTrendRecipe)
-	api.POST("/createChefRecipe", s.CreateChefRecipe)
-	api.POST("/createUsrRecipe", s.CreateUsrRecipe)
-	api.PUT("/updateRecipe/:id", s.UpdateRecipe)
+	api.GET("/trend-recipes", s.ListTrendRecipe)
+	api.POST("/chef-recipe", s.CreateChefRecipe)
+	api.POST("/usr-recipe", s.CreateUsrRecipe)
+	api.PUT("/recipe/:id", s.UpdateRecipe)
 }
 
 func (s *Server) Start(addr string) error {
