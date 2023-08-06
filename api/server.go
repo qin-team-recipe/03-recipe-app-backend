@@ -39,10 +39,15 @@ func (s *Server) MountHandlers() {
 	auth.GET("/google/callback", s.OauthGoogleCallback)
 
 	// シェフ関連
+	api.GET("/chef/:id", s.GetChef)
 	api.GET("/featured-chefs", s.ListFeaturedChef)
+	api.POST("/chef", s.CreateChef)
+	api.PUT("/chef/:id", s.UpdateChef)
 
 	// ユーザー関連
+	api.GET("/getUser/:id", s.GetUser)
 	api.POST("/createUser", s.CreateUser)
+	api.PUT("/updateUser/:id", s.UpdateUser)
 
 	//// 仮で作成　セッションの説明用 ////
 	// グループを作成
@@ -54,8 +59,11 @@ func (s *Server) MountHandlers() {
 
 	// レシピ関連
 	api.GET("/trend-recipes", s.ListTrendRecipe)
+	api.GET("/recipe/:id", s.GetRecipe)
+	//api.GET("/chef-recipes/:chef_id", s.)
+	//api.GET("/user-recipes/:usr_id", s.)
 	api.POST("/chef-recipe", s.CreateChefRecipe)
-	api.POST("/usr-recipe", s.CreateUsrRecipe)
+	api.POST("/user-recipe", s.CreateUsrRecipe)
 	api.PUT("/recipe/:id", s.UpdateRecipe)
 }
 

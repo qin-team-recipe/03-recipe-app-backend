@@ -43,3 +43,108 @@ func (s *Server) ListFeaturedChef(c *gin.Context) {
 
 	c.JSON(http.StatusOK, response)
 }
+
+func (s *Server) GetChef(c *gin.Context) {
+	// パスパラメータ取り出し
+	id, err := utils.StrToUUID(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	}
+
+	// 問い合わせ処理
+	row, err := s.q.GetChef(context.Background(), id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	//// レスポンス型バリデーション
+	//err = utils.ValidateStructTwoWay[db.VChef, docs.GetChef](&row)
+	//if err != nil {
+	//	c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	//	return
+	//}
+
+	c.JSON(http.StatusOK, row)
+}
+
+func (s *Server) CreateChef(c *gin.Context) {
+	//// リクエストボディを構造体にバインド
+	//reqb := docs.PostApiCreateChefJSONRequestBody{}
+	//if err := c.ShouldBind(&reqb); err != nil {
+	//	c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	//	return
+	//}
+	//
+	//// 構造体からJSONに変換
+	//jsn, err := json.Marshal(&reqb)
+	//if err != nil {
+	//	c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	//}
+	jsn, err := c.GetRawData()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// 新規登録処理
+	row, err := s.q.CreateChef(context.Background(), jsn)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	//// レスポンス型バリデーション
+	//err = utils.ValidateStructTwoWay[db.VChef, docs.CreateChef](&row)
+	//if err != nil {
+	//	c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	//	return
+	//}
+
+	c.JSON(http.StatusOK, row)
+}
+
+func (s *Server) UpdateChef(c *gin.Context) {
+	var param db.UpdateChefParams
+	var err error
+
+	// パスパラメータ取り出し
+	param.ID, err = utils.StrToUUID(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	}
+
+	//// リクエストボディを構造体にバインド
+	//reqb := docs.PutApiUpdateChefJSONRequestBody{}
+	//if err := c.ShouldBind(&reqb); err != nil {
+	//	c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	//	return
+	//}
+	//
+	//// 構造体からJSONに変換
+	//param.Data, err = json.Marshal(&reqb)
+	//if err != nil {
+	//	c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	//}
+	param.Data, err = c.GetRawData()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// 更新処理
+	row, err := s.q.UpdateChef(context.Background(), param)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	//// レスポンス型バリデーション
+	//err = utils.ValidateStructTwoWay[db.VChef, docs.UpdateChef](&row)
+	//if err != nil {
+	//	c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	//	return
+	//}
+
+	c.JSON(http.StatusOK, row)
+}

@@ -11,3 +11,17 @@ RETURNING id, name, email;
 
 -- name: GetUserId :one
 SELECT id FROM usr WHERE email = $1;
+
+-- name: GetUser :one
+SELECT
+    *
+FROM
+    v_usr
+WHERE
+    id = @id;
+
+-- name: UpdateUser :one
+SELECT
+    *
+FROM
+    update_usr(@id, @data);

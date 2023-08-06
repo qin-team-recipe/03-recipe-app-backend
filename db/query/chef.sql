@@ -26,3 +26,23 @@ ON
 ORDER BY
     score DESC
 LIMIT @lim;
+
+-- name: GetChef :one
+SELECT
+    *
+FROM
+    v_chef
+WHERE
+    id = @id;
+
+-- name: CreateChef :one
+SELECT
+    *
+FROM
+    insert_chef(@data);
+
+-- name: UpdateChef :one
+SELECT
+    *
+FROM
+    update_chef(@id, @data);
