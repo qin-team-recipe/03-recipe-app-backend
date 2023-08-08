@@ -89,7 +89,12 @@ func (s *Server) OauthGoogleCallback(c *gin.Context) {
 	}
 
 	s.rbd.Set(context.Background(), guid.String(), data, 3600*time.Second)
-	c.Redirect(http.StatusTemporaryRedirect, "http://localhost:3000/createUser")
+	afterLoginUrl, err := c.Cookie("after_login_url")
+	if (err != nil) || (afterLoginUrl == "") {
+		c.Redirect(http.StatusTemporaryRedirect, "http://localhost:3000")
+		return
+	}
+	c.Redirect(http.StatusTemporaryRedirect, afterLoginUrl)
 }
 
 func generateStateOauthCookie(c *gin.Context) string {
