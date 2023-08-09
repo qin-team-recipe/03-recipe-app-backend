@@ -2,12 +2,14 @@ package api
 
 import (
 	"context"
-	db "github.com/aopontann/gin-sqlc/db/sqlc"
-	"github.com/aopontann/gin-sqlc/docs"
-	"github.com/aopontann/gin-sqlc/utils"
+	"encoding/json"
+	"github.com/jackc/pgx/v5/pgtype"
 	"math/rand"
 	"net/http"
 
+	db "github.com/aopontann/gin-sqlc/db/sqlc"
+	"github.com/aopontann/gin-sqlc/docs"
+	"github.com/aopontann/gin-sqlc/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/mattn/go-gimei"
 )
@@ -58,33 +60,28 @@ func (s *Server) GetRecipe(c *gin.Context) {
 		return
 	}
 
-	//// レスポンス型バリデーション
-	//err = utils.ValidateStructTwoWay[db.VRecipe, docs.GetRecipe](&row)
-	//if err != nil {
-	//	c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-	//	return
-	//}
+	// レスポンス型バリデーション
+	err = utils.ValidateStructTwoWay[db.VRecipe, docs.GetRecipe](&row)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 
 	c.JSON(http.StatusOK, row)
 }
 
 func (s *Server) CreateChefRecipe(c *gin.Context) {
-	//// リクエストボディを構造体にバインド
-	//reqb := docs.PostApiCreateChefRecipeJSONRequestBody{}
-	//if err := c.ShouldBind(&reqb); err != nil {
-	//	c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-	//	return
-	//}
-	//
-	//// 構造体からJSONに変換
-	//jsn, err := json.Marshal(&reqb)
-	//if err != nil {
-	//	c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-	//}
-	jsn, err := c.GetRawData()
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	// リクエストボディを構造体にバインド
+	reqb := docs.PostApiCreateChefRecipeJSONRequestBody{}
+	if err := c.ShouldBind(&reqb); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
+	}
+
+	// 構造体からJSONに変換
+	jsn, err := json.Marshal(&reqb)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
 
 	// 新規登録処理
@@ -94,33 +91,43 @@ func (s *Server) CreateChefRecipe(c *gin.Context) {
 		return
 	}
 
-	//// レスポンス型バリデーション
-	//err = utils.ValidateStructTwoWay[db.VRecipe, docs.CreateChefRecipe](&row)
-	//if err != nil {
-	//	c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-	//	return
-	//}
+	// レスポンス型バリデーション
+	err = utils.ValidateStructTwoWay[db.VRecipe, docs.CreateChefRecipe](&row)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 
 	c.JSON(http.StatusOK, row)
 }
 
 func (s *Server) CreateUsrRecipe(c *gin.Context) {
-	//// リクエストボディを構造体にバインド
-	//reqb := docs.PostApiCreateUsrRecipeJSONRequestBody{}
-	//if err := c.ShouldBind(&reqb); err != nil {
-	//	c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-	//	return
-	//}
-	//
-	//// 構造体からJSONに変換
-	//jsn, err := json.Marshal(&reqb)
-	//if err != nil {
-	//	c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-	//}
-	jsn, err := c.GetRawData()
+	// リクエストボディを構造体にバインド
+	reqb := docs.PostApiCreateUsrRecipeJSONRequestBody{}
+	if err := c.ShouldBind(&reqb); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// usrIdを取得
+	email := c.MustGet("email").(string)
+	usrId, err := s.q.GetUserId(context.Background(), email)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
+	}
+
+	// 構造体にuserIdを追加してJSONに変換
+	type Alias docs.PostApiCreateUsrRecipeJSONRequestBody
+	jsn, err := json.Marshal(&struct {
+		UsrId pgtype.UUID `json:"usrId"`
+		*Alias
+	}{
+		UsrId: usrId,
+		Alias: (*Alias)(&reqb),
+	})
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
 
 	// 新規登録処理
@@ -130,12 +137,12 @@ func (s *Server) CreateUsrRecipe(c *gin.Context) {
 		return
 	}
 
-	//// レスポンス型バリデーション
-	//err = utils.ValidateStructTwoWay[db.VRecipe, docs.CreateUsrRecipe](&row)
-	//if err != nil {
-	//	c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-	//	return
-	//}
+	// レスポンス型バリデーション
+	err = utils.ValidateStructTwoWay[db.VRecipe, docs.CreateUsrRecipe](&row)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 
 	c.JSON(http.StatusOK, row)
 }
@@ -150,22 +157,17 @@ func (s *Server) UpdateRecipe(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
 
-	//// リクエストボディを構造体にバインド
-	//reqb := docs.PutApiUpdateRecipeJSONRequestBody{}
-	//if err := c.ShouldBind(&reqb); err != nil {
-	//	c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-	//	return
-	//}
-	//
-	//// 構造体からJSONに変換
-	//param.Data, err = json.Marshal(&reqb)
-	//if err != nil {
-	//	c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-	//}
-	param.Data, err = c.GetRawData()
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	// リクエストボディを構造体にバインド
+	reqb := docs.PutApiUpdateRecipeJSONRequestBody{}
+	if err := c.ShouldBind(&reqb); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
+	}
+
+	// 構造体からJSONに変換
+	param.Data, err = json.Marshal(&reqb)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
 
 	// 更新処理
@@ -175,12 +177,12 @@ func (s *Server) UpdateRecipe(c *gin.Context) {
 		return
 	}
 
-	//// レスポンス型バリデーション
-	//err = utils.ValidateStructTwoWay[db.VRecipe, docs.UpdateRecipe](&row)
-	//if err != nil {
-	//	c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-	//	return
-	//}
+	// レスポンス型バリデーション
+	err = utils.ValidateStructTwoWay[db.VRecipe, docs.UpdateRecipe](&row)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 
 	c.JSON(http.StatusOK, row)
 }

@@ -29,7 +29,15 @@ LIMIT @lim;
 
 -- name: GetChef :one
 SELECT
-    *
+    id,
+    name,
+    image_url,
+    profile,
+    link,
+    created_at,
+    updated_at,
+    num_recipe,
+    num_follower
 FROM
     v_chef
 WHERE
@@ -37,12 +45,28 @@ WHERE
 
 -- name: CreateChef :one
 SELECT
-    *
+    id,
+    name,
+    image_url,
+    profile,
+    link,
+    created_at,
+    updated_at,
+    num_recipe,
+    num_follower
 FROM
     insert_chef(@data);
 
 -- name: UpdateChef :one
 SELECT
-    *
+    id,
+    name,
+    image_url,
+    profile,
+    link,
+    created_at,
+    updated_at,
+    num_recipe,
+    num_follower
 FROM
     update_chef(@id, @data);

@@ -36,7 +36,7 @@ CREATE TYPE type_vrecipe_ingredient AS (
 );
 
 -- Project Name : チーム03
--- Date/Time    : 2023/07/28 22:39:47
+-- Date/Time    : 2023/08/08 21:15:29
 -- Author       : kaned
 -- RDBMS Type   : PostgreSQL
 -- Application  : A5:SQL Mk-2
@@ -126,6 +126,7 @@ CREATE TABLE shopping_list (
   id UUID DEFAULT GEN_RANDOM_UUID() NOT NULL
   , usr_id UUID NOT NULL
   , recipe_id UUID
+  , idx INTEGER NOT NULL
   , description TEXT
   , is_fair_copy BOOLEAN NOT NULL
   , created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL
@@ -335,6 +336,7 @@ COMMENT ON TABLE shopping_list IS '買い物リスト';
 COMMENT ON COLUMN shopping_list.id IS '';
 COMMENT ON COLUMN shopping_list.usr_id IS '';
 COMMENT ON COLUMN shopping_list.recipe_id IS 'NULL：メモリスト／削除レシピ';
+COMMENT ON COLUMN shopping_list.idx IS 'インデックス';
 COMMENT ON COLUMN shopping_list.description IS '「*人前」「メモリスト」';
 COMMENT ON COLUMN shopping_list.is_fair_copy IS '清書or下書き';
 COMMENT ON COLUMN shopping_list.created_at IS '';
@@ -970,7 +972,7 @@ $$;
 DROP FUNCTION if exists update_usr CASCADE;
 
 CREATE OR REPLACE FUNCTION update_usr(
-    id UUID,
+    email TEXT,
     data JSONB
 )
     RETURNS v_usr
@@ -990,7 +992,6 @@ BEGIN
     END LOOP;
 
     UPDATE usr SET
---         email         = data->>'email',
         name          = data->>'name',
         image_url     = data->>'imageUrl',
         profile       = data->>'profile',
@@ -998,10 +999,10 @@ BEGIN
 --         auth_server   = data->>'authServer',
 --         auth_userinfo = data->'authUserinfo'
     WHERE
-        usr.id = update_usr.id
+        usr.email = update_usr.email
     RETURNING
-        usr.id,
-        email,
+        id,
+        usr.email,
         name,
         image_url,
         profile,

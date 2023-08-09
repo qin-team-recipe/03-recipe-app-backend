@@ -1,4 +1,8 @@
-DROP TYPE if exists type_vrecipe_ingredient CASCADE;
+DROP FUNCTION if exists update_recipe;
+DROP FUNCTION if exists insert_recipe;
+DROP VIEW if exists v_recipe;
+DROP TYPE if exists type_vrecipe_ingredient;
+
 
 CREATE TYPE type_vrecipe_ingredient AS (
     id UUID,
@@ -6,8 +10,6 @@ CREATE TYPE type_vrecipe_ingredient AS (
     supplement TEXT
 );
 
-
-DROP VIEW if exists v_recipe CASCADE;
 
 CREATE VIEW v_recipe AS
 SELECT
@@ -51,8 +53,6 @@ SELECT
 FROM
     recipe;
 
-
-DROP FUNCTION if exists insert_recipe CASCADE;
 
 CREATE OR REPLACE FUNCTION insert_recipe(
     data JSONB
@@ -149,8 +149,6 @@ BEGIN
 END
 $$;
 
-
-DROP FUNCTION if exists update_recipe CASCADE;
 
 CREATE OR REPLACE FUNCTION update_recipe(
     id UUID,

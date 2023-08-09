@@ -8,28 +8,46 @@ package db
 import (
 	"context"
 
+	dto "github.com/aopontann/gin-sqlc/db/dto"
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const createChef = `-- name: CreateChef :one
 SELECT
-    id, email, name, image_url, profile, link, auth_server, auth_userinfo, created_at, updated_at, num_recipe, num_follower
+    id,
+    name,
+    image_url,
+    profile,
+    link,
+    created_at,
+    updated_at,
+    num_recipe,
+    num_follower
 FROM
     insert_chef($1)
 `
 
-func (q *Queries) CreateChef(ctx context.Context, data []byte) (VChef, error) {
+type CreateChefRow struct {
+	ID          pgtype.UUID          `json:"id"`
+	Name        string               `json:"name"`
+	ImageUrl    pgtype.Text          `json:"imageUrl"`
+	Profile     pgtype.Text          `json:"profile"`
+	Link        dto.ChefLinkArrayDto `json:"link"`
+	CreatedAt   pgtype.Timestamptz   `json:"createdAt"`
+	UpdatedAt   pgtype.Timestamptz   `json:"updatedAt"`
+	NumRecipe   int32                `json:"numRecipe"`
+	NumFollower int32                `json:"numFollower"`
+}
+
+func (q *Queries) CreateChef(ctx context.Context, data []byte) (CreateChefRow, error) {
 	row := q.db.QueryRow(ctx, createChef, data)
-	var i VChef
+	var i CreateChefRow
 	err := row.Scan(
 		&i.ID,
-		&i.Email,
 		&i.Name,
 		&i.ImageUrl,
 		&i.Profile,
 		&i.Link,
-		&i.AuthServer,
-		&i.AuthUserinfo,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.NumRecipe,
@@ -40,25 +58,42 @@ func (q *Queries) CreateChef(ctx context.Context, data []byte) (VChef, error) {
 
 const getChef = `-- name: GetChef :one
 SELECT
-    id, email, name, image_url, profile, link, auth_server, auth_userinfo, created_at, updated_at, num_recipe, num_follower
+    id,
+    name,
+    image_url,
+    profile,
+    link,
+    created_at,
+    updated_at,
+    num_recipe,
+    num_follower
 FROM
     v_chef
 WHERE
     id = $1
 `
 
-func (q *Queries) GetChef(ctx context.Context, id pgtype.UUID) (VChef, error) {
+type GetChefRow struct {
+	ID          pgtype.UUID          `json:"id"`
+	Name        string               `json:"name"`
+	ImageUrl    pgtype.Text          `json:"imageUrl"`
+	Profile     pgtype.Text          `json:"profile"`
+	Link        dto.ChefLinkArrayDto `json:"link"`
+	CreatedAt   pgtype.Timestamptz   `json:"createdAt"`
+	UpdatedAt   pgtype.Timestamptz   `json:"updatedAt"`
+	NumRecipe   int32                `json:"numRecipe"`
+	NumFollower int32                `json:"numFollower"`
+}
+
+func (q *Queries) GetChef(ctx context.Context, id pgtype.UUID) (GetChefRow, error) {
 	row := q.db.QueryRow(ctx, getChef, id)
-	var i VChef
+	var i GetChefRow
 	err := row.Scan(
 		&i.ID,
-		&i.Email,
 		&i.Name,
 		&i.ImageUrl,
 		&i.Profile,
 		&i.Link,
-		&i.AuthServer,
-		&i.AuthUserinfo,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.NumRecipe,
@@ -133,7 +168,15 @@ func (q *Queries) ListFeaturedChef(ctx context.Context, lim int32) ([]ListFeatur
 
 const updateChef = `-- name: UpdateChef :one
 SELECT
-    id, email, name, image_url, profile, link, auth_server, auth_userinfo, created_at, updated_at, num_recipe, num_follower
+    id,
+    name,
+    image_url,
+    profile,
+    link,
+    created_at,
+    updated_at,
+    num_recipe,
+    num_follower
 FROM
     update_chef($1, $2)
 `
@@ -143,18 +186,27 @@ type UpdateChefParams struct {
 	Data []byte      `json:"data"`
 }
 
-func (q *Queries) UpdateChef(ctx context.Context, arg UpdateChefParams) (VChef, error) {
+type UpdateChefRow struct {
+	ID          pgtype.UUID          `json:"id"`
+	Name        string               `json:"name"`
+	ImageUrl    pgtype.Text          `json:"imageUrl"`
+	Profile     pgtype.Text          `json:"profile"`
+	Link        dto.ChefLinkArrayDto `json:"link"`
+	CreatedAt   pgtype.Timestamptz   `json:"createdAt"`
+	UpdatedAt   pgtype.Timestamptz   `json:"updatedAt"`
+	NumRecipe   int32                `json:"numRecipe"`
+	NumFollower int32                `json:"numFollower"`
+}
+
+func (q *Queries) UpdateChef(ctx context.Context, arg UpdateChefParams) (UpdateChefRow, error) {
 	row := q.db.QueryRow(ctx, updateChef, arg.ID, arg.Data)
-	var i VChef
+	var i UpdateChefRow
 	err := row.Scan(
 		&i.ID,
-		&i.Email,
 		&i.Name,
 		&i.ImageUrl,
 		&i.Profile,
 		&i.Link,
-		&i.AuthServer,
-		&i.AuthUserinfo,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.NumRecipe,

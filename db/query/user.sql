@@ -14,14 +14,30 @@ SELECT id FROM usr WHERE email = $1;
 
 -- name: GetUser :one
 SELECT
-    *
+    id,
+    email,
+    name,
+    image_url,
+    profile,
+    link,
+    created_at,
+    updated_at,
+    num_recipe
 FROM
     v_usr
 WHERE
-    id = @id;
+    email = @email;
 
 -- name: UpdateUser :one
 SELECT
-    *
+    id,
+    email,
+    name,
+    image_url,
+    profile,
+    link,
+    created_at,
+    updated_at,
+    num_recipe
 FROM
-    update_usr(@id, @data);
+    update_usr(@email, @data);

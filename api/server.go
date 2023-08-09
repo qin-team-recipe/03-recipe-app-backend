@@ -39,15 +39,13 @@ func (s *Server) MountHandlers() {
 	auth.GET("/google/callback", s.OauthGoogleCallback)
 
 	// シェフ関連
-	api.GET("/chef/:id", s.GetChef)
-	api.GET("/featured-chefs", s.ListFeaturedChef)
-	api.POST("/chef", s.CreateChef)
-	api.PUT("/chef/:id", s.UpdateChef)
+	api.GET("/chefs/:id", s.GetChef)
+	api.PUT("/chefs/:id", s.UpdateChef)
+	api.POST("/chefs", s.CreateChef)
+	api.GET("/chefs/featured", s.ListFeaturedChef)
 
 	// ユーザー関連
-	api.GET("/getUser/:id", s.GetUser)
-	api.POST("/createUser", s.CreateUser)
-	api.PUT("/updateUser/:id", s.UpdateUser)
+	api.POST("/users", s.CreateUser)
 
 	//// 仮で作成　セッションの説明用 ////
 	// グループを作成
@@ -57,14 +55,17 @@ func (s *Server) MountHandlers() {
 	// ユーザIDのみ返すAPI
 	usr.GET("/id", s.GetUserId)
 
+	usr.GET("/users", s.GetUser)
+	usr.PUT("/users", s.UpdateUser)
+
 	// レシピ関連
-	api.GET("/trend-recipes", s.ListTrendRecipe)
-	api.GET("/recipe/:id", s.GetRecipe)
-	//api.GET("/chef-recipes/:chef_id", s.)
-	//api.GET("/user-recipes/:usr_id", s.)
-	api.POST("/chef-recipe", s.CreateChefRecipe)
-	api.POST("/user-recipe", s.CreateUsrRecipe)
-	api.PUT("/recipe/:id", s.UpdateRecipe)
+	api.GET("/recipes/:id", s.GetRecipe)
+	api.PUT("/recipes/:id", s.UpdateRecipe)
+	api.POST("/recipes/chef", s.CreateChefRecipe)
+	usr.POST("/recipes/user", s.CreateUsrRecipe)
+	api.GET("/recipes/trend", s.ListTrendRecipe)
+	//api.GET("/recipes/chef/:chef_id", s.)
+	//api.GET("/recipes/user/:usr_id", s.)
 }
 
 func (s *Server) Start(addr string) error {

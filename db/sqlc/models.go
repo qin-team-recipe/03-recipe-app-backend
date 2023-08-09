@@ -132,6 +132,8 @@ type ShoppingList struct {
 	UsrID pgtype.UUID `json:"usrId"`
 	// NULL：メモリスト／削除レシピ
 	RecipeID pgtype.UUID `json:"recipeId"`
+	// インデックス
+	Idx int32 `json:"idx"`
 	// 「*人前」「メモリスト」
 	Description pgtype.Text `json:"description"`
 	// 清書or下書き
