@@ -8,6 +8,8 @@ import (
 	"time"
 
 	db "github.com/aopontann/gin-sqlc/db/sqlc"
+	"github.com/aopontann/gin-sqlc/docs"
+	"github.com/aopontann/gin-sqlc/utils"
 	"github.com/gin-gonic/gin"
 )
 
@@ -72,4 +74,63 @@ func (s *Server) GetUserId(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"id": uid, "email": email})
+}
+
+func (s *Server) GetUser(c *gin.Context) {
+	email := c.MustGet("email").(string)
+
+	// 問い合わせ処理
+	row, err := s.q.GetUser(context.Background(), email)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// レスポンス型バリデーション
+	err = utils.ValidateStructTwoWay[db.GetUserRow, docs.GetUsr](&row)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, row)
+}
+
+func (s *Server) UpdateUser(c *gin.Context) {
+	var param db.UpdateUserParams
+	var err error
+
+	param.Email = c.MustGet("email").(string)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	}
+
+	// リクエストボディを構造体にバインド
+	reqb := docs.PutApiUpdateUsrJSONRequestBody{}
+	if err := c.ShouldBind(&reqb); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// 構造体からJSONに変換
+	param.Data, err = json.Marshal(&reqb)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	}
+
+	// 更新処理
+	row, err := s.q.UpdateUser(context.Background(), param)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// レスポンス型バリデーション
+	err = utils.ValidateStructTwoWay[db.UpdateUserRow, docs.UpdateUsr](&row)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, row)
 }

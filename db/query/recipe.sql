@@ -7,6 +7,8 @@ history AS (
     FROM
         fav_history
     WHERE
+        chef_id IS NOT NULL
+    AND
         CURRENT_TIMESTAMP - INTERVAL '3 days' <= created_at
     GROUP BY
         recipe_id
@@ -27,6 +29,34 @@ ON
 ORDER BY
     score DESC
 LIMIT @lim;
+
+-- name: GetRecipe :one
+SELECT
+    *
+FROM
+    v_recipe
+WHERE
+    id = @id;
+
+-- name: GetChefRecipes :many
+SELECT
+    *
+FROM
+    v_recipe
+WHERE
+    chef_id = @chef_id
+ORDER BY
+    created_at DESC;
+
+-- name: GetUsrRecipes :many
+SELECT
+    *
+FROM
+    v_recipe
+WHERE
+    usr_id = @usr_id
+ORDER BY
+    created_at DESC;
 
 -- name: CreateRecipe :one
 SELECT

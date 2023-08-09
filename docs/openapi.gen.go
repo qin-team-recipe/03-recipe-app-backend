@@ -4,10 +4,41 @@
 package docs
 
 import (
+	"encoding/json"
+
+	"github.com/deepmap/oapi-codegen/pkg/runtime"
 	openapi_types "github.com/deepmap/oapi-codegen/pkg/types"
 )
 
-// CreateChefRecipe defines model for createChefRecipe.
+// CreateChef defines model for CreateChef.
+type CreateChef struct {
+	CreatedAt *string `json:"createdAt,omitempty"`
+	Id        string  `json:"id"`
+
+	// ImageUrl プロフィール画像
+	ImageUrl *string `json:"imageUrl,omitempty"`
+
+	// Link リンク
+	Link []struct {
+		Label *string `json:"label,omitempty"`
+		Url   *string `json:"url,omitempty"`
+	} `json:"link"`
+
+	// Name 登録名
+	Name string `json:"name"`
+
+	// NumFollower フォロワー数
+	NumFollower int `json:"numFollower"`
+
+	// NumRecipe レシピ数
+	NumRecipe int `json:"numRecipe"`
+
+	// Profile シェフ紹介
+	Profile   *string `json:"profile,omitempty"`
+	UpdatedAt *string `json:"updatedAt,omitempty"`
+}
+
+// CreateChefRecipe defines model for CreateChefRecipe.
 type CreateChefRecipe struct {
 	// AccessLevel 公開、限定公開、非公開、下書き
 	AccessLevel int `json:"accessLevel"`
@@ -22,6 +53,17 @@ type CreateChefRecipe struct {
 	// ImageUrl 画像
 	ImageUrl *string `json:"imageUrl,omitempty"`
 
+	// Ingredient 材料
+	Ingredient []struct {
+		Id openapi_types.UUID `json:"id"`
+
+		// Name 材料名
+		Name string `json:"name"`
+
+		// Supplement 補足
+		Supplement *string `json:"supplement,omitempty"`
+	} `json:"ingredient"`
+
 	// Introduction レシピの紹介文
 	Introduction *string `json:"introduction,omitempty"`
 
@@ -33,11 +75,12 @@ type CreateChefRecipe struct {
 		Html *string `json:"html,omitempty"`
 
 		// Supplement 補足
-		Supplement *map[string]interface{} `json:"supplement,omitempty"`
+		Supplement *CreateChefRecipe_Method_Supplement `json:"supplement,omitempty"`
 	} `json:"method"`
 
 	// Name レシピ名
-	Name string `json:"name"`
+	Name   string `json:"name"`
+	NumFav int    `json:"numFav"`
 
 	// Servings ＊人前
 	Servings  int    `json:"servings"`
@@ -47,7 +90,18 @@ type CreateChefRecipe struct {
 	UsrId *openapi_types.UUID `json:"usrId,omitempty"`
 }
 
-// CreateUsrRecipe defines model for createUsrRecipe.
+// CreateChefRecipeMethodSupplement0 defines model for .
+type CreateChefRecipeMethodSupplement0 = map[string]interface{}
+
+// CreateChefRecipeMethodSupplement1 defines model for .
+type CreateChefRecipeMethodSupplement1 = []map[string]interface{}
+
+// CreateChefRecipe_Method_Supplement 補足
+type CreateChefRecipe_Method_Supplement struct {
+	union json.RawMessage
+}
+
+// CreateUsrRecipe defines model for CreateUsrRecipe.
 type CreateUsrRecipe struct {
 	// AccessLevel 公開、限定公開、非公開、下書き
 	AccessLevel int `json:"accessLevel"`
@@ -62,6 +116,17 @@ type CreateUsrRecipe struct {
 	// ImageUrl 画像
 	ImageUrl *string `json:"imageUrl,omitempty"`
 
+	// Ingredient 材料
+	Ingredient []struct {
+		Id openapi_types.UUID `json:"id"`
+
+		// Name 材料名
+		Name string `json:"name"`
+
+		// Supplement 補足
+		Supplement *string `json:"supplement,omitempty"`
+	} `json:"ingredient"`
+
 	// Introduction レシピの紹介文
 	Introduction *string `json:"introduction,omitempty"`
 
@@ -73,11 +138,12 @@ type CreateUsrRecipe struct {
 		Html *string `json:"html,omitempty"`
 
 		// Supplement 補足
-		Supplement *map[string]interface{} `json:"supplement,omitempty"`
+		Supplement *CreateUsrRecipe_Method_Supplement `json:"supplement,omitempty"`
 	} `json:"method"`
 
 	// Name レシピ名
-	Name string `json:"name"`
+	Name   string `json:"name"`
+	NumFav int    `json:"numFav"`
 
 	// Servings ＊人前
 	Servings  int    `json:"servings"`
@@ -87,7 +153,18 @@ type CreateUsrRecipe struct {
 	UsrId openapi_types.UUID `json:"usrId"`
 }
 
-// FeaturedChef defines model for featuredChef.
+// CreateUsrRecipeMethodSupplement0 defines model for .
+type CreateUsrRecipeMethodSupplement0 = map[string]interface{}
+
+// CreateUsrRecipeMethodSupplement1 defines model for .
+type CreateUsrRecipeMethodSupplement1 = []map[string]interface{}
+
+// CreateUsrRecipe_Method_Supplement 補足
+type CreateUsrRecipe_Method_Supplement struct {
+	union json.RawMessage
+}
+
+// FeaturedChef defines model for FeaturedChef.
 type FeaturedChef struct {
 	Data []struct {
 		// ChefId シェフID
@@ -107,7 +184,126 @@ type FeaturedChef struct {
 	} `json:"data"`
 }
 
-// TrendRecipe defines model for trendRecipe.
+// GetChef defines model for GetChef.
+type GetChef struct {
+	CreatedAt *string `json:"createdAt,omitempty"`
+	Id        string  `json:"id"`
+
+	// ImageUrl プロフィール画像
+	ImageUrl *string `json:"imageUrl,omitempty"`
+
+	// Link リンク
+	Link []struct {
+		Label *string `json:"label,omitempty"`
+		Url   *string `json:"url,omitempty"`
+	} `json:"link"`
+
+	// Name 登録名
+	Name string `json:"name"`
+
+	// NumFollower フォロワー数
+	NumFollower int `json:"numFollower"`
+
+	// NumRecipe レシピ数
+	NumRecipe int `json:"numRecipe"`
+
+	// Profile シェフ紹介
+	Profile   *string `json:"profile,omitempty"`
+	UpdatedAt *string `json:"updatedAt,omitempty"`
+}
+
+// GetRecipe defines model for GetRecipe.
+type GetRecipe struct {
+	// AccessLevel 公開、限定公開、非公開、下書き
+	AccessLevel int `json:"accessLevel"`
+
+	// ChefId シェフID
+	ChefId    *openapi_types.UUID `json:"chefId,omitempty"`
+	CreatedAt string              `json:"createdAt"`
+
+	// Id レシピID
+	Id openapi_types.UUID `json:"id"`
+
+	// ImageUrl 画像
+	ImageUrl *string `json:"imageUrl,omitempty"`
+
+	// Ingredient 材料
+	Ingredient []struct {
+		Id openapi_types.UUID `json:"id"`
+
+		// Name 材料名
+		Name string `json:"name"`
+
+		// Supplement 補足
+		Supplement *string `json:"supplement,omitempty"`
+	} `json:"ingredient"`
+
+	// Introduction レシピの紹介文
+	Introduction *string `json:"introduction,omitempty"`
+
+	// Link リンク
+	Link *[]string `json:"link,omitempty"`
+
+	// Method 作り方
+	Method []struct {
+		Html *string `json:"html,omitempty"`
+
+		// Supplement 補足
+		Supplement *GetRecipe_Method_Supplement `json:"supplement,omitempty"`
+	} `json:"method"`
+
+	// Name レシピ名
+	Name   string `json:"name"`
+	NumFav int    `json:"numFav"`
+
+	// Servings ＊人前
+	Servings  int    `json:"servings"`
+	UpdatedAt string `json:"updatedAt"`
+
+	// UsrId ユーザーID
+	UsrId *openapi_types.UUID `json:"usrId,omitempty"`
+}
+
+// GetRecipeMethodSupplement0 defines model for .
+type GetRecipeMethodSupplement0 = map[string]interface{}
+
+// GetRecipeMethodSupplement1 defines model for .
+type GetRecipeMethodSupplement1 = []map[string]interface{}
+
+// GetRecipe_Method_Supplement 補足
+type GetRecipe_Method_Supplement struct {
+	union json.RawMessage
+}
+
+// GetUsr defines model for GetUsr.
+type GetUsr struct {
+	CreatedAt string `json:"createdAt"`
+
+	// Email ログインemail
+	Email string `json:"email"`
+	Id    string `json:"id"`
+
+	// ImageUrl プロフィール画像（任意）
+	ImageUrl *string `json:"imageUrl,omitempty"`
+
+	// Link リンク（任意）
+	Link []struct {
+		Label *string `json:"label,omitempty"`
+		Url   *string `json:"url,omitempty"`
+	} `json:"link"`
+
+	// Name ニックネーム
+	Name string `json:"name"`
+
+	// NumRecipe マイレシピ数
+	NumRecipe int `json:"numRecipe"`
+
+	// Profile 自己紹介（任意）
+	Profile   *string `json:"profile,omitempty"`
+	UpdatedAt string  `json:"updatedAt"`
+}
+
+// TrendRecipe defines model for TrendRecipe.
 type TrendRecipe struct {
 	Data []struct {
 		// ImageUrl レシピ画像
@@ -130,20 +326,59 @@ type TrendRecipe struct {
 	} `json:"data"`
 }
 
-// UpdateRecipe defines model for updateRecipe.
+// UpdateChef defines model for UpdateChef.
+type UpdateChef struct {
+	CreatedAt *string `json:"createdAt,omitempty"`
+	Id        string  `json:"id"`
+
+	// ImageUrl プロフィール画像
+	ImageUrl *string `json:"imageUrl,omitempty"`
+
+	// Link リンク
+	Link []struct {
+		Label *string `json:"label,omitempty"`
+		Url   *string `json:"url,omitempty"`
+	} `json:"link"`
+
+	// Name 登録名
+	Name string `json:"name"`
+
+	// NumFollower フォロワー数
+	NumFollower int `json:"numFollower"`
+
+	// NumRecipe レシピ数
+	NumRecipe int `json:"numRecipe"`
+
+	// Profile シェフ紹介
+	Profile   *string `json:"profile,omitempty"`
+	UpdatedAt *string `json:"updatedAt,omitempty"`
+}
+
+// UpdateRecipe defines model for UpdateRecipe.
 type UpdateRecipe struct {
 	// AccessLevel 公開、限定公開、非公開、下書き
 	AccessLevel int `json:"accessLevel"`
 
 	// ChefId シェフID
-	ChefId    openapi_types.UUID `json:"chefId"`
-	CreatedAt string             `json:"createdAt"`
+	ChefId    *openapi_types.UUID `json:"chefId,omitempty"`
+	CreatedAt string              `json:"createdAt"`
 
 	// Id レシピID
 	Id openapi_types.UUID `json:"id"`
 
 	// ImageUrl 画像
 	ImageUrl *string `json:"imageUrl,omitempty"`
+
+	// Ingredient 材料
+	Ingredient []struct {
+		Id openapi_types.UUID `json:"id"`
+
+		// Name 材料名
+		Name string `json:"name"`
+
+		// Supplement 補足
+		Supplement *string `json:"supplement,omitempty"`
+	} `json:"ingredient"`
 
 	// Introduction レシピの紹介文
 	Introduction *string `json:"introduction,omitempty"`
@@ -156,11 +391,12 @@ type UpdateRecipe struct {
 		Html *string `json:"html,omitempty"`
 
 		// Supplement 補足
-		Supplement *map[string]interface{} `json:"supplement,omitempty"`
+		Supplement *UpdateRecipe_Method_Supplement `json:"supplement,omitempty"`
 	} `json:"method"`
 
 	// Name レシピ名
-	Name string `json:"name"`
+	Name   string `json:"name"`
+	NumFav int    `json:"numFav"`
 
 	// Servings ＊人前
 	Servings  int    `json:"servings"`
@@ -170,16 +406,98 @@ type UpdateRecipe struct {
 	UsrId *openapi_types.UUID `json:"usrId,omitempty"`
 }
 
+// UpdateRecipeMethodSupplement0 defines model for .
+type UpdateRecipeMethodSupplement0 = map[string]interface{}
+
+// UpdateRecipeMethodSupplement1 defines model for .
+type UpdateRecipeMethodSupplement1 = []map[string]interface{}
+
+// UpdateRecipe_Method_Supplement 補足
+type UpdateRecipe_Method_Supplement struct {
+	union json.RawMessage
+}
+
+// UpdateUsr defines model for UpdateUsr.
+type UpdateUsr struct {
+	CreatedAt string `json:"createdAt"`
+
+	// Email ログインemail
+	Email string `json:"email"`
+	Id    string `json:"id"`
+
+	// ImageUrl プロフィール画像（任意）
+	ImageUrl *string `json:"imageUrl,omitempty"`
+
+	// Link リンク（任意）
+	Link []struct {
+		Label *string `json:"label,omitempty"`
+		Url   *string `json:"url,omitempty"`
+	} `json:"link"`
+
+	// Name ニックネーム
+	Name string `json:"name"`
+
+	// NumRecipe マイレシピ数
+	NumRecipe int `json:"numRecipe"`
+
+	// Profile 自己紹介（任意）
+	Profile   *string `json:"profile,omitempty"`
+	UpdatedAt string  `json:"updatedAt"`
+}
+
+// PostApiCreateChefJSONBody defines parameters for PostApiCreateChef.
+type PostApiCreateChefJSONBody struct {
+	// ImageUrl プロフィール画像
+	ImageUrl *string `json:"imageUrl,omitempty"`
+
+	// Link リンク
+	Link []struct {
+		Label *string `json:"label,omitempty"`
+		Url   *string `json:"url,omitempty"`
+	} `binding:"required" json:"link"`
+
+	// Name 登録名
+	Name string `binding:"required" json:"name"`
+
+	// Profile シェフ紹介
+	Profile *string `json:"profile,omitempty"`
+}
+
+// PutApiUpdateChefJSONBody defines parameters for PutApiUpdateChef.
+type PutApiUpdateChefJSONBody struct {
+	// ImageUrl プロフィール画像
+	ImageUrl *string `json:"imageUrl,omitempty"`
+
+	// Link リンク
+	Link []struct {
+		Label *string `json:"label,omitempty"`
+		Url   *string `json:"url,omitempty"`
+	} `binding:"required" json:"link"`
+
+	// Name 登録名
+	Name string `binding:"required" json:"name"`
+
+	// Profile シェフ紹介
+	Profile *string `json:"profile,omitempty"`
+}
+
 // PostApiCreateChefRecipeJSONBody defines parameters for PostApiCreateChefRecipe.
 type PostApiCreateChefRecipeJSONBody struct {
 	// AccessLevel 公開、限定公開、非公開、下書き
 	AccessLevel int `binding:"required" json:"accessLevel"`
 
 	// ChefId シェフID
-	ChefId openapi_types.UUID `binding:"required" json:"chefId"`
+	ChefId string `binding:"required" json:"chefId"`
 
 	// ImageUrl 画像
-	ImageUrl *string `json:"imageUrl,omitempty"`
+	ImageUrl   *string `json:"imageUrl,omitempty"`
+	Ingredient []struct {
+		// Name 材料名
+		Name string `binding:"required" json:"name"`
+
+		// Supplement 補足
+		Supplement *string `json:"supplement,omitempty"`
+	} `binding:"required" json:"ingredient"`
 
 	// Introduction レシピの紹介文
 	Introduction *string `json:"introduction,omitempty"`
@@ -192,7 +510,43 @@ type PostApiCreateChefRecipeJSONBody struct {
 		Html *string `json:"html,omitempty"`
 
 		// Supplement 補足
-		Supplement *map[string]interface{} `json:"supplement,omitempty"`
+		Supplement *any `json:"supplement,omitempty"`
+	} `binding:"required" json:"method"`
+
+	// Name レシピ名
+	Name string `binding:"required" json:"name"`
+
+	// Servings ＊人前
+	Servings int `binding:"required" json:"servings"`
+}
+
+// PutApiUpdateRecipeJSONBody defines parameters for PutApiUpdateRecipe.
+type PutApiUpdateRecipeJSONBody struct {
+	// AccessLevel 公開、限定公開、非公開、下書き
+	AccessLevel int `binding:"required" json:"accessLevel"`
+
+	// ImageUrl 画像
+	ImageUrl   *string `json:"imageUrl,omitempty"`
+	Ingredient []struct {
+		// Name 材料名
+		Name string `binding:"required" json:"name"`
+
+		// Supplement 補足
+		Supplement *string `json:"supplement,omitempty"`
+	} `binding:"required" json:"ingredient"`
+
+	// Introduction レシピの紹介文
+	Introduction *string `json:"introduction,omitempty"`
+
+	// Link リンク
+	Link []string `binding:"required" json:"link"`
+
+	// Method 作り方
+	Method []struct {
+		Html *string `json:"html,omitempty"`
+
+		// Supplement 補足
+		Supplement *any `json:"supplement,omitempty"`
 	} `binding:"required" json:"method"`
 
 	// Name レシピ名
@@ -208,7 +562,14 @@ type PostApiCreateUsrRecipeJSONBody struct {
 	AccessLevel int `binding:"required" json:"accessLevel"`
 
 	// ImageUrl 画像
-	ImageUrl *string `json:"imageUrl,omitempty"`
+	ImageUrl   *string `json:"imageUrl,omitempty"`
+	Ingredient []struct {
+		// Name 材料名
+		Name string `binding:"required" json:"name"`
+
+		// Supplement 補足
+		Supplement *string `json:"supplement,omitempty"`
+	} `binding:"required" json:"ingredient"`
 
 	// Introduction レシピの紹介文
 	Introduction *string `json:"introduction,omitempty"`
@@ -221,7 +582,7 @@ type PostApiCreateUsrRecipeJSONBody struct {
 		Html *string `json:"html,omitempty"`
 
 		// Supplement 補足
-		Supplement *map[string]interface{} `json:"supplement,omitempty"`
+		Supplement *any `json:"supplement,omitempty"`
 	} `binding:"required" json:"method"`
 
 	// Name レシピ名
@@ -229,45 +590,288 @@ type PostApiCreateUsrRecipeJSONBody struct {
 
 	// Servings ＊人前
 	Servings int `binding:"required" json:"servings"`
-
-	// UsrId ユーザーID
-	UsrId openapi_types.UUID `binding:"required" json:"usrId"`
 }
 
-// PutApiUpdateRecipeJSONBody defines parameters for PutApiUpdateRecipe.
-type PutApiUpdateRecipeJSONBody struct {
-	// AccessLevel 公開、限定公開、非公開、下書き
-	AccessLevel int `binding:"required" json:"accessLevel"`
-
-	// ImageUrl 画像
+// PutApiUpdateUsrJSONBody defines parameters for PutApiUpdateUsr.
+type PutApiUpdateUsrJSONBody struct {
+	// ImageUrl プロフィール画像（任意）
 	ImageUrl *string `json:"imageUrl,omitempty"`
 
-	// Introduction レシピの紹介文
-	Introduction *string `json:"introduction,omitempty"`
+	// Link リンク（任意）
+	Link []struct {
+		Label *string `json:"label,omitempty"`
+		Url   *string `json:"url,omitempty"`
+	} `binding:"required" json:"link"`
 
-	// Link リンク
-	Link []string `binding:"required" json:"link"`
-
-	// Method 作り方
-	Method []struct {
-		Html *string `json:"html,omitempty"`
-
-		// Supplement 補足
-		Supplement *map[string]interface{} `json:"supplement,omitempty"`
-	} `binding:"required" json:"method"`
-
-	// Name レシピ名
+	// Name ニックネーム
 	Name string `binding:"required" json:"name"`
 
-	// Servings ＊人前
-	Servings int `binding:"required" json:"servings"`
+	// Profile 自己紹介（任意）
+	Profile *string `json:"profile,omitempty"`
 }
+
+// PostApiCreateChefJSONRequestBody defines body for PostApiCreateChef for application/json ContentType.
+type PostApiCreateChefJSONRequestBody PostApiCreateChefJSONBody
+
+// PutApiUpdateChefJSONRequestBody defines body for PutApiUpdateChef for application/json ContentType.
+type PutApiUpdateChefJSONRequestBody PutApiUpdateChefJSONBody
 
 // PostApiCreateChefRecipeJSONRequestBody defines body for PostApiCreateChefRecipe for application/json ContentType.
 type PostApiCreateChefRecipeJSONRequestBody PostApiCreateChefRecipeJSONBody
 
+// PutApiUpdateRecipeJSONRequestBody defines body for PutApiUpdateRecipe for application/json ContentType.
+type PutApiUpdateRecipeJSONRequestBody PutApiUpdateRecipeJSONBody
+
 // PostApiCreateUsrRecipeJSONRequestBody defines body for PostApiCreateUsrRecipe for application/json ContentType.
 type PostApiCreateUsrRecipeJSONRequestBody PostApiCreateUsrRecipeJSONBody
 
-// PutApiUpdateRecipeJSONRequestBody defines body for PutApiUpdateRecipe for application/json ContentType.
-type PutApiUpdateRecipeJSONRequestBody PutApiUpdateRecipeJSONBody
+// PutApiUpdateUsrJSONRequestBody defines body for PutApiUpdateUsr for application/json ContentType.
+type PutApiUpdateUsrJSONRequestBody PutApiUpdateUsrJSONBody
+
+// AsCreateChefRecipeMethodSupplement0 returns the union data inside the CreateChefRecipe_Method_Supplement as a CreateChefRecipeMethodSupplement0
+func (t CreateChefRecipe_Method_Supplement) AsCreateChefRecipeMethodSupplement0() (CreateChefRecipeMethodSupplement0, error) {
+	var body CreateChefRecipeMethodSupplement0
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromCreateChefRecipeMethodSupplement0 overwrites any union data inside the CreateChefRecipe_Method_Supplement as the provided CreateChefRecipeMethodSupplement0
+func (t *CreateChefRecipe_Method_Supplement) FromCreateChefRecipeMethodSupplement0(v CreateChefRecipeMethodSupplement0) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeCreateChefRecipeMethodSupplement0 performs a merge with any union data inside the CreateChefRecipe_Method_Supplement, using the provided CreateChefRecipeMethodSupplement0
+func (t *CreateChefRecipe_Method_Supplement) MergeCreateChefRecipeMethodSupplement0(v CreateChefRecipeMethodSupplement0) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JsonMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsCreateChefRecipeMethodSupplement1 returns the union data inside the CreateChefRecipe_Method_Supplement as a CreateChefRecipeMethodSupplement1
+func (t CreateChefRecipe_Method_Supplement) AsCreateChefRecipeMethodSupplement1() (CreateChefRecipeMethodSupplement1, error) {
+	var body CreateChefRecipeMethodSupplement1
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromCreateChefRecipeMethodSupplement1 overwrites any union data inside the CreateChefRecipe_Method_Supplement as the provided CreateChefRecipeMethodSupplement1
+func (t *CreateChefRecipe_Method_Supplement) FromCreateChefRecipeMethodSupplement1(v CreateChefRecipeMethodSupplement1) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeCreateChefRecipeMethodSupplement1 performs a merge with any union data inside the CreateChefRecipe_Method_Supplement, using the provided CreateChefRecipeMethodSupplement1
+func (t *CreateChefRecipe_Method_Supplement) MergeCreateChefRecipeMethodSupplement1(v CreateChefRecipeMethodSupplement1) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JsonMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+func (t CreateChefRecipe_Method_Supplement) MarshalJSON() ([]byte, error) {
+	b, err := t.union.MarshalJSON()
+	return b, err
+}
+
+func (t *CreateChefRecipe_Method_Supplement) UnmarshalJSON(b []byte) error {
+	err := t.union.UnmarshalJSON(b)
+	return err
+}
+
+// AsCreateUsrRecipeMethodSupplement0 returns the union data inside the CreateUsrRecipe_Method_Supplement as a CreateUsrRecipeMethodSupplement0
+func (t CreateUsrRecipe_Method_Supplement) AsCreateUsrRecipeMethodSupplement0() (CreateUsrRecipeMethodSupplement0, error) {
+	var body CreateUsrRecipeMethodSupplement0
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromCreateUsrRecipeMethodSupplement0 overwrites any union data inside the CreateUsrRecipe_Method_Supplement as the provided CreateUsrRecipeMethodSupplement0
+func (t *CreateUsrRecipe_Method_Supplement) FromCreateUsrRecipeMethodSupplement0(v CreateUsrRecipeMethodSupplement0) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeCreateUsrRecipeMethodSupplement0 performs a merge with any union data inside the CreateUsrRecipe_Method_Supplement, using the provided CreateUsrRecipeMethodSupplement0
+func (t *CreateUsrRecipe_Method_Supplement) MergeCreateUsrRecipeMethodSupplement0(v CreateUsrRecipeMethodSupplement0) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JsonMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsCreateUsrRecipeMethodSupplement1 returns the union data inside the CreateUsrRecipe_Method_Supplement as a CreateUsrRecipeMethodSupplement1
+func (t CreateUsrRecipe_Method_Supplement) AsCreateUsrRecipeMethodSupplement1() (CreateUsrRecipeMethodSupplement1, error) {
+	var body CreateUsrRecipeMethodSupplement1
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromCreateUsrRecipeMethodSupplement1 overwrites any union data inside the CreateUsrRecipe_Method_Supplement as the provided CreateUsrRecipeMethodSupplement1
+func (t *CreateUsrRecipe_Method_Supplement) FromCreateUsrRecipeMethodSupplement1(v CreateUsrRecipeMethodSupplement1) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeCreateUsrRecipeMethodSupplement1 performs a merge with any union data inside the CreateUsrRecipe_Method_Supplement, using the provided CreateUsrRecipeMethodSupplement1
+func (t *CreateUsrRecipe_Method_Supplement) MergeCreateUsrRecipeMethodSupplement1(v CreateUsrRecipeMethodSupplement1) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JsonMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+func (t CreateUsrRecipe_Method_Supplement) MarshalJSON() ([]byte, error) {
+	b, err := t.union.MarshalJSON()
+	return b, err
+}
+
+func (t *CreateUsrRecipe_Method_Supplement) UnmarshalJSON(b []byte) error {
+	err := t.union.UnmarshalJSON(b)
+	return err
+}
+
+// AsGetRecipeMethodSupplement0 returns the union data inside the GetRecipe_Method_Supplement as a GetRecipeMethodSupplement0
+func (t GetRecipe_Method_Supplement) AsGetRecipeMethodSupplement0() (GetRecipeMethodSupplement0, error) {
+	var body GetRecipeMethodSupplement0
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromGetRecipeMethodSupplement0 overwrites any union data inside the GetRecipe_Method_Supplement as the provided GetRecipeMethodSupplement0
+func (t *GetRecipe_Method_Supplement) FromGetRecipeMethodSupplement0(v GetRecipeMethodSupplement0) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeGetRecipeMethodSupplement0 performs a merge with any union data inside the GetRecipe_Method_Supplement, using the provided GetRecipeMethodSupplement0
+func (t *GetRecipe_Method_Supplement) MergeGetRecipeMethodSupplement0(v GetRecipeMethodSupplement0) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JsonMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsGetRecipeMethodSupplement1 returns the union data inside the GetRecipe_Method_Supplement as a GetRecipeMethodSupplement1
+func (t GetRecipe_Method_Supplement) AsGetRecipeMethodSupplement1() (GetRecipeMethodSupplement1, error) {
+	var body GetRecipeMethodSupplement1
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromGetRecipeMethodSupplement1 overwrites any union data inside the GetRecipe_Method_Supplement as the provided GetRecipeMethodSupplement1
+func (t *GetRecipe_Method_Supplement) FromGetRecipeMethodSupplement1(v GetRecipeMethodSupplement1) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeGetRecipeMethodSupplement1 performs a merge with any union data inside the GetRecipe_Method_Supplement, using the provided GetRecipeMethodSupplement1
+func (t *GetRecipe_Method_Supplement) MergeGetRecipeMethodSupplement1(v GetRecipeMethodSupplement1) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JsonMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+func (t GetRecipe_Method_Supplement) MarshalJSON() ([]byte, error) {
+	b, err := t.union.MarshalJSON()
+	return b, err
+}
+
+func (t *GetRecipe_Method_Supplement) UnmarshalJSON(b []byte) error {
+	err := t.union.UnmarshalJSON(b)
+	return err
+}
+
+// AsUpdateRecipeMethodSupplement0 returns the union data inside the UpdateRecipe_Method_Supplement as a UpdateRecipeMethodSupplement0
+func (t UpdateRecipe_Method_Supplement) AsUpdateRecipeMethodSupplement0() (UpdateRecipeMethodSupplement0, error) {
+	var body UpdateRecipeMethodSupplement0
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromUpdateRecipeMethodSupplement0 overwrites any union data inside the UpdateRecipe_Method_Supplement as the provided UpdateRecipeMethodSupplement0
+func (t *UpdateRecipe_Method_Supplement) FromUpdateRecipeMethodSupplement0(v UpdateRecipeMethodSupplement0) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeUpdateRecipeMethodSupplement0 performs a merge with any union data inside the UpdateRecipe_Method_Supplement, using the provided UpdateRecipeMethodSupplement0
+func (t *UpdateRecipe_Method_Supplement) MergeUpdateRecipeMethodSupplement0(v UpdateRecipeMethodSupplement0) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JsonMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsUpdateRecipeMethodSupplement1 returns the union data inside the UpdateRecipe_Method_Supplement as a UpdateRecipeMethodSupplement1
+func (t UpdateRecipe_Method_Supplement) AsUpdateRecipeMethodSupplement1() (UpdateRecipeMethodSupplement1, error) {
+	var body UpdateRecipeMethodSupplement1
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromUpdateRecipeMethodSupplement1 overwrites any union data inside the UpdateRecipe_Method_Supplement as the provided UpdateRecipeMethodSupplement1
+func (t *UpdateRecipe_Method_Supplement) FromUpdateRecipeMethodSupplement1(v UpdateRecipeMethodSupplement1) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeUpdateRecipeMethodSupplement1 performs a merge with any union data inside the UpdateRecipe_Method_Supplement, using the provided UpdateRecipeMethodSupplement1
+func (t *UpdateRecipe_Method_Supplement) MergeUpdateRecipeMethodSupplement1(v UpdateRecipeMethodSupplement1) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JsonMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+func (t UpdateRecipe_Method_Supplement) MarshalJSON() ([]byte, error) {
+	b, err := t.union.MarshalJSON()
+	return b, err
+}
+
+func (t *UpdateRecipe_Method_Supplement) UnmarshalJSON(b []byte) error {
+	err := t.union.UnmarshalJSON(b)
+	return err
+}
