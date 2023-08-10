@@ -147,9 +147,9 @@ paths:
     parameters: []
   /api/user/users:
     get:
-      summary: ユーザー取得
+      summary: 自分を取得
       tags: []
-      operationId: get-api-getUsr
+      operationId: get-api-getSelf
       responses:
         '200':
           description: OK
@@ -209,6 +209,24 @@ paths:
               required:
                 - name
                 - link
+  '/api/users/{id}':
+    get:
+      summary: ユーザー取得
+      tags: []
+      operationId: get-api-getUsr
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetUsr'
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
   '/api/recipes/{id}':
     put:
       summary: レシピ更新

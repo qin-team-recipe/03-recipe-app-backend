@@ -57,7 +57,7 @@ func (q *Queries) ExistsUser(ctx context.Context, email string) (bool, error) {
 	return exists, err
 }
 
-const getUser = `-- name: GetUser :one
+const getSelf = `-- name: GetSelf :one
 SELECT
     id,
     email,
@@ -74,6 +74,52 @@ WHERE
     email = $1
 `
 
+type GetSelfRow struct {
+	ID        pgtype.UUID          `json:"id"`
+	Email     string               `json:"email"`
+	Name      string               `json:"name"`
+	ImageUrl  pgtype.Text          `json:"imageUrl"`
+	Profile   pgtype.Text          `json:"profile"`
+	Link      dto.ChefLinkArrayDto `json:"link"`
+	CreatedAt pgtype.Timestamptz   `json:"createdAt"`
+	UpdatedAt pgtype.Timestamptz   `json:"updatedAt"`
+	NumRecipe int32                `json:"numRecipe"`
+}
+
+func (q *Queries) GetSelf(ctx context.Context, email string) (GetSelfRow, error) {
+	row := q.db.QueryRow(ctx, getSelf, email)
+	var i GetSelfRow
+	err := row.Scan(
+		&i.ID,
+		&i.Email,
+		&i.Name,
+		&i.ImageUrl,
+		&i.Profile,
+		&i.Link,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.NumRecipe,
+	)
+	return i, err
+}
+
+const getUser = `-- name: GetUser :one
+SELECT
+    id,
+    email,
+    name,
+    image_url,
+    profile,
+    link,
+    created_at,
+    updated_at,
+    num_recipe
+FROM
+    v_usr
+WHERE
+    id = $1
+`
+
 type GetUserRow struct {
 	ID        pgtype.UUID          `json:"id"`
 	Email     string               `json:"email"`
@@ -86,8 +132,8 @@ type GetUserRow struct {
 	NumRecipe int32                `json:"numRecipe"`
 }
 
-func (q *Queries) GetUser(ctx context.Context, email string) (GetUserRow, error) {
-	row := q.db.QueryRow(ctx, getUser, email)
+func (q *Queries) GetUser(ctx context.Context, id pgtype.UUID) (GetUserRow, error) {
+	row := q.db.QueryRow(ctx, getUser, id)
 	var i GetUserRow
 	err := row.Scan(
 		&i.ID,

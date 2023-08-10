@@ -12,7 +12,7 @@ RETURNING id, name, email;
 -- name: GetUserId :one
 SELECT id FROM usr WHERE email = $1;
 
--- name: GetUser :one
+-- name: GetSelf :one
 SELECT
     id,
     email,
@@ -27,6 +27,22 @@ FROM
     v_usr
 WHERE
     email = @email;
+
+-- name: GetUser :one
+SELECT
+    id,
+    email,
+    name,
+    image_url,
+    profile,
+    link,
+    created_at,
+    updated_at,
+    num_recipe
+FROM
+    v_usr
+WHERE
+    id = @id;
 
 -- name: UpdateUser :one
 SELECT

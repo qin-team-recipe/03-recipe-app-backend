@@ -46,6 +46,7 @@ func (s *Server) MountHandlers() {
 
 	// ユーザー関連
 	api.POST("/users", s.CreateUser)
+	api.GET("/users/:id", s.GetUser)
 
 	//// 仮で作成　セッションの説明用 ////
 	// グループを作成
@@ -55,7 +56,7 @@ func (s *Server) MountHandlers() {
 	// ユーザIDのみ返すAPI
 	usr.GET("/id", s.GetUserId)
 
-	usr.GET("/users", s.GetUser)
+	usr.GET("/users", s.GetSelf)
 	usr.PUT("/users", s.UpdateUser)
 
 	// レシピ関連
