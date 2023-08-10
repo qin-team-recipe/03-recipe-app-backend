@@ -1,6 +1,4 @@
 openapi: 3.1.0
-x-stoplight:
-  id: 8omayzirnu2ni
 info:
   version: '1.0'
   title: team3-backend API
@@ -79,6 +77,16 @@ paths:
               required:
                 - name
                 - link
+    delete:
+      summary: ''
+      operationId: delete-api-chefs-id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeletedChef'
   /api/chefs:
     post:
       summary: シェフ新規登録
@@ -209,6 +217,16 @@ paths:
               required:
                 - name
                 - link
+    delete:
+      summary: ''
+      operationId: delete-api-user-users
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeletedUsr'
   '/api/users/{id}':
     get:
       summary: ユーザー取得
@@ -353,6 +371,16 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetRecipe'
+    delete:
+      summary: ''
+      operationId: delete-api-recipes-id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeletedRecipe'
   /api/recipes/chef:
     post:
       summary: 有名シェフレシピ登録
@@ -877,6 +905,180 @@ components:
         - createdAt
         - updatedAt
         - numFav
+    DeletedChef:
+      type: object
+      x-stoplight:
+        id: 0sabxjvap6cxx
+      x-examples:
+        Example 1:
+          id: f4da8c3d-64d7-4dcf-858d-f3161304531b
+          name: NAME_1
+          imageUrl: 'http://www.yahoo.co.jp'
+          profile: PROFILE_1
+          link:
+            - label: LABEL_1
+              url: null
+          createdAt: '2023-07-30T16:04:30.100876+09:00'
+          updatedAt: '2023-08-06T17:16:30.121799+09:00'
+          numRecipe: 7
+          numFollower: 0
+      title: deletedChef
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+          description: 登録名
+        imageUrl:
+          type: string
+          description: プロフィール画像
+        profile:
+          type: string
+          description: シェフ紹介
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+        numRecipe:
+          type: integer
+          description: レシピ数
+        numFollower:
+          type: integer
+          description: フォロワー数
+      required:
+        - id
+        - name
+        - numRecipe
+        - numFollower
+    DeletedRecipe:
+      type: object
+      x-stoplight:
+        id: 7ylw045makklq
+      x-examples:
+        Example 1:
+          id: fcd040c9-8ea9-4833-a42d-95e57c47a745
+          chefId: f4da8c3d-64d7-4dcf-858d-f3161304531b
+          usrId: null
+          name: 名前1
+          servings: 4
+          ingredient:
+            - id: 157e8f3d-033f-47b4-b74c-332d2caf2437
+              name: キャベツ
+              supplement: 補足1
+            - id: 66605cad-fa1e-4405-97a5-e669018ead6e
+              name: トマト
+              supplement: 補足2
+          method:
+            - html: <p>作り方1</p>
+              supplement: {}
+            - html: <p>作り方2</p>
+              supplement: []
+          imageUrl: IMAGE_URL_1
+          introduction: INTRODUCTION_1
+          link:
+            - 'https://www.yahoo.co.jp'
+            - 'https://www.amazon.co.jp'
+          accessLevel: 2
+          createdAt: '2023-08-06T06:14:53.749359+09:00'
+          updatedAt: '2023-08-06T12:45:56.980533+09:00'
+          numFav: 0
+      title: deletedRecipe
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: レシピID
+        chefId:
+          type: string
+          format: uuid
+          description: シェフID
+        usrId:
+          type: string
+          format: uuid
+          description: ユーザーID
+        name:
+          type: string
+          description: レシピ名
+        servings:
+          type: integer
+          description: ＊人前
+        imageUrl:
+          type: string
+          description: 画像
+        introduction:
+          type: string
+          description: レシピの紹介文
+        link:
+          type: array
+          description: リンク
+          items:
+            type: string
+        accessLevel:
+          type: integer
+          description: 公開、限定公開、非公開、下書き
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+        numFav:
+          type: integer
+      required:
+        - id
+        - name
+        - servings
+        - accessLevel
+        - createdAt
+        - updatedAt
+        - numFav
+    DeletedUsr:
+      type: object
+      x-stoplight:
+        id: su3z8zcw3jki8
+      x-examples:
+        Example 1:
+          id: 1c6fc87e-430b-4e71-af55-103fe3a16bee
+          email: kaneda@gmail.com
+          name: NAME_1
+          imageUrl: 'http://www.yahoo.co.jp'
+          profile: PROFILE_1
+          link:
+            - label: LABEL_1
+              url: 'http://www.yahoo.co.jp'
+            - label: LABEL_2
+              url: 'http://www.yahoo.co.jp'
+          createdAt: '2023-08-08T18:48:40.89562+09:00'
+          updatedAt: '2023-08-08T19:56:55.402664+09:00'
+          numRecipe: 0
+      title: deletedUsr
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+          description: ログインemail
+        name:
+          type: string
+          description: ニックネーム
+        imageUrl:
+          type: string
+          description: プロフィール画像（任意）
+        profile:
+          type: string
+          description: 自己紹介（任意）
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+        numRecipe:
+          type: integer
+          description: マイレシピ数
+      required:
+        - id
+        - email
+        - name
+        - createdAt
+        - updatedAt
+        - numRecipe
     FeaturedChef:
       type: object
       x-stoplight:

@@ -57,3 +57,18 @@ SELECT
     num_recipe
 FROM
     update_usr(@email, @data);
+
+-- name: DeleteUser :one
+DELETE FROM
+    usr
+WHERE
+    email = @email
+RETURNING
+    id,
+    email,
+    name,
+    image_url,
+    profile,
+    created_at,
+    updated_at,
+    num_recipe;

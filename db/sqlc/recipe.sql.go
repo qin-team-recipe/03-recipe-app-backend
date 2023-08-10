@@ -40,6 +40,61 @@ func (q *Queries) CreateRecipe(ctx context.Context, data []byte) (VRecipe, error
 	return i, err
 }
 
+const deleteRecipe = `-- name: DeleteRecipe :one
+DELETE FROM
+    recipe
+WHERE
+    id = $1
+RETURNING
+    id,
+    chef_id,
+    usr_id,
+    name,
+    servings,
+    image_url,
+    introduction,
+    link,
+    access_level,
+    created_at,
+    updated_at,
+    num_fav
+`
+
+type DeleteRecipeRow struct {
+	ID           pgtype.UUID        `json:"id"`
+	ChefID       pgtype.UUID        `json:"chefId"`
+	UsrID        pgtype.UUID        `json:"usrId"`
+	Name         string             `json:"name"`
+	Servings     int32              `json:"servings"`
+	ImageUrl     pgtype.Text        `json:"imageUrl"`
+	Introduction pgtype.Text        `json:"introduction"`
+	Link         []string           `json:"link"`
+	AccessLevel  int32              `json:"accessLevel"`
+	CreatedAt    pgtype.Timestamptz `json:"createdAt"`
+	UpdatedAt    pgtype.Timestamptz `json:"updatedAt"`
+	NumFav       int32              `json:"numFav"`
+}
+
+func (q *Queries) DeleteRecipe(ctx context.Context, id pgtype.UUID) (DeleteRecipeRow, error) {
+	row := q.db.QueryRow(ctx, deleteRecipe, id)
+	var i DeleteRecipeRow
+	err := row.Scan(
+		&i.ID,
+		&i.ChefID,
+		&i.UsrID,
+		&i.Name,
+		&i.Servings,
+		&i.ImageUrl,
+		&i.Introduction,
+		&i.Link,
+		&i.AccessLevel,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.NumFav,
+	)
+	return i, err
+}
+
 const getChefRecipes = `-- name: GetChefRecipes :many
 SELECT
     id, chef_id, usr_id, name, servings, ingredient, method, image_url, introduction, link, access_level, created_at, updated_at, num_fav

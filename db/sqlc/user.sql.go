@@ -46,6 +46,49 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (CreateU
 	return i, err
 }
 
+const deleteUser = `-- name: DeleteUser :one
+DELETE FROM
+    usr
+WHERE
+    email = $1
+RETURNING
+    id,
+    email,
+    name,
+    image_url,
+    profile,
+    created_at,
+    updated_at,
+    num_recipe
+`
+
+type DeleteUserRow struct {
+	ID        pgtype.UUID        `json:"id"`
+	Email     string             `json:"email"`
+	Name      string             `json:"name"`
+	ImageUrl  pgtype.Text        `json:"imageUrl"`
+	Profile   pgtype.Text        `json:"profile"`
+	CreatedAt pgtype.Timestamptz `json:"createdAt"`
+	UpdatedAt pgtype.Timestamptz `json:"updatedAt"`
+	NumRecipe int32              `json:"numRecipe"`
+}
+
+func (q *Queries) DeleteUser(ctx context.Context, email string) (DeleteUserRow, error) {
+	row := q.db.QueryRow(ctx, deleteUser, email)
+	var i DeleteUserRow
+	err := row.Scan(
+		&i.ID,
+		&i.Email,
+		&i.Name,
+		&i.ImageUrl,
+		&i.Profile,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.NumRecipe,
+	)
+	return i, err
+}
+
 const existsUser = `-- name: ExistsUser :one
 SELECT EXISTS (SELECT id, email, name, image_url, profile, link, auth_server, auth_userinfo, created_at, updated_at, num_recipe FROM usr WHERE email = $1)
 `

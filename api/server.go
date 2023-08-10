@@ -41,6 +41,7 @@ func (s *Server) MountHandlers() {
 	// シェフ関連
 	api.GET("/chefs/:id", s.GetChef)
 	api.PUT("/chefs/:id", s.UpdateChef)
+	api.DELETE("/chefs/:id", s.DeleteChef)
 	api.POST("/chefs", s.CreateChef)
 	api.GET("/chefs/featured", s.ListFeaturedChef)
 
@@ -57,11 +58,13 @@ func (s *Server) MountHandlers() {
 	usr.GET("/id", s.GetUserId)
 
 	usr.GET("/users", s.GetSelf)
-	usr.PUT("/users", s.UpdateUser)
+	usr.PUT("/users", s.UpdateSelf)
+	usr.DELETE("/users", s.DeleteSelf)
 
 	// レシピ関連
 	api.GET("/recipes/:id", s.GetRecipe)
 	api.PUT("/recipes/:id", s.UpdateRecipe)
+	api.DELETE("/recipes/:id", s.DeleteRecipe)
 	api.POST("/recipes/chef", s.CreateChefRecipe)
 	usr.POST("/recipes/user", s.CreateUsrRecipe)
 	api.GET("/recipes/trend", s.ListTrendRecipe)

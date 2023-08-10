@@ -120,14 +120,10 @@ func (s *Server) GetSelf(c *gin.Context) {
 	c.JSON(http.StatusOK, row)
 }
 
-func (s *Server) UpdateUser(c *gin.Context) {
+func (s *Server) UpdateSelf(c *gin.Context) {
 	var param db.UpdateUserParams
 	var err error
-
 	param.Email = c.MustGet("email").(string)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-	}
 
 	// リクエストボディを構造体にバインド
 	reqb := docs.PutApiUpdateUsrJSONRequestBody{}
@@ -151,6 +147,26 @@ func (s *Server) UpdateUser(c *gin.Context) {
 
 	// レスポンス型バリデーション
 	err = utils.ValidateStructTwoWay[db.UpdateUserRow, docs.UpdateUsr](&row)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, row)
+}
+
+func (s *Server) DeleteSelf(c *gin.Context) {
+	email := c.MustGet("email").(string)
+
+	// 削除処理
+	row, err := s.q.DeleteUser(context.Background(), email)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// レスポンス型バリデーション
+	err = utils.ValidateStructTwoWay[db.DeleteUserRow, docs.DeletedUsr](&row)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

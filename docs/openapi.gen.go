@@ -164,6 +164,83 @@ type CreateUsrRecipe_Method_Supplement struct {
 	union json.RawMessage
 }
 
+// DeletedChef defines model for DeletedChef.
+type DeletedChef struct {
+	CreatedAt *string `json:"createdAt,omitempty"`
+	Id        string  `json:"id"`
+
+	// ImageUrl プロフィール画像
+	ImageUrl *string `json:"imageUrl,omitempty"`
+
+	// Name 登録名
+	Name string `json:"name"`
+
+	// NumFollower フォロワー数
+	NumFollower int `json:"numFollower"`
+
+	// NumRecipe レシピ数
+	NumRecipe int `json:"numRecipe"`
+
+	// Profile シェフ紹介
+	Profile   *string `json:"profile,omitempty"`
+	UpdatedAt *string `json:"updatedAt,omitempty"`
+}
+
+// DeletedRecipe defines model for DeletedRecipe.
+type DeletedRecipe struct {
+	// AccessLevel 公開、限定公開、非公開、下書き
+	AccessLevel int `json:"accessLevel"`
+
+	// ChefId シェフID
+	ChefId    *openapi_types.UUID `json:"chefId,omitempty"`
+	CreatedAt string              `json:"createdAt"`
+
+	// Id レシピID
+	Id openapi_types.UUID `json:"id"`
+
+	// ImageUrl 画像
+	ImageUrl *string `json:"imageUrl,omitempty"`
+
+	// Introduction レシピの紹介文
+	Introduction *string `json:"introduction,omitempty"`
+
+	// Link リンク
+	Link *[]string `json:"link,omitempty"`
+
+	// Name レシピ名
+	Name   string `json:"name"`
+	NumFav int    `json:"numFav"`
+
+	// Servings ＊人前
+	Servings  int    `json:"servings"`
+	UpdatedAt string `json:"updatedAt"`
+
+	// UsrId ユーザーID
+	UsrId *openapi_types.UUID `json:"usrId,omitempty"`
+}
+
+// DeletedUsr defines model for DeletedUsr.
+type DeletedUsr struct {
+	CreatedAt string `json:"createdAt"`
+
+	// Email ログインemail
+	Email string `json:"email"`
+	Id    string `json:"id"`
+
+	// ImageUrl プロフィール画像（任意）
+	ImageUrl *string `json:"imageUrl,omitempty"`
+
+	// Name ニックネーム
+	Name string `json:"name"`
+
+	// NumRecipe マイレシピ数
+	NumRecipe int `json:"numRecipe"`
+
+	// Profile 自己紹介（任意）
+	Profile   *string `json:"profile,omitempty"`
+	UpdatedAt string  `json:"updatedAt"`
+}
+
 // FeaturedChef defines model for FeaturedChef.
 type FeaturedChef struct {
 	Data []struct {

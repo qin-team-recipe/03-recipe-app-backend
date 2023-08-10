@@ -186,3 +186,27 @@ func (s *Server) UpdateRecipe(c *gin.Context) {
 
 	c.JSON(http.StatusOK, row)
 }
+
+func (s *Server) DeleteRecipe(c *gin.Context) {
+	// パスパラメータ取り出し
+	id, err := utils.StrToUUID(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	}
+
+	// 問い合わせ処理
+	row, err := s.q.DeleteRecipe(context.Background(), id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// レスポンス型バリデーション
+	err = utils.ValidateStructTwoWay[db.DeleteRecipeRow, docs.DeletedRecipe](&row)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, row)
+}
