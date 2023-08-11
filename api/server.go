@@ -70,6 +70,12 @@ func (s *Server) MountHandlers() {
 	api.GET("/recipes/trend", s.ListTrendRecipe)
 	//api.GET("/recipes/chef/:chef_id", s.)
 	//api.GET("/recipes/user/:usr_id", s.)
+
+	// ショッピングリスト関連
+	usr.GET("/lists", s.ListShoppingList)
+	usr.GET("/lists/:recipe_id", s.GetShoppingList)
+	usr.PUT("/lists/:id", s.UpdateShoppingList)
+	usr.POST("/lists", s.CreateShoppingList)
 }
 
 func (s *Server) Start(addr string) error {

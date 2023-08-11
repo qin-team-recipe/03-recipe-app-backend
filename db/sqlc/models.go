@@ -121,9 +121,13 @@ type ShoppingItem struct {
 	ShoppingListID pgtype.UUID `json:"shoppingListId"`
 	IngredientID   pgtype.UUID `json:"ingredientId"`
 	// インデックス
-	Idx       int32              `json:"idx"`
-	CreatedAt pgtype.Timestamptz `json:"createdAt"`
-	UpdatedAt pgtype.Timestamptz `json:"updatedAt"`
+	Idx int32 `json:"idx"`
+	// 材料名
+	Name string `json:"name"`
+	// 補足
+	Supplement pgtype.Text        `json:"supplement"`
+	CreatedAt  pgtype.Timestamptz `json:"createdAt"`
+	UpdatedAt  pgtype.Timestamptz `json:"updatedAt"`
 }
 
 // 買い物リスト
@@ -132,8 +136,8 @@ type ShoppingList struct {
 	UsrID pgtype.UUID `json:"usrId"`
 	// NULL：メモリスト／削除レシピ
 	RecipeID pgtype.UUID `json:"recipeId"`
-	// インデックス
-	Idx int32 `json:"idx"`
+	// リバースインデックス
+	RIdx int32 `json:"rIdx"`
 	// 「*人前」「メモリスト」
 	Description pgtype.Text `json:"description"`
 	// 清書or下書き
@@ -195,6 +199,21 @@ type VRecipe struct {
 	CreatedAt    pgtype.Timestamptz           `json:"createdAt"`
 	UpdatedAt    pgtype.Timestamptz           `json:"updatedAt"`
 	NumFav       int32                        `json:"numFav"`
+}
+
+type VShoppingList struct {
+	ID              pgtype.UUID              `json:"id"`
+	UsrID           pgtype.UUID              `json:"usrId"`
+	RecipeID        pgtype.UUID              `json:"recipeId"`
+	RecipeName      string                   `json:"recipeName"`
+	ChefName        pgtype.Text              `json:"chefName"`
+	GeneralChefName pgtype.Text              `json:"generalChefName"`
+	Description     pgtype.Text              `json:"description"`
+	IsFairCopy      bool                     `json:"isFairCopy"`
+	CreatedAt       pgtype.Timestamptz       `json:"createdAt"`
+	UpdatedAt       pgtype.Timestamptz       `json:"updatedAt"`
+	Item            dto.ShoppingItemArrayDto `json:"item"`
+	RIdx            int32                    `json:"rIdx"`
 }
 
 type VUsr struct {

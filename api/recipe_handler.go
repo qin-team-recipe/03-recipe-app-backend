@@ -6,6 +6,7 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 	"math/rand"
 	"net/http"
+	"reflect"
 
 	db "github.com/aopontann/gin-sqlc/db/sqlc"
 	"github.com/aopontann/gin-sqlc/docs"
@@ -26,6 +27,10 @@ func (s *Server) ListTrendRecipe(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
+	}
+
+	if response.Data == nil || reflect.ValueOf(response.Data).IsNil() {
+		response.Data = []db.FakeListTrendRecipeRow{}
 	}
 
 	// ダミーデータ作成（本番では消す）

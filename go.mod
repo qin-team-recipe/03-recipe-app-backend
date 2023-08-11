@@ -5,6 +5,7 @@ go 1.20
 require (
 	github.com/deepmap/oapi-codegen v1.13.0
 	github.com/gin-gonic/gin v1.9.1
+	github.com/jinzhu/copier v0.3.5
 	github.com/mattn/go-gimei v0.0.4
 	github.com/redis/go-redis/v9 v9.0.5
 	github.com/rs/xid v1.5.0
