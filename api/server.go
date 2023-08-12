@@ -41,11 +41,13 @@ func (s *Server) MountHandlers() {
 	// シェフ関連
 	api.GET("/chefs/:id", s.GetChef)
 	api.PUT("/chefs/:id", s.UpdateChef)
+	api.DELETE("/chefs/:id", s.DeleteChef)
 	api.POST("/chefs", s.CreateChef)
 	api.GET("/chefs/featured", s.ListFeaturedChef)
 
 	// ユーザー関連
 	api.POST("/users", s.CreateUser)
+	api.GET("/users/:id", s.GetUser)
 
 	//// 仮で作成　セッションの説明用 ////
 	// グループを作成
@@ -55,17 +57,26 @@ func (s *Server) MountHandlers() {
 	// ユーザIDのみ返すAPI
 	usr.GET("/id", s.GetUserId)
 
-	usr.GET("/users", s.GetUser)
-	usr.PUT("/users", s.UpdateUser)
+	usr.GET("/users", s.GetSelf)
+	usr.PUT("/users", s.UpdateSelf)
+	usr.DELETE("/users", s.DeleteSelf)
 
 	// レシピ関連
 	api.GET("/recipes/:id", s.GetRecipe)
 	api.PUT("/recipes/:id", s.UpdateRecipe)
+	api.DELETE("/recipes/:id", s.DeleteRecipe)
 	api.POST("/recipes/chef", s.CreateChefRecipe)
 	usr.POST("/recipes/user", s.CreateUsrRecipe)
 	api.GET("/recipes/trend", s.ListTrendRecipe)
 	//api.GET("/recipes/chef/:chef_id", s.)
 	//api.GET("/recipes/user/:usr_id", s.)
+
+	// ショッピングリスト関連
+	usr.GET("/lists", s.ListShoppingList)
+	usr.GET("/lists/:recipe_id", s.GetShoppingList)
+	usr.PUT("/lists/:id", s.UpdateShoppingList)
+	usr.DELETE("/lists/:id", s.DeleteShoppingList)
+	usr.POST("/lists", s.CreateShoppingList)
 }
 
 func (s *Server) Start(addr string) error {

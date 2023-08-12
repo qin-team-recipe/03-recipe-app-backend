@@ -70,3 +70,18 @@ SELECT
     num_follower
 FROM
     update_chef(@id, @data);
+
+-- name: DeleteChef :one
+DELETE FROM
+    chef
+WHERE
+    id = @id
+RETURNING
+    id,
+    name,
+    image_url,
+    profile,
+    created_at,
+    updated_at,
+    num_recipe,
+    num_follower;

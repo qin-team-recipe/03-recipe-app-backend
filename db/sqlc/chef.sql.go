@@ -56,6 +56,49 @@ func (q *Queries) CreateChef(ctx context.Context, data []byte) (CreateChefRow, e
 	return i, err
 }
 
+const deleteChef = `-- name: DeleteChef :one
+DELETE FROM
+    chef
+WHERE
+    id = $1
+RETURNING
+    id,
+    name,
+    image_url,
+    profile,
+    created_at,
+    updated_at,
+    num_recipe,
+    num_follower
+`
+
+type DeleteChefRow struct {
+	ID          pgtype.UUID        `json:"id"`
+	Name        string             `json:"name"`
+	ImageUrl    pgtype.Text        `json:"imageUrl"`
+	Profile     pgtype.Text        `json:"profile"`
+	CreatedAt   pgtype.Timestamptz `json:"createdAt"`
+	UpdatedAt   pgtype.Timestamptz `json:"updatedAt"`
+	NumRecipe   int32              `json:"numRecipe"`
+	NumFollower int32              `json:"numFollower"`
+}
+
+func (q *Queries) DeleteChef(ctx context.Context, id pgtype.UUID) (DeleteChefRow, error) {
+	row := q.db.QueryRow(ctx, deleteChef, id)
+	var i DeleteChefRow
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.ImageUrl,
+		&i.Profile,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.NumRecipe,
+		&i.NumFollower,
+	)
+	return i, err
+}
+
 const getChef = `-- name: GetChef :one
 SELECT
     id,

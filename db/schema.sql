@@ -36,7 +36,7 @@ CREATE TYPE type_vrecipe_ingredient AS (
 );
 
 -- Project Name : チーム03
--- Date/Time    : 2023/08/08 21:15:29
+-- Date/Time    : 2023/08/11 13:59:26
 -- Author       : kaned
 -- RDBMS Type   : PostgreSQL
 -- Application  : A5:SQL Mk-2
@@ -72,6 +72,8 @@ CREATE TABLE shopping_item (
   , shopping_list_id UUID NOT NULL
   , ingredient_id UUID
   , idx INTEGER NOT NULL
+  , name TEXT NOT NULL
+  , supplement TEXT
   , created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL
   , updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL
   , CONSTRAINT shopping_item_PKC PRIMARY KEY (id)
@@ -126,13 +128,16 @@ CREATE TABLE shopping_list (
   id UUID DEFAULT GEN_RANDOM_UUID() NOT NULL
   , usr_id UUID NOT NULL
   , recipe_id UUID
-  , idx INTEGER NOT NULL
+  , r_idx INTEGER NOT NULL
   , description TEXT
   , is_fair_copy BOOLEAN NOT NULL
   , created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL
   , updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL
   , CONSTRAINT shopping_list_PKC PRIMARY KEY (id)
 ) ;
+
+CREATE UNIQUE INDEX shopping_list_IX1
+  ON shopping_list(usr_id,recipe_id);
 
 -- ファボ中
 -- * BackupToTempTable
@@ -308,6 +313,8 @@ COMMENT ON COLUMN shopping_item.id IS '';
 COMMENT ON COLUMN shopping_item.shopping_list_id IS '';
 COMMENT ON COLUMN shopping_item.ingredient_id IS '';
 COMMENT ON COLUMN shopping_item.idx IS 'インデックス';
+COMMENT ON COLUMN shopping_item.name IS '材料名';
+COMMENT ON COLUMN shopping_item.supplement IS '補足';
 COMMENT ON COLUMN shopping_item.created_at IS '';
 COMMENT ON COLUMN shopping_item.updated_at IS '';
 
@@ -336,7 +343,7 @@ COMMENT ON TABLE shopping_list IS '買い物リスト';
 COMMENT ON COLUMN shopping_list.id IS '';
 COMMENT ON COLUMN shopping_list.usr_id IS '';
 COMMENT ON COLUMN shopping_list.recipe_id IS 'NULL：メモリスト／削除レシピ';
-COMMENT ON COLUMN shopping_list.idx IS 'インデックス';
+COMMENT ON COLUMN shopping_list.r_idx IS 'リバースインデックス';
 COMMENT ON COLUMN shopping_list.description IS '「*人前」「メモリスト」';
 COMMENT ON COLUMN shopping_list.is_fair_copy IS '清書or下書き';
 COMMENT ON COLUMN shopping_list.created_at IS '';
@@ -1234,3 +1241,83 @@ BEGIN
     RETURN rec;
 END
 $$;
+
+DROP VIEW if exists v_shopping_list CASCADE;
+
+CREATE VIEW v_shopping_list AS
+SELECT
+    shopping_list.id,
+    shopping_list.usr_id,
+    shopping_list.recipe_id,
+    CASE
+    WHEN shopping_list.recipe_id IS NOT NULL THEN
+        recipe.name
+    ELSE
+        '(メモリスト)'
+    END AS recipe_name,
+    CASE
+    WHEN shopping_list.recipe_id IS NOT NULL THEN
+        CASE
+        WHEN recipe.chef_id IS NOT NULL THEN
+            (SELECT
+                name
+            FROM
+                chef
+            WHERE
+                chef.id = recipe.chef_id)
+        ELSE
+            NULL::TEXT
+        END
+    ELSE
+        '(メモリスト)'
+    END AS chef_name,
+    CASE
+    WHEN recipe_id IS NOT NULL THEN
+        CASE
+        WHEN recipe.usr_id IS NOT NULL THEN
+            (SELECT
+                name
+            FROM
+                usr
+            WHERE
+                usr.id = recipe.usr_id)
+        ELSE
+            NULL::TEXT
+        END
+    ELSE
+        '(メモリスト)'
+    END AS general_chef_name,
+    shopping_list.description,
+    shopping_list.is_fair_copy,
+    shopping_list.created_at,
+    shopping_list.updated_at,
+    COALESCE(
+        (
+            SELECT JSONB_AGG(
+                JSONB_BUILD_OBJECT('id', id) ||
+                JSONB_BUILD_OBJECT('ingredientId', ingredient_id) ||
+                JSONB_BUILD_OBJECT('name', name) ||
+                JSONB_BUILD_OBJECT('supplement', supplement)
+--                 JSONB_BUILD_OBJECT('createdAt', created_at) ||
+--                 JSONB_BUILD_OBJECT('updatedAt', updated_at)
+            )
+            FROM
+            (
+                SELECT
+                    *
+                FROM
+                    shopping_item
+                WHERE
+                    shopping_list_id = shopping_list.id
+                ORDER BY idx
+            ) AS ingre
+        ),
+        TO_JSONB(ARRAY[]::INTEGER[])
+    ) AS item,
+    shopping_list.r_idx
+FROM
+    shopping_list
+LEFT OUTER JOIN
+    recipe
+ON
+    shopping_list.recipe_id = recipe.id;

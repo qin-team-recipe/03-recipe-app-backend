@@ -69,3 +69,22 @@ SELECT
     *
 FROM
     update_recipe(@id, @data);
+
+-- name: DeleteRecipe :one
+DELETE FROM
+    recipe
+WHERE
+    id = @id
+RETURNING
+    id,
+    chef_id,
+    usr_id,
+    name,
+    servings,
+    image_url,
+    introduction,
+    link,
+    access_level,
+    created_at,
+    updated_at,
+    num_fav;

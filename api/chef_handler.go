@@ -5,20 +5,20 @@ import (
 	"encoding/json"
 	"math/rand"
 	"net/http"
+	"reflect"
 
 	db "github.com/aopontann/gin-sqlc/db/sqlc"
 	"github.com/aopontann/gin-sqlc/docs"
 	"github.com/aopontann/gin-sqlc/utils"
-
 	"github.com/gin-gonic/gin"
 	"github.com/mattn/go-gimei"
 )
 
-type featuredChefResponse struct {
-	Data []db.FakeListFeaturedChefRow `json:"data"`
-}
-
 func (s *Server) ListFeaturedChef(c *gin.Context) {
+	type featuredChefResponse struct {
+		Data []db.FakeListFeaturedChefRow `json:"data"`
+	}
+
 	const limit int32 = 10
 	var response featuredChefResponse
 	var err error
@@ -26,6 +26,10 @@ func (s *Server) ListFeaturedChef(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
+	}
+
+	if response.Data == nil || reflect.ValueOf(response.Data).IsNil() {
+		response.Data = []db.FakeListFeaturedChefRow{}
 	}
 
 	// ダミーデータ作成（本番では消す）
@@ -71,7 +75,7 @@ func (s *Server) GetChef(c *gin.Context) {
 
 func (s *Server) CreateChef(c *gin.Context) {
 	// リクエストボディを構造体にバインド
-	reqb := docs.PostApiCreateChefJSONRequestBody{}
+	reqb := docs.PostApiChefsJSONRequestBody{}
 	if err := c.ShouldBind(&reqb); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -111,7 +115,7 @@ func (s *Server) UpdateChef(c *gin.Context) {
 	}
 
 	// リクエストボディを構造体にバインド
-	reqb := docs.PutApiUpdateChefJSONRequestBody{}
+	reqb := docs.PutApiChefsIdJSONRequestBody{}
 	if err := c.ShouldBind(&reqb); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -132,6 +136,30 @@ func (s *Server) UpdateChef(c *gin.Context) {
 
 	// レスポンス型バリデーション
 	err = utils.ValidateStructTwoWay[db.UpdateChefRow, docs.UpdateChef](&row)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, row)
+}
+
+func (s *Server) DeleteChef(c *gin.Context) {
+	// パスパラメータ取り出し
+	id, err := utils.StrToUUID(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	}
+
+	// 問い合わせ処理
+	row, err := s.q.DeleteChef(context.Background(), id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// レスポンス型バリデーション
+	err = utils.ValidateStructTwoWay[db.DeleteChefRow, docs.DeletedChef](&row)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

@@ -13,3 +13,14 @@ type RecipeIngredientDto struct {
 }
 
 type RecipeIngredientArrayDto []RecipeIngredientDto
+
+type ShoppingItemDto struct {
+	ID           pgtype.UUID `json:"id"`
+	IngredientId pgtype.UUID `json:"ingredientId"`
+	Name         string      `json:"name"`
+	Supplement   pgtype.Text `json:"supplement"`
+	//CreatedAt  pgtype.Timestamptz `json:"createdAt"`
+	//UpdatedAt  pgtype.Timestamptz `json:"updatedAt"`
+}
+
+type ShoppingItemArrayDto []ShoppingItemDto

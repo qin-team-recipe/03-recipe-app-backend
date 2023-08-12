@@ -101,6 +101,45 @@ type CreateChefRecipe_Method_Supplement struct {
 	union json.RawMessage
 }
 
+// CreateShoppingList defines model for CreateShoppingList.
+type CreateShoppingList struct {
+	CreatedAt string `json:"createdAt"`
+
+	// Description 「*人前」「メモリスト」
+	Description *string `json:"description,omitempty"`
+
+	// Id 買い物リストID
+	Id openapi_types.UUID `json:"id"`
+
+	// IsFairCopy true：清書、false：下書き
+	IsFairCopy bool `json:"isFairCopy"`
+
+	// Item 買い物明細
+	Item []struct {
+		// Id 買い物明細ID
+		Id openapi_types.UUID `json:"id"`
+
+		// IngredientId 材料ID
+		IngredientId *openapi_types.UUID `json:"ingredientId,omitempty"`
+
+		// Name 材料名
+		Name string `json:"name"`
+
+		// Supplement 補足
+		Supplement *string `json:"supplement,omitempty"`
+	} `json:"item"`
+
+	// RIdx リバースインデックス
+	RIdx int `json:"rIdx"`
+
+	// RecipeId レシピID
+	RecipeId  *openapi_types.UUID `json:"recipeId,omitempty"`
+	UpdatedAt string              `json:"updatedAt"`
+
+	// UsrId ユーザーID
+	UsrId openapi_types.UUID `json:"usrId"`
+}
+
 // CreateUsrRecipe defines model for CreateUsrRecipe.
 type CreateUsrRecipe struct {
 	// AccessLevel 公開、限定公開、非公開、下書き
@@ -162,6 +201,107 @@ type CreateUsrRecipeMethodSupplement1 = []map[string]interface{}
 // CreateUsrRecipe_Method_Supplement 補足
 type CreateUsrRecipe_Method_Supplement struct {
 	union json.RawMessage
+}
+
+// DeletedChef defines model for DeletedChef.
+type DeletedChef struct {
+	CreatedAt *string `json:"createdAt,omitempty"`
+	Id        string  `json:"id"`
+
+	// ImageUrl プロフィール画像
+	ImageUrl *string `json:"imageUrl,omitempty"`
+
+	// Name 登録名
+	Name string `json:"name"`
+
+	// NumFollower フォロワー数
+	NumFollower int `json:"numFollower"`
+
+	// NumRecipe レシピ数
+	NumRecipe int `json:"numRecipe"`
+
+	// Profile シェフ紹介
+	Profile   *string `json:"profile,omitempty"`
+	UpdatedAt *string `json:"updatedAt,omitempty"`
+}
+
+// DeletedRecipe defines model for DeletedRecipe.
+type DeletedRecipe struct {
+	// AccessLevel 公開、限定公開、非公開、下書き
+	AccessLevel int `json:"accessLevel"`
+
+	// ChefId シェフID
+	ChefId    *openapi_types.UUID `json:"chefId,omitempty"`
+	CreatedAt string              `json:"createdAt"`
+
+	// Id レシピID
+	Id openapi_types.UUID `json:"id"`
+
+	// ImageUrl 画像
+	ImageUrl *string `json:"imageUrl,omitempty"`
+
+	// Introduction レシピの紹介文
+	Introduction *string `json:"introduction,omitempty"`
+
+	// Link リンク
+	Link *[]string `json:"link,omitempty"`
+
+	// Name レシピ名
+	Name   string `json:"name"`
+	NumFav int    `json:"numFav"`
+
+	// Servings ＊人前
+	Servings  int    `json:"servings"`
+	UpdatedAt string `json:"updatedAt"`
+
+	// UsrId ユーザーID
+	UsrId *openapi_types.UUID `json:"usrId,omitempty"`
+}
+
+// DeletedShoppingList defines model for DeletedShoppingList.
+type DeletedShoppingList struct {
+	CreatedAt string `json:"createdAt"`
+
+	// Description 「*人前」「メモリスト」
+	Description *string `json:"description,omitempty"`
+
+	// Id 買い物リストID
+	Id openapi_types.UUID `json:"id"`
+
+	// IsFairCopy true：清書、false：下書き
+	IsFairCopy bool `json:"isFairCopy"`
+
+	// RIdx リバースインデックス
+	RIdx int `json:"rIdx"`
+
+	// RecipeId レシピID
+	RecipeId  *openapi_types.UUID `json:"recipeId,omitempty"`
+	UpdatedAt string              `json:"updatedAt"`
+
+	// UsrId ユーザーID
+	UsrId openapi_types.UUID `json:"usrId"`
+}
+
+// DeletedUsr defines model for DeletedUsr.
+type DeletedUsr struct {
+	CreatedAt string `json:"createdAt"`
+
+	// Email ログインemail
+	Email string `json:"email"`
+	Id    string `json:"id"`
+
+	// ImageUrl プロフィール画像（任意）
+	ImageUrl *string `json:"imageUrl,omitempty"`
+
+	// Name ニックネーム
+	Name string `json:"name"`
+
+	// NumRecipe マイレシピ数
+	NumRecipe int `json:"numRecipe"`
+
+	// Profile 自己紹介（任意）
+	Profile   *string `json:"profile,omitempty"`
+	UpdatedAt string  `json:"updatedAt"`
 }
 
 // FeaturedChef defines model for FeaturedChef.
@@ -273,6 +413,100 @@ type GetRecipeMethodSupplement1 = []map[string]interface{}
 // GetRecipe_Method_Supplement 補足
 type GetRecipe_Method_Supplement struct {
 	union json.RawMessage
+}
+
+// GetShoppingList defines model for GetShoppingList.
+type GetShoppingList struct {
+	// ChefName 有名シェフ名
+	ChefName  *string `json:"chefName,omitempty"`
+	CreatedAt string  `json:"createdAt"`
+
+	// Description 「*人前」「メモリスト」
+	Description *string `json:"description,omitempty"`
+
+	// GeneralChefName 一般シェフ名
+	GeneralChefName *string `json:"generalChefName,omitempty"`
+
+	// Id 買い物リストID
+	Id openapi_types.UUID `json:"id"`
+
+	// IsFairCopy true：清書、false：下書き
+	IsFairCopy bool `json:"isFairCopy"`
+
+	// Item 買い物明細
+	Item []struct {
+		// Id 買い物明細ID
+		Id openapi_types.UUID `json:"id"`
+
+		// IngredientId 材料ID
+		IngredientId *openapi_types.UUID `json:"ingredientId,omitempty"`
+
+		// Name 材料名
+		Name string `json:"name"`
+
+		// Supplement 補足
+		Supplement *string `json:"supplement,omitempty"`
+	} `json:"item"`
+
+	// RIdx リバースインデックス
+	RIdx     int                 `json:"rIdx"`
+	RecipeId *openapi_types.UUID `json:"recipeId,omitempty"`
+
+	// RecipeName レシピ名
+	RecipeName string `json:"recipeName"`
+	UpdatedAt  string `json:"updatedAt"`
+
+	// UsrId ユーザーID
+	UsrId openapi_types.UUID `json:"usrId"`
+}
+
+// GetShoppingLists defines model for GetShoppingLists.
+type GetShoppingLists struct {
+	Data []struct {
+		// ChefName 有名シェフ名
+		ChefName  *string `json:"chefName,omitempty"`
+		CreatedAt string  `json:"createdAt"`
+
+		// Description 「*人前」「メモリスト」
+		Description *string `json:"description,omitempty"`
+
+		// GeneralChefName 一般シェフ名
+		GeneralChefName *string `json:"generalChefName,omitempty"`
+
+		// Id 買い物リストID
+		Id openapi_types.UUID `json:"id"`
+
+		// IsFairCopy true：清書、false：下書き
+		IsFairCopy bool `json:"isFairCopy"`
+
+		// Item 買い物明細
+		Item []struct {
+			// Id 買い物明細ID
+			Id openapi_types.UUID `json:"id"`
+
+			// IngredientId 材料ID
+			IngredientId *openapi_types.UUID `json:"ingredientId,omitempty"`
+
+			// Name 材料名
+			Name string `json:"name"`
+
+			// Supplement 補足
+			Supplement *string `json:"supplement,omitempty"`
+		} `json:"item"`
+
+		// RIdx リバースインデックス
+		RIdx int `json:"rIdx"`
+
+		// RecipeId レシピID
+		RecipeId *openapi_types.UUID `json:"recipeId,omitempty"`
+
+		// RecipeName レシピ名
+		RecipeName string `json:"recipeName"`
+		UpdatedAt  string `json:"updatedAt"`
+
+		// UsrId ユーザーID
+		UsrId openapi_types.UUID `json:"usrId"`
+	} `json:"data"`
 }
 
 // GetUsr defines model for GetUsr.
@@ -417,6 +651,45 @@ type UpdateRecipe_Method_Supplement struct {
 	union json.RawMessage
 }
 
+// UpdateShoppingList defines model for UpdateShoppingList.
+type UpdateShoppingList struct {
+	CreatedAt string `json:"createdAt"`
+
+	// Description 「*人前」「メモリスト」
+	Description *string `json:"description,omitempty"`
+
+	// Id 買い物リストID
+	Id openapi_types.UUID `json:"id"`
+
+	// IsFairCopy true：清書、false：下書き
+	IsFairCopy bool `json:"isFairCopy"`
+
+	// Item 買い物明細
+	Item []struct {
+		// Id 買い物明細ID
+		Id openapi_types.UUID `json:"id"`
+
+		// IngredientId 材料ID
+		IngredientId *openapi_types.UUID `json:"ingredientId,omitempty"`
+
+		// Name 材料名
+		Name string `json:"name"`
+
+		// Supplement 補足
+		Supplement *string `json:"supplement,omitempty"`
+	} `json:"item"`
+
+	// RIdx リバースインデックス
+	RIdx int `json:"rIdx"`
+
+	// RecipeId レシピID
+	RecipeId  *openapi_types.UUID `json:"recipeId,omitempty"`
+	UpdatedAt string              `json:"updatedAt"`
+
+	// UsrId ユーザーID
+	UsrId openapi_types.UUID `json:"usrId"`
+}
+
 // UpdateUsr defines model for UpdateUsr.
 type UpdateUsr struct {
 	CreatedAt string `json:"createdAt"`
@@ -445,8 +718,8 @@ type UpdateUsr struct {
 	UpdatedAt string  `json:"updatedAt"`
 }
 
-// PostApiCreateChefJSONBody defines parameters for PostApiCreateChef.
-type PostApiCreateChefJSONBody struct {
+// PostApiChefsJSONBody defines parameters for PostApiChefs.
+type PostApiChefsJSONBody struct {
 	// ImageUrl プロフィール画像
 	ImageUrl *string `json:"imageUrl,omitempty"`
 
@@ -463,8 +736,8 @@ type PostApiCreateChefJSONBody struct {
 	Profile *string `json:"profile,omitempty"`
 }
 
-// PutApiUpdateChefJSONBody defines parameters for PutApiUpdateChef.
-type PutApiUpdateChefJSONBody struct {
+// PutApiChefsIdJSONBody defines parameters for PutApiChefsId.
+type PutApiChefsIdJSONBody struct {
 	// ImageUrl プロフィール画像
 	ImageUrl *string `json:"imageUrl,omitempty"`
 
@@ -481,8 +754,8 @@ type PutApiUpdateChefJSONBody struct {
 	Profile *string `json:"profile,omitempty"`
 }
 
-// PostApiCreateChefRecipeJSONBody defines parameters for PostApiCreateChefRecipe.
-type PostApiCreateChefRecipeJSONBody struct {
+// PostApiRecipesChefJSONBody defines parameters for PostApiRecipesChef.
+type PostApiRecipesChefJSONBody struct {
 	// AccessLevel 公開、限定公開、非公開、下書き
 	AccessLevel int `binding:"required" json:"accessLevel"`
 
@@ -520,8 +793,8 @@ type PostApiCreateChefRecipeJSONBody struct {
 	Servings int `binding:"required" json:"servings"`
 }
 
-// PutApiUpdateRecipeJSONBody defines parameters for PutApiUpdateRecipe.
-type PutApiUpdateRecipeJSONBody struct {
+// PutApiRecipesIdJSONBody defines parameters for PutApiRecipesId.
+type PutApiRecipesIdJSONBody struct {
 	// AccessLevel 公開、限定公開、非公開、下書き
 	AccessLevel int `binding:"required" json:"accessLevel"`
 
@@ -556,8 +829,62 @@ type PutApiUpdateRecipeJSONBody struct {
 	Servings int `binding:"required" json:"servings"`
 }
 
-// PostApiCreateUsrRecipeJSONBody defines parameters for PostApiCreateUsrRecipe.
-type PostApiCreateUsrRecipeJSONBody struct {
+// PostApiUserListsJSONBody defines parameters for PostApiUserLists.
+type PostApiUserListsJSONBody struct {
+	// Description 「*人前」「メモリスト」
+	Description *string `json:"description,omitempty"`
+
+	// IsFairCopy true：清書、false：下書き
+	IsFairCopy bool `binding:"required" json:"isFairCopy"`
+
+	// Item 買い物明細
+	Item []struct {
+		// IngredientId 材料ID（メモリストのときはnull）
+		IngredientId *string `json:"ingredientId,omitempty"`
+
+		// Name 材料名
+		Name string `binding:"required" json:"name"`
+
+		// Supplement 補足
+		Supplement *string `json:"supplement,omitempty"`
+	} `binding:"required" json:"item"`
+
+	// RecipeId レシピID（メモリストのときはnull）
+	RecipeId *string `json:"recipeId,omitempty"`
+}
+
+// PutApiUserListsIdJSONBody defines parameters for PutApiUserListsId.
+type PutApiUserListsIdJSONBody struct {
+	// Description 「*人前」「メモリスト」
+	Description *string `json:"description,omitempty"`
+
+	// IsFairCopy true：清書、false：下書き
+	IsFairCopy bool `binding:"required" json:"isFairCopy"`
+
+	// Item 買い物明細
+	Item []struct {
+		// Id 買い物明細ID（新規登録のときはnull）
+		Id *string `json:"id,omitempty"`
+
+		// IngredientId 材料ID（メモリストのときはnull）
+		IngredientId *string `json:"ingredientId,omitempty"`
+
+		// Name 材料名
+		Name string `binding:"required" json:"name"`
+
+		// Supplement 補足
+		Supplement *string `json:"supplement,omitempty"`
+	} `binding:"required" json:"item"`
+
+	// RIdx リバースインデックス
+	RIdx int `binding:"required" json:"rIdx"`
+
+	// RecipeId レシピID（メモリストのときはnull）
+	RecipeId *string `json:"recipeId,omitempty"`
+}
+
+// PostApiUserRecipesUserJSONBody defines parameters for PostApiUserRecipesUser.
+type PostApiUserRecipesUserJSONBody struct {
 	// AccessLevel 公開、限定公開、非公開、下書き
 	AccessLevel int `binding:"required" json:"accessLevel"`
 
@@ -592,8 +919,8 @@ type PostApiCreateUsrRecipeJSONBody struct {
 	Servings int `binding:"required" json:"servings"`
 }
 
-// PutApiUpdateUsrJSONBody defines parameters for PutApiUpdateUsr.
-type PutApiUpdateUsrJSONBody struct {
+// PutApiUserUsersJSONBody defines parameters for PutApiUserUsers.
+type PutApiUserUsersJSONBody struct {
 	// ImageUrl プロフィール画像（任意）
 	ImageUrl *string `json:"imageUrl,omitempty"`
 
@@ -610,23 +937,29 @@ type PutApiUpdateUsrJSONBody struct {
 	Profile *string `json:"profile,omitempty"`
 }
 
-// PostApiCreateChefJSONRequestBody defines body for PostApiCreateChef for application/json ContentType.
-type PostApiCreateChefJSONRequestBody PostApiCreateChefJSONBody
+// PostApiChefsJSONRequestBody defines body for PostApiChefs for application/json ContentType.
+type PostApiChefsJSONRequestBody PostApiChefsJSONBody
 
-// PutApiUpdateChefJSONRequestBody defines body for PutApiUpdateChef for application/json ContentType.
-type PutApiUpdateChefJSONRequestBody PutApiUpdateChefJSONBody
+// PutApiChefsIdJSONRequestBody defines body for PutApiChefsId for application/json ContentType.
+type PutApiChefsIdJSONRequestBody PutApiChefsIdJSONBody
 
-// PostApiCreateChefRecipeJSONRequestBody defines body for PostApiCreateChefRecipe for application/json ContentType.
-type PostApiCreateChefRecipeJSONRequestBody PostApiCreateChefRecipeJSONBody
+// PostApiRecipesChefJSONRequestBody defines body for PostApiRecipesChef for application/json ContentType.
+type PostApiRecipesChefJSONRequestBody PostApiRecipesChefJSONBody
 
-// PutApiUpdateRecipeJSONRequestBody defines body for PutApiUpdateRecipe for application/json ContentType.
-type PutApiUpdateRecipeJSONRequestBody PutApiUpdateRecipeJSONBody
+// PutApiRecipesIdJSONRequestBody defines body for PutApiRecipesId for application/json ContentType.
+type PutApiRecipesIdJSONRequestBody PutApiRecipesIdJSONBody
 
-// PostApiCreateUsrRecipeJSONRequestBody defines body for PostApiCreateUsrRecipe for application/json ContentType.
-type PostApiCreateUsrRecipeJSONRequestBody PostApiCreateUsrRecipeJSONBody
+// PostApiUserListsJSONRequestBody defines body for PostApiUserLists for application/json ContentType.
+type PostApiUserListsJSONRequestBody PostApiUserListsJSONBody
 
-// PutApiUpdateUsrJSONRequestBody defines body for PutApiUpdateUsr for application/json ContentType.
-type PutApiUpdateUsrJSONRequestBody PutApiUpdateUsrJSONBody
+// PutApiUserListsIdJSONRequestBody defines body for PutApiUserListsId for application/json ContentType.
+type PutApiUserListsIdJSONRequestBody PutApiUserListsIdJSONBody
+
+// PostApiUserRecipesUserJSONRequestBody defines body for PostApiUserRecipesUser for application/json ContentType.
+type PostApiUserRecipesUserJSONRequestBody PostApiUserRecipesUserJSONBody
+
+// PutApiUserUsersJSONRequestBody defines body for PutApiUserUsers for application/json ContentType.
+type PutApiUserUsersJSONRequestBody PutApiUserUsersJSONBody
 
 // AsCreateChefRecipeMethodSupplement0 returns the union data inside the CreateChefRecipe_Method_Supplement as a CreateChefRecipeMethodSupplement0
 func (t CreateChefRecipe_Method_Supplement) AsCreateChefRecipeMethodSupplement0() (CreateChefRecipeMethodSupplement0, error) {
