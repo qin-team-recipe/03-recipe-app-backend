@@ -10,16 +10,15 @@ import (
 	db "github.com/aopontann/gin-sqlc/db/sqlc"
 	"github.com/aopontann/gin-sqlc/docs"
 	"github.com/aopontann/gin-sqlc/utils"
-
 	"github.com/gin-gonic/gin"
 	"github.com/mattn/go-gimei"
 )
 
-type featuredChefResponse struct {
-	Data []db.FakeListFeaturedChefRow `json:"data"`
-}
-
 func (s *Server) ListFeaturedChef(c *gin.Context) {
+	type featuredChefResponse struct {
+		Data []db.FakeListFeaturedChefRow `json:"data"`
+	}
+
 	const limit int32 = 10
 	var response featuredChefResponse
 	var err error
@@ -76,7 +75,7 @@ func (s *Server) GetChef(c *gin.Context) {
 
 func (s *Server) CreateChef(c *gin.Context) {
 	// リクエストボディを構造体にバインド
-	reqb := docs.PostApiCreateChefJSONRequestBody{}
+	reqb := docs.PostApiChefsJSONRequestBody{}
 	if err := c.ShouldBind(&reqb); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -116,7 +115,7 @@ func (s *Server) UpdateChef(c *gin.Context) {
 	}
 
 	// リクエストボディを構造体にバインド
-	reqb := docs.PutApiUpdateChefJSONRequestBody{}
+	reqb := docs.PutApiChefsIdJSONRequestBody{}
 	if err := c.ShouldBind(&reqb); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

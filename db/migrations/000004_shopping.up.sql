@@ -76,3 +76,15 @@ COMMENT ON COLUMN shopping_list.description IS '「*人前」「メモリスト�
 COMMENT ON COLUMN shopping_list.is_fair_copy IS '清書or下書き';
 COMMENT ON COLUMN shopping_list.created_at IS '';
 COMMENT ON COLUMN shopping_list.updated_at IS '';
+
+-- TRIGGER
+CREATE TRIGGER t_shopping_item_updated_at
+    BEFORE UPDATE ON shopping_item
+    FOR EACH ROW
+    EXECUTE FUNCTION refresh_updated_at();
+
+CREATE TRIGGER t_shopping_list_updated_at
+    BEFORE UPDATE ON shopping_list
+    FOR EACH ROW
+    EXECUTE FUNCTION refresh_updated_at();
+

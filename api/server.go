@@ -75,6 +75,7 @@ func (s *Server) MountHandlers() {
 	usr.GET("/lists", s.ListShoppingList)
 	usr.GET("/lists/:recipe_id", s.GetShoppingList)
 	usr.PUT("/lists/:id", s.UpdateShoppingList)
+	usr.DELETE("/lists/:id", s.DeleteShoppingList)
 	usr.POST("/lists", s.CreateShoppingList)
 }
 

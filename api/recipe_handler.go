@@ -3,7 +3,6 @@ package api
 import (
 	"context"
 	"encoding/json"
-	"github.com/jackc/pgx/v5/pgtype"
 	"math/rand"
 	"net/http"
 	"reflect"
@@ -12,14 +11,15 @@ import (
 	"github.com/aopontann/gin-sqlc/docs"
 	"github.com/aopontann/gin-sqlc/utils"
 	"github.com/gin-gonic/gin"
+	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/mattn/go-gimei"
 )
 
-type trendRecipeResponse struct {
-	Data []db.FakeListTrendRecipeRow `json:"data"`
-}
-
 func (s *Server) ListTrendRecipe(c *gin.Context) {
+	type trendRecipeResponse struct {
+		Data []db.FakeListTrendRecipeRow `json:"data"`
+	}
+
 	const limit int32 = 10
 	var response trendRecipeResponse
 	var err error
@@ -77,7 +77,7 @@ func (s *Server) GetRecipe(c *gin.Context) {
 
 func (s *Server) CreateChefRecipe(c *gin.Context) {
 	// リクエストボディを構造体にバインド
-	reqb := docs.PostApiCreateChefRecipeJSONRequestBody{}
+	reqb := docs.PostApiRecipesChefJSONRequestBody{}
 	if err := c.ShouldBind(&reqb); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -108,7 +108,7 @@ func (s *Server) CreateChefRecipe(c *gin.Context) {
 
 func (s *Server) CreateUsrRecipe(c *gin.Context) {
 	// リクエストボディを構造体にバインド
-	reqb := docs.PostApiCreateUsrRecipeJSONRequestBody{}
+	reqb := docs.PostApiUserRecipesUserJSONRequestBody{}
 	if err := c.ShouldBind(&reqb); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -123,7 +123,7 @@ func (s *Server) CreateUsrRecipe(c *gin.Context) {
 	}
 
 	// 構造体にuserIdを追加してJSONに変換
-	type Alias docs.PostApiCreateUsrRecipeJSONRequestBody
+	type Alias docs.PostApiUserRecipesUserJSONRequestBody
 	jsn, err := json.Marshal(&struct {
 		UsrId pgtype.UUID `json:"usrId"`
 		*Alias
@@ -163,7 +163,7 @@ func (s *Server) UpdateRecipe(c *gin.Context) {
 	}
 
 	// リクエストボディを構造体にバインド
-	reqb := docs.PutApiUpdateRecipeJSONRequestBody{}
+	reqb := docs.PutApiRecipesIdJSONRequestBody{}
 	if err := c.ShouldBind(&reqb); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

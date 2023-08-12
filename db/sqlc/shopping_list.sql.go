@@ -12,68 +12,6 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-const createShoppingItem = `-- name: CreateShoppingItem :one
-INSERT INTO shopping_item (
-    shopping_list_id,
-    ingredient_id,
-    idx,
-    name,
-    supplement
-)
-VALUES
-(
-    $1,
-    $2,
-    $3,
-    $4,
-    $5
-)
-RETURNING
-    id,
-    ingredient_id,
-    name,
-    supplement,
-    created_at,
-    updated_at
-`
-
-type CreateShoppingItemParams struct {
-	ShoppingListID pgtype.UUID `json:"shoppingListId"`
-	IngredientID   pgtype.UUID `json:"ingredientId"`
-	Idx            int32       `json:"idx"`
-	Name           string      `json:"name"`
-	Supplement     pgtype.Text `json:"supplement"`
-}
-
-type CreateShoppingItemRow struct {
-	ID           pgtype.UUID        `json:"id"`
-	IngredientID pgtype.UUID        `json:"ingredientId"`
-	Name         string             `json:"name"`
-	Supplement   pgtype.Text        `json:"supplement"`
-	CreatedAt    pgtype.Timestamptz `json:"createdAt"`
-	UpdatedAt    pgtype.Timestamptz `json:"updatedAt"`
-}
-
-func (q *Queries) CreateShoppingItem(ctx context.Context, arg CreateShoppingItemParams) (CreateShoppingItemRow, error) {
-	row := q.db.QueryRow(ctx, createShoppingItem,
-		arg.ShoppingListID,
-		arg.IngredientID,
-		arg.Idx,
-		arg.Name,
-		arg.Supplement,
-	)
-	var i CreateShoppingItemRow
-	err := row.Scan(
-		&i.ID,
-		&i.IngredientID,
-		&i.Name,
-		&i.Supplement,
-		&i.CreatedAt,
-		&i.UpdatedAt,
-	)
-	return i, err
-}
-
 const createShoppingList = `-- name: CreateShoppingList :one
 INSERT INTO shopping_list (
     usr_id,
@@ -87,13 +25,11 @@ VALUES
     $1,
     $2,
     (SELECT
-        COALESCE(MAX(r_idx), 1)
+        COALESCE(MAX(r_idx) + 1, 1)
     FROM
         shopping_list
     WHERE
         usr_id = $1
-    AND
-        recipe_id = $2
     ),
     $3,
     $4
@@ -102,6 +38,7 @@ RETURNING
     id,
     usr_id,
     recipe_id,
+    r_idx,
     description,
     is_fair_copy,
     created_at,
@@ -115,28 +52,19 @@ type CreateShoppingListParams struct {
 	IsFairCopy  bool        `json:"isFairCopy"`
 }
 
-type CreateShoppingListRow struct {
-	ID          pgtype.UUID        `json:"id"`
-	UsrID       pgtype.UUID        `json:"usrId"`
-	RecipeID    pgtype.UUID        `json:"recipeId"`
-	Description pgtype.Text        `json:"description"`
-	IsFairCopy  bool               `json:"isFairCopy"`
-	CreatedAt   pgtype.Timestamptz `json:"createdAt"`
-	UpdatedAt   pgtype.Timestamptz `json:"updatedAt"`
-}
-
-func (q *Queries) CreateShoppingList(ctx context.Context, arg CreateShoppingListParams) (CreateShoppingListRow, error) {
+func (q *Queries) CreateShoppingList(ctx context.Context, arg CreateShoppingListParams) (ShoppingList, error) {
 	row := q.db.QueryRow(ctx, createShoppingList,
 		arg.UsrID,
 		arg.RecipeID,
 		arg.Description,
 		arg.IsFairCopy,
 	)
-	var i CreateShoppingListRow
+	var i ShoppingList
 	err := row.Scan(
 		&i.ID,
 		&i.UsrID,
 		&i.RecipeID,
+		&i.RIdx,
 		&i.Description,
 		&i.IsFairCopy,
 		&i.CreatedAt,
@@ -145,23 +73,43 @@ func (q *Queries) CreateShoppingList(ctx context.Context, arg CreateShoppingList
 	return i, err
 }
 
-const deleteNotAnyShoppingItem = `-- name: DeleteNotAnyShoppingItem :exec
+const deleteShoppingList = `-- name: DeleteShoppingList :one
 DELETE FROM
-    shopping_item
+    shopping_list
 WHERE
-    shopping_list_id = $1
+    usr_id = $1
 AND
-    NOT (id = ANY ($2::UUID[]))
+    id = $2
+RETURNING
+    id,
+    usr_id,
+    recipe_id,
+    r_idx,
+    description,
+    is_fair_copy,
+    created_at,
+    updated_at
 `
 
-type DeleteNotAnyShoppingItemParams struct {
-	ShoppingListID pgtype.UUID   `json:"shoppingListId"`
-	ID             []pgtype.UUID `json:"id"`
+type DeleteShoppingListParams struct {
+	UsrID pgtype.UUID `json:"usrId"`
+	ID    pgtype.UUID `json:"id"`
 }
 
-func (q *Queries) DeleteNotAnyShoppingItem(ctx context.Context, arg DeleteNotAnyShoppingItemParams) error {
-	_, err := q.db.Exec(ctx, deleteNotAnyShoppingItem, arg.ShoppingListID, arg.ID)
-	return err
+func (q *Queries) DeleteShoppingList(ctx context.Context, arg DeleteShoppingListParams) (ShoppingList, error) {
+	row := q.db.QueryRow(ctx, deleteShoppingList, arg.UsrID, arg.ID)
+	var i ShoppingList
+	err := row.Scan(
+		&i.ID,
+		&i.UsrID,
+		&i.RecipeID,
+		&i.RIdx,
+		&i.Description,
+		&i.IsFairCopy,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
 }
 
 const getShoppingList = `-- name: GetShoppingList :one
@@ -169,6 +117,7 @@ SELECT
     id,
     usr_id,
     recipe_id,
+    r_idx,
     recipe_name,
     chef_name,
     general_chef_name,
@@ -194,6 +143,7 @@ type GetShoppingListRow struct {
 	ID              pgtype.UUID              `json:"id"`
 	UsrID           pgtype.UUID              `json:"usrId"`
 	RecipeID        pgtype.UUID              `json:"recipeId"`
+	RIdx            int32                    `json:"rIdx"`
 	RecipeName      string                   `json:"recipeName"`
 	ChefName        pgtype.Text              `json:"chefName"`
 	GeneralChefName pgtype.Text              `json:"generalChefName"`
@@ -211,6 +161,7 @@ func (q *Queries) GetShoppingList(ctx context.Context, arg GetShoppingListParams
 		&i.ID,
 		&i.UsrID,
 		&i.RecipeID,
+		&i.RIdx,
 		&i.RecipeName,
 		&i.ChefName,
 		&i.GeneralChefName,
@@ -223,11 +174,140 @@ func (q *Queries) GetShoppingList(ctx context.Context, arg GetShoppingListParams
 	return i, err
 }
 
+const innerCreateShoppingItem = `-- name: InnerCreateShoppingItem :one
+INSERT INTO shopping_item (
+    shopping_list_id,
+    ingredient_id,
+    idx,
+    name,
+    supplement
+)
+VALUES
+(
+    $1,
+    $2,
+    $3,
+    $4,
+    $5
+)
+RETURNING
+    id,
+    ingredient_id,
+    name,
+    supplement
+`
+
+type InnerCreateShoppingItemParams struct {
+	ShoppingListID pgtype.UUID `json:"shoppingListId"`
+	IngredientID   pgtype.UUID `json:"ingredientId"`
+	Idx            int32       `json:"idx"`
+	Name           string      `json:"name"`
+	Supplement     pgtype.Text `json:"supplement"`
+}
+
+type InnerCreateShoppingItemRow struct {
+	ID           pgtype.UUID `json:"id"`
+	IngredientID pgtype.UUID `json:"ingredientId"`
+	Name         string      `json:"name"`
+	Supplement   pgtype.Text `json:"supplement"`
+}
+
+func (q *Queries) InnerCreateShoppingItem(ctx context.Context, arg InnerCreateShoppingItemParams) (InnerCreateShoppingItemRow, error) {
+	row := q.db.QueryRow(ctx, innerCreateShoppingItem,
+		arg.ShoppingListID,
+		arg.IngredientID,
+		arg.Idx,
+		arg.Name,
+		arg.Supplement,
+	)
+	var i InnerCreateShoppingItemRow
+	err := row.Scan(
+		&i.ID,
+		&i.IngredientID,
+		&i.Name,
+		&i.Supplement,
+	)
+	return i, err
+}
+
+const innerDeleteNotAnyShoppingItem = `-- name: InnerDeleteNotAnyShoppingItem :exec
+DELETE FROM
+    shopping_item
+WHERE
+    shopping_list_id = $1
+AND
+    NOT (id = ANY ($2::UUID[]))
+`
+
+type InnerDeleteNotAnyShoppingItemParams struct {
+	ShoppingListID pgtype.UUID   `json:"shoppingListId"`
+	ID             []pgtype.UUID `json:"id"`
+}
+
+func (q *Queries) InnerDeleteNotAnyShoppingItem(ctx context.Context, arg InnerDeleteNotAnyShoppingItemParams) error {
+	_, err := q.db.Exec(ctx, innerDeleteNotAnyShoppingItem, arg.ShoppingListID, arg.ID)
+	return err
+}
+
+const innerUpdateShoppingItem = `-- name: InnerUpdateShoppingItem :one
+UPDATE shopping_item SET
+    idx           = $1,
+    name          = $2,
+    supplement    = $3
+WHERE
+    (ingredient_id = $4 OR $4 IS NULL)
+AND
+    shopping_list_id = $5
+AND
+    id = $6
+RETURNING
+    id,
+    ingredient_id,
+    name,
+    supplement
+`
+
+type InnerUpdateShoppingItemParams struct {
+	Idx            int32       `json:"idx"`
+	Name           string      `json:"name"`
+	Supplement     pgtype.Text `json:"supplement"`
+	IngredientID   pgtype.UUID `json:"ingredientId"`
+	ShoppingListID pgtype.UUID `json:"shoppingListId"`
+	ID             pgtype.UUID `json:"id"`
+}
+
+type InnerUpdateShoppingItemRow struct {
+	ID           pgtype.UUID `json:"id"`
+	IngredientID pgtype.UUID `json:"ingredientId"`
+	Name         string      `json:"name"`
+	Supplement   pgtype.Text `json:"supplement"`
+}
+
+func (q *Queries) InnerUpdateShoppingItem(ctx context.Context, arg InnerUpdateShoppingItemParams) (InnerUpdateShoppingItemRow, error) {
+	row := q.db.QueryRow(ctx, innerUpdateShoppingItem,
+		arg.Idx,
+		arg.Name,
+		arg.Supplement,
+		arg.IngredientID,
+		arg.ShoppingListID,
+		arg.ID,
+	)
+	var i InnerUpdateShoppingItemRow
+	err := row.Scan(
+		&i.ID,
+		&i.IngredientID,
+		&i.Name,
+		&i.Supplement,
+	)
+	return i, err
+}
+
 const listShoppingList = `-- name: ListShoppingList :many
 SELECT
     id,
     usr_id,
     recipe_id,
+    r_idx,
     recipe_name,
     chef_name,
     general_chef_name,
@@ -248,6 +328,7 @@ type ListShoppingListRow struct {
 	ID              pgtype.UUID              `json:"id"`
 	UsrID           pgtype.UUID              `json:"usrId"`
 	RecipeID        pgtype.UUID              `json:"recipeId"`
+	RIdx            int32                    `json:"rIdx"`
 	RecipeName      string                   `json:"recipeName"`
 	ChefName        pgtype.Text              `json:"chefName"`
 	GeneralChefName pgtype.Text              `json:"generalChefName"`
@@ -271,6 +352,7 @@ func (q *Queries) ListShoppingList(ctx context.Context, usrID pgtype.UUID) ([]Li
 			&i.ID,
 			&i.UsrID,
 			&i.RecipeID,
+			&i.RIdx,
 			&i.RecipeName,
 			&i.ChefName,
 			&i.GeneralChefName,
@@ -290,74 +372,20 @@ func (q *Queries) ListShoppingList(ctx context.Context, usrID pgtype.UUID) ([]Li
 	return items, nil
 }
 
-const updateShoppingItem = `-- name: UpdateShoppingItem :one
-UPDATE shopping_item SET
-    shopping_list_id = $1,
-    ingredient_id    = $2,
-    idx              = $3,
-    name             = $4,
-    supplement       = $5
-WHERE
-    id = $6
-RETURNING
-    id,
-    ingredient_id,
-    name,
-    supplement,
-    created_at,
-    updated_at
-`
-
-type UpdateShoppingItemParams struct {
-	ShoppingListID pgtype.UUID `json:"shoppingListId"`
-	IngredientID   pgtype.UUID `json:"ingredientId"`
-	Idx            int32       `json:"idx"`
-	Name           string      `json:"name"`
-	Supplement     pgtype.Text `json:"supplement"`
-	ID             pgtype.UUID `json:"id"`
-}
-
-type UpdateShoppingItemRow struct {
-	ID           pgtype.UUID        `json:"id"`
-	IngredientID pgtype.UUID        `json:"ingredientId"`
-	Name         string             `json:"name"`
-	Supplement   pgtype.Text        `json:"supplement"`
-	CreatedAt    pgtype.Timestamptz `json:"createdAt"`
-	UpdatedAt    pgtype.Timestamptz `json:"updatedAt"`
-}
-
-func (q *Queries) UpdateShoppingItem(ctx context.Context, arg UpdateShoppingItemParams) (UpdateShoppingItemRow, error) {
-	row := q.db.QueryRow(ctx, updateShoppingItem,
-		arg.ShoppingListID,
-		arg.IngredientID,
-		arg.Idx,
-		arg.Name,
-		arg.Supplement,
-		arg.ID,
-	)
-	var i UpdateShoppingItemRow
-	err := row.Scan(
-		&i.ID,
-		&i.IngredientID,
-		&i.Name,
-		&i.Supplement,
-		&i.CreatedAt,
-		&i.UpdatedAt,
-	)
-	return i, err
-}
-
 const updateShoppingList = `-- name: UpdateShoppingList :one
 UPDATE shopping_list SET
     r_idx        = $1,
     description  = $2,
     is_fair_copy = $3
 WHERE
-    id = $4
+    usr_id = $4
+AND
+    id = $5
 RETURNING
     id,
     usr_id,
     recipe_id,
+    r_idx,
     description,
     is_fair_copy,
     created_at,
@@ -368,31 +396,24 @@ type UpdateShoppingListParams struct {
 	RIdx        int32       `json:"rIdx"`
 	Description pgtype.Text `json:"description"`
 	IsFairCopy  bool        `json:"isFairCopy"`
+	UsrID       pgtype.UUID `json:"usrId"`
 	ID          pgtype.UUID `json:"id"`
 }
 
-type UpdateShoppingListRow struct {
-	ID          pgtype.UUID        `json:"id"`
-	UsrID       pgtype.UUID        `json:"usrId"`
-	RecipeID    pgtype.UUID        `json:"recipeId"`
-	Description pgtype.Text        `json:"description"`
-	IsFairCopy  bool               `json:"isFairCopy"`
-	CreatedAt   pgtype.Timestamptz `json:"createdAt"`
-	UpdatedAt   pgtype.Timestamptz `json:"updatedAt"`
-}
-
-func (q *Queries) UpdateShoppingList(ctx context.Context, arg UpdateShoppingListParams) (UpdateShoppingListRow, error) {
+func (q *Queries) UpdateShoppingList(ctx context.Context, arg UpdateShoppingListParams) (ShoppingList, error) {
 	row := q.db.QueryRow(ctx, updateShoppingList,
 		arg.RIdx,
 		arg.Description,
 		arg.IsFairCopy,
+		arg.UsrID,
 		arg.ID,
 	)
-	var i UpdateShoppingListRow
+	var i ShoppingList
 	err := row.Scan(
 		&i.ID,
 		&i.UsrID,
 		&i.RecipeID,
+		&i.RIdx,
 		&i.Description,
 		&i.IsFairCopy,
 		&i.CreatedAt,

@@ -3,6 +3,7 @@ SELECT
     id,
     usr_id,
     recipe_id,
+    r_idx,
     recipe_name,
     chef_name,
     general_chef_name,
@@ -23,6 +24,7 @@ SELECT
     id,
     usr_id,
     recipe_id,
+    r_idx,
     recipe_name,
     chef_name,
     general_chef_name,
@@ -51,13 +53,11 @@ VALUES
     @usr_id,
     @recipe_id,
     (SELECT
-        COALESCE(MAX(r_idx), 1)
+        COALESCE(MAX(r_idx) + 1, 1)
     FROM
         shopping_list
     WHERE
         usr_id = @usr_id
-    AND
-        recipe_id = @recipe_id
     ),
     @description,
     @is_fair_copy
@@ -66,12 +66,13 @@ RETURNING
     id,
     usr_id,
     recipe_id,
+    r_idx,
     description,
     is_fair_copy,
     created_at,
     updated_at;
 
--- name: CreateShoppingItem :one
+-- name: InnerCreateShoppingItem :one
 INSERT INTO shopping_item (
     shopping_list_id,
     ingredient_id,
@@ -91,9 +92,7 @@ RETURNING
     id,
     ingredient_id,
     name,
-    supplement,
-    created_at,
-    updated_at;
+    supplement;
 
 -- name: UpdateShoppingList :one
 UPDATE shopping_list SET
@@ -101,37 +100,57 @@ UPDATE shopping_list SET
     description  = @description,
     is_fair_copy = @is_fair_copy
 WHERE
+    usr_id = @usr_id
+AND
     id = @id
 RETURNING
     id,
     usr_id,
     recipe_id,
+    r_idx,
     description,
     is_fair_copy,
     created_at,
     updated_at;
 
--- name: UpdateShoppingItem :one
+-- name: InnerUpdateShoppingItem :one
 UPDATE shopping_item SET
-    shopping_list_id = @shopping_list_id,
-    ingredient_id    = @ingredient_id,
-    idx              = @idx,
-    name             = @name,
-    supplement       = @supplement
+    idx           = @idx,
+    name          = @name,
+    supplement    = @supplement
 WHERE
+    (ingredient_id = @ingredient_id OR @ingredient_id IS NULL)
+AND
+    shopping_list_id = @shopping_list_id
+AND
     id = @id
 RETURNING
     id,
     ingredient_id,
     name,
-    supplement,
-    created_at,
-    updated_at;
+    supplement;
 
--- name: DeleteNotAnyShoppingItem :exec
+-- name: InnerDeleteNotAnyShoppingItem :exec
 DELETE FROM
     shopping_item
 WHERE
     shopping_list_id = @shopping_list_id
 AND
     NOT (id = ANY (@id::UUID[]));
+
+-- name: DeleteShoppingList :one
+DELETE FROM
+    shopping_list
+WHERE
+    usr_id = @usr_id
+AND
+    id = @id
+RETURNING
+    id,
+    usr_id,
+    recipe_id,
+    r_idx,
+    description,
+    is_fair_copy,
+    created_at,
+    updated_at;

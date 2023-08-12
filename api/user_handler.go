@@ -126,7 +126,7 @@ func (s *Server) UpdateSelf(c *gin.Context) {
 	param.Email = c.MustGet("email").(string)
 
 	// リクエストボディを構造体にバインド
-	reqb := docs.PutApiUpdateUsrJSONRequestBody{}
+	reqb := docs.PutApiUserUsersJSONRequestBody{}
 	if err := c.ShouldBind(&reqb); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
