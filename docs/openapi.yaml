@@ -1,4 +1,6 @@
 openapi: 3.1.0
+x-stoplight:
+  id: 8omayzirnu2ni
 info:
   version: '1.0'
   title: team3-backend API
@@ -78,7 +80,7 @@ paths:
                 - name
                 - link
     delete:
-      summary: ''
+      summary: シェフ削除
       operationId: delete-api-chefs-id
       responses:
         '200':
@@ -166,7 +168,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/GetUsr'
     put:
-      summary: ユーザー更新
+      summary: 自分を更新
       operationId: put-api-user-users
       responses:
         '200':
@@ -218,7 +220,7 @@ paths:
                 - name
                 - link
     delete:
-      summary: ''
+      summary: 自分を削除
       operationId: delete-api-user-users
       responses:
         '200':
@@ -372,7 +374,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/GetRecipe'
     delete:
-      summary: ''
+      summary: レシピ削除
       operationId: delete-api-recipes-id
       responses:
         '200':
@@ -624,7 +626,7 @@ paths:
     parameters: []
   /api/user/lists:
     get:
-      summary: Your GET endpoint
+      summary: ユーザーの買い物リスト一覧
       tags: []
       responses:
         '200':
@@ -635,7 +637,7 @@ paths:
                 $ref: '#/components/schemas/GetShoppingLists'
       operationId: get-api-user-lists
     post:
-      summary: ''
+      summary: 買い物リスト登録
       operationId: post-api-user-lists
       responses:
         '200':
@@ -702,7 +704,7 @@ paths:
                 - item
   '/api/user/lists/{recipe_id}':
     get:
-      summary: Your GET endpoint
+      summary: 買い物リスト取得
       tags: []
       responses:
         '200':
@@ -726,7 +728,7 @@ paths:
         in: path
         required: true
     delete:
-      summary: ''
+      summary: 買い物リスト削除
       operationId: delete-api-user-lists-id
       responses:
         '200':
@@ -736,7 +738,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/DeletedShoppingList'
     put:
-      summary: ''
+      summary: 買い物リスト更新
       operationId: put-api-user-lists-id
       responses:
         '200':
