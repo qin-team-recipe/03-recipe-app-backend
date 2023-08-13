@@ -1,6 +1,4 @@
 openapi: 3.1.0
-x-stoplight:
-  id: 8omayzirnu2ni
 info:
   version: '1.0'
   title: team3-backend API
@@ -11,7 +9,7 @@ servers:
 paths:
   '/api/chefs/{id}':
     get:
-      summary: シェフ取得
+      summary: 有名シェフ取得
       tags: []
       operationId: get-api-chefs-id
       responses:
@@ -28,7 +26,7 @@ paths:
         in: path
         required: true
     put:
-      summary: シェフ更新
+      summary: 有名シェフ更新
       operationId: put-api-chefs-id
       responses:
         '200':
@@ -80,7 +78,7 @@ paths:
                 - name
                 - link
     delete:
-      summary: シェフ削除
+      summary: 有名シェフ削除
       operationId: delete-api-chefs-id
       responses:
         '200':
@@ -91,7 +89,7 @@ paths:
                 $ref: '#/components/schemas/DeletedChef'
   /api/chefs:
     post:
-      summary: シェフ新規登録
+      summary: 有名シェフ新規登録
       operationId: post-api-chefs
       responses:
         '200':
@@ -143,7 +141,7 @@ paths:
       description: ''
   /api/chefs/featured:
     get:
-      summary: 注目のシェフ一覧
+      summary: 注目の有名シェフ一覧
       operationId: get-api-chefs-featured
       responses:
         '200':
@@ -248,9 +246,27 @@ paths:
         in: path
         required: true
   '/api/recipes/{id}':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+        description: レシピID
+    get:
+      summary: レシピ取得
+      operationId: get-api-recipes-id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetRecipe'
+  '/api/chefs/recipe/{recipe_id}':
     put:
-      summary: レシピ更新
-      operationId: put-api-recipes-id
+      summary: 有名シェフのレシピ更新
+      operationId: put-api-chefs-recipe-recipe_id
       responses:
         '200':
           description: OK
@@ -303,6 +319,10 @@ paths:
                   items:
                     type: object
                     properties:
+                      id:
+                        type: string
+                        format: uuid
+                        description: 材料ID
                       name:
                         type: string
                         x-oapi-codegen-extra-tags:
@@ -359,23 +379,12 @@ paths:
     parameters:
       - schema:
           type: string
-        name: id
+        name: recipe_id
         in: path
         required: true
-        description: レシピID
-    get:
-      summary: レシピ取得
-      operationId: get-api-recipes-id
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GetRecipe'
     delete:
-      summary: レシピ削除
-      operationId: delete-api-recipes-id
+      summary: 有名シェフのレシピ削除
+      operationId: delete-api-chefs-recipe-recipe_id
       responses:
         '200':
           description: OK
@@ -383,10 +392,139 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/DeletedRecipe'
-  /api/recipes/chef:
+  '/api/user/users/recipe/{recipe_id}':
+    put:
+      summary: 一般シェフのマイレシピ更新
+      operationId: put-api-user-users-recipe-recipe_id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateRecipe'
+      x-stoplight:
+        id: v8smkyhzs45kj
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              x-examples:
+                Example 1:
+                  name: オムライス
+                  servings: 6
+                  ingredient:
+                    - name: 卵
+                      supplement: 鶏卵
+                    - name: トマト
+                      supplement: ケチャップ
+                  method:
+                    - html: <p>卵を焼く</p>
+                      supplement: {}
+                    - html: <p>ケチャップをかける</p>
+                      supplement: []
+                  imageUrl: IMAGE_URL_1
+                  introduction: INTRODUCTION_1
+                  link:
+                    - 'https://www.yahoo.co.jp'
+                    - 'https://www.amazon.co.jp'
+                  accessLevel: 2
+              properties:
+                name:
+                  type: string
+                  x-oapi-codegen-extra-tags:
+                    binding: required
+                  description: レシピ名
+                servings:
+                  type: integer
+                  x-oapi-codegen-extra-tags:
+                    binding: required
+                  description: ＊人前
+                ingredient:
+                  type: array
+                  x-oapi-codegen-extra-tags:
+                    binding: required
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+                        description: 材料ID
+                      name:
+                        type: string
+                        x-oapi-codegen-extra-tags:
+                          binding: required
+                        description: 材料名
+                      supplement:
+                        type: string
+                        description: 補足
+                    required:
+                      - name
+                method:
+                  type: array
+                  x-oapi-codegen-extra-tags:
+                    binding: required
+                  description: 作り方
+                  items:
+                    type: object
+                    properties:
+                      html:
+                        type: string
+                      supplement:
+                        oneOf:
+                          - type: object
+                          - type: array
+                            items:
+                              type: object
+                        x-go-type: any
+                        description: 補足
+                imageUrl:
+                  type: string
+                  description: 画像
+                introduction:
+                  type: string
+                  description: レシピの紹介文
+                link:
+                  type: array
+                  x-oapi-codegen-extra-tags:
+                    binding: required
+                  description: リンク
+                  items:
+                    type: string
+                accessLevel:
+                  type: integer
+                  x-oapi-codegen-extra-tags:
+                    binding: required
+                  description: 公開、限定公開、非公開、下書き
+              required:
+                - name
+                - servings
+                - ingredient
+                - method
+                - link
+                - accessLevel
+    parameters:
+      - schema:
+          type: string
+        name: recipe_id
+        in: path
+        required: true
+    delete:
+      summary: 一般シェフのマイレシピ削除
+      operationId: delete-api-user-users-recipe-recipe_id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeletedRecipe'
+  '/api/chefs/{chef_id}/recipe':
     post:
-      summary: 有名シェフレシピ登録
-      operationId: post-api-recipes-chef
+      summary: 有名シェフのレシピ新規登録
+      operationId: post-api-chefs-chef_id-recipe
       responses:
         '200':
           description: OK
@@ -423,11 +561,6 @@ paths:
                     - 'https://www.amazon.co.jp'
                   accessLevel: 2
               properties:
-                chefId:
-                  type: string
-                  x-oapi-codegen-extra-tags:
-                    binding: required
-                  description: シェフID
                 name:
                   type: string
                   x-oapi-codegen-extra-tags:
@@ -492,18 +625,23 @@ paths:
                     binding: required
                   description: 公開、限定公開、非公開、下書き
               required:
-                - chefId
                 - name
                 - servings
                 - ingredient
                 - method
                 - link
                 - accessLevel
-    parameters: []
-  /api/user/recipes/user:
+      description: ''
+    parameters:
+      - schema:
+          type: string
+        name: chef_id
+        in: path
+        required: true
+  /api/user/users/recipe:
     post:
-      summary: マイレシピ登録
-      operationId: post-api-user-recipes-user
+      summary: 一般シェフのマイレシピ新規登録
+      operationId: post-api-user-users-recipe
       responses:
         '200':
           description: OK
@@ -702,7 +840,7 @@ paths:
               required:
                 - isFairCopy
                 - item
-  '/api/user/lists/{recipe_id}':
+  '/api/user/lists/recipe/{recipe_id}':
     get:
       summary: 買い物リスト取得
       tags: []
@@ -713,7 +851,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetShoppingList'
-      operationId: get-api-user-lists-recipe_id
+      operationId: get-api-user-lists-recipe-recipe_id
     parameters:
       - schema:
           type: string

@@ -150,7 +150,7 @@ func (s *Server) CreateShoppingList(c *gin.Context) {
 
 	// 買い物明細テーブルへの新規登録
 	for i := 0; i < len(reqb.Item); i++ {
-		reqb.Item[i].ShoppingListID = resp.Alias2.ID
+		reqb.Item[i].ShoppingListID = resp.ID
 		reqb.Item[i].Idx = int32(i + 1)
 		itemRow, err := qtx.InnerCreateShoppingItem(context.Background(), reqb.Item[i])
 		if err != nil {
@@ -264,7 +264,7 @@ func (s *Server) UpdateShoppingList(c *gin.Context) {
 	}
 
 	for i := 0; i < len(reqb.Item); i++ {
-		reqb.Item[i].ShoppingListID = resp.Alias2.ID
+		reqb.Item[i].ShoppingListID = resp.ID
 		reqb.Item[i].Idx = int32(i + 1)
 		if reqb.Item[i].ID.Valid {
 			// 買い物明細テーブルの更新

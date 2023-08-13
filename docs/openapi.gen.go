@@ -736,6 +736,81 @@ type PostApiChefsJSONBody struct {
 	Profile *string `json:"profile,omitempty"`
 }
 
+// PutApiChefsRecipeRecipeIdJSONBody defines parameters for PutApiChefsRecipeRecipeId.
+type PutApiChefsRecipeRecipeIdJSONBody struct {
+	// AccessLevel 公開、限定公開、非公開、下書き
+	AccessLevel int `binding:"required" json:"accessLevel"`
+
+	// ImageUrl 画像
+	ImageUrl   *string `json:"imageUrl,omitempty"`
+	Ingredient []struct {
+		// Id 材料ID
+		Id *openapi_types.UUID `json:"id,omitempty"`
+
+		// Name 材料名
+		Name string `binding:"required" json:"name"`
+
+		// Supplement 補足
+		Supplement *string `json:"supplement,omitempty"`
+	} `binding:"required" json:"ingredient"`
+
+	// Introduction レシピの紹介文
+	Introduction *string `json:"introduction,omitempty"`
+
+	// Link リンク
+	Link []string `binding:"required" json:"link"`
+
+	// Method 作り方
+	Method []struct {
+		Html *string `json:"html,omitempty"`
+
+		// Supplement 補足
+		Supplement *any `json:"supplement,omitempty"`
+	} `binding:"required" json:"method"`
+
+	// Name レシピ名
+	Name string `binding:"required" json:"name"`
+
+	// Servings ＊人前
+	Servings int `binding:"required" json:"servings"`
+}
+
+// PostApiChefsChefIdRecipeJSONBody defines parameters for PostApiChefsChefIdRecipe.
+type PostApiChefsChefIdRecipeJSONBody struct {
+	// AccessLevel 公開、限定公開、非公開、下書き
+	AccessLevel int `binding:"required" json:"accessLevel"`
+
+	// ImageUrl 画像
+	ImageUrl   *string `json:"imageUrl,omitempty"`
+	Ingredient []struct {
+		// Name 材料名
+		Name string `binding:"required" json:"name"`
+
+		// Supplement 補足
+		Supplement *string `json:"supplement,omitempty"`
+	} `binding:"required" json:"ingredient"`
+
+	// Introduction レシピの紹介文
+	Introduction *string `json:"introduction,omitempty"`
+
+	// Link リンク
+	Link []string `binding:"required" json:"link"`
+
+	// Method 作り方
+	Method []struct {
+		Html *string `json:"html,omitempty"`
+
+		// Supplement 補足
+		Supplement *any `json:"supplement,omitempty"`
+	} `binding:"required" json:"method"`
+
+	// Name レシピ名
+	Name string `binding:"required" json:"name"`
+
+	// Servings ＊人前
+	Servings int `binding:"required" json:"servings"`
+}
+
 // PutApiChefsIdJSONBody defines parameters for PutApiChefsId.
 type PutApiChefsIdJSONBody struct {
 	// ImageUrl プロフィール画像
@@ -752,81 +827,6 @@ type PutApiChefsIdJSONBody struct {
 
 	// Profile シェフ紹介
 	Profile *string `json:"profile,omitempty"`
-}
-
-// PostApiRecipesChefJSONBody defines parameters for PostApiRecipesChef.
-type PostApiRecipesChefJSONBody struct {
-	// AccessLevel 公開、限定公開、非公開、下書き
-	AccessLevel int `binding:"required" json:"accessLevel"`
-
-	// ChefId シェフID
-	ChefId string `binding:"required" json:"chefId"`
-
-	// ImageUrl 画像
-	ImageUrl   *string `json:"imageUrl,omitempty"`
-	Ingredient []struct {
-		// Name 材料名
-		Name string `binding:"required" json:"name"`
-
-		// Supplement 補足
-		Supplement *string `json:"supplement,omitempty"`
-	} `binding:"required" json:"ingredient"`
-
-	// Introduction レシピの紹介文
-	Introduction *string `json:"introduction,omitempty"`
-
-	// Link リンク
-	Link []string `binding:"required" json:"link"`
-
-	// Method 作り方
-	Method []struct {
-		Html *string `json:"html,omitempty"`
-
-		// Supplement 補足
-		Supplement *any `json:"supplement,omitempty"`
-	} `binding:"required" json:"method"`
-
-	// Name レシピ名
-	Name string `binding:"required" json:"name"`
-
-	// Servings ＊人前
-	Servings int `binding:"required" json:"servings"`
-}
-
-// PutApiRecipesIdJSONBody defines parameters for PutApiRecipesId.
-type PutApiRecipesIdJSONBody struct {
-	// AccessLevel 公開、限定公開、非公開、下書き
-	AccessLevel int `binding:"required" json:"accessLevel"`
-
-	// ImageUrl 画像
-	ImageUrl   *string `json:"imageUrl,omitempty"`
-	Ingredient []struct {
-		// Name 材料名
-		Name string `binding:"required" json:"name"`
-
-		// Supplement 補足
-		Supplement *string `json:"supplement,omitempty"`
-	} `binding:"required" json:"ingredient"`
-
-	// Introduction レシピの紹介文
-	Introduction *string `json:"introduction,omitempty"`
-
-	// Link リンク
-	Link []string `binding:"required" json:"link"`
-
-	// Method 作り方
-	Method []struct {
-		Html *string `json:"html,omitempty"`
-
-		// Supplement 補足
-		Supplement *any `json:"supplement,omitempty"`
-	} `binding:"required" json:"method"`
-
-	// Name レシピ名
-	Name string `binding:"required" json:"name"`
-
-	// Servings ＊人前
-	Servings int `binding:"required" json:"servings"`
 }
 
 // PostApiUserListsJSONBody defines parameters for PostApiUserLists.
@@ -883,8 +883,26 @@ type PutApiUserListsIdJSONBody struct {
 	RecipeId *string `json:"recipeId,omitempty"`
 }
 
-// PostApiUserRecipesUserJSONBody defines parameters for PostApiUserRecipesUser.
-type PostApiUserRecipesUserJSONBody struct {
+// PutApiUserUsersJSONBody defines parameters for PutApiUserUsers.
+type PutApiUserUsersJSONBody struct {
+	// ImageUrl プロフィール画像（任意）
+	ImageUrl *string `json:"imageUrl,omitempty"`
+
+	// Link リンク（任意）
+	Link []struct {
+		Label *string `json:"label,omitempty"`
+		Url   *string `json:"url,omitempty"`
+	} `binding:"required" json:"link"`
+
+	// Name ニックネーム
+	Name string `binding:"required" json:"name"`
+
+	// Profile 自己紹介（任意）
+	Profile *string `json:"profile,omitempty"`
+}
+
+// PostApiUserUsersRecipeJSONBody defines parameters for PostApiUserUsersRecipe.
+type PostApiUserUsersRecipeJSONBody struct {
 	// AccessLevel 公開、限定公開、非公開、下書き
 	AccessLevel int `binding:"required" json:"accessLevel"`
 
@@ -919,35 +937,56 @@ type PostApiUserRecipesUserJSONBody struct {
 	Servings int `binding:"required" json:"servings"`
 }
 
-// PutApiUserUsersJSONBody defines parameters for PutApiUserUsers.
-type PutApiUserUsersJSONBody struct {
-	// ImageUrl プロフィール画像（任意）
-	ImageUrl *string `json:"imageUrl,omitempty"`
+// PutApiUserUsersRecipeRecipeIdJSONBody defines parameters for PutApiUserUsersRecipeRecipeId.
+type PutApiUserUsersRecipeRecipeIdJSONBody struct {
+	// AccessLevel 公開、限定公開、非公開、下書き
+	AccessLevel int `binding:"required" json:"accessLevel"`
 
-	// Link リンク（任意）
-	Link []struct {
-		Label *string `json:"label,omitempty"`
-		Url   *string `json:"url,omitempty"`
-	} `binding:"required" json:"link"`
+	// ImageUrl 画像
+	ImageUrl   *string `json:"imageUrl,omitempty"`
+	Ingredient []struct {
+		// Id 材料ID
+		Id *openapi_types.UUID `json:"id,omitempty"`
 
-	// Name ニックネーム
+		// Name 材料名
+		Name string `binding:"required" json:"name"`
+
+		// Supplement 補足
+		Supplement *string `json:"supplement,omitempty"`
+	} `binding:"required" json:"ingredient"`
+
+	// Introduction レシピの紹介文
+	Introduction *string `json:"introduction,omitempty"`
+
+	// Link リンク
+	Link []string `binding:"required" json:"link"`
+
+	// Method 作り方
+	Method []struct {
+		Html *string `json:"html,omitempty"`
+
+		// Supplement 補足
+		Supplement *any `json:"supplement,omitempty"`
+	} `binding:"required" json:"method"`
+
+	// Name レシピ名
 	Name string `binding:"required" json:"name"`
 
-	// Profile 自己紹介（任意）
-	Profile *string `json:"profile,omitempty"`
+	// Servings ＊人前
+	Servings int `binding:"required" json:"servings"`
 }
 
 // PostApiChefsJSONRequestBody defines body for PostApiChefs for application/json ContentType.
 type PostApiChefsJSONRequestBody PostApiChefsJSONBody
 
+// PutApiChefsRecipeRecipeIdJSONRequestBody defines body for PutApiChefsRecipeRecipeId for application/json ContentType.
+type PutApiChefsRecipeRecipeIdJSONRequestBody PutApiChefsRecipeRecipeIdJSONBody
+
+// PostApiChefsChefIdRecipeJSONRequestBody defines body for PostApiChefsChefIdRecipe for application/json ContentType.
+type PostApiChefsChefIdRecipeJSONRequestBody PostApiChefsChefIdRecipeJSONBody
+
 // PutApiChefsIdJSONRequestBody defines body for PutApiChefsId for application/json ContentType.
 type PutApiChefsIdJSONRequestBody PutApiChefsIdJSONBody
-
-// PostApiRecipesChefJSONRequestBody defines body for PostApiRecipesChef for application/json ContentType.
-type PostApiRecipesChefJSONRequestBody PostApiRecipesChefJSONBody
-
-// PutApiRecipesIdJSONRequestBody defines body for PutApiRecipesId for application/json ContentType.
-type PutApiRecipesIdJSONRequestBody PutApiRecipesIdJSONBody
 
 // PostApiUserListsJSONRequestBody defines body for PostApiUserLists for application/json ContentType.
 type PostApiUserListsJSONRequestBody PostApiUserListsJSONBody
@@ -955,11 +994,14 @@ type PostApiUserListsJSONRequestBody PostApiUserListsJSONBody
 // PutApiUserListsIdJSONRequestBody defines body for PutApiUserListsId for application/json ContentType.
 type PutApiUserListsIdJSONRequestBody PutApiUserListsIdJSONBody
 
-// PostApiUserRecipesUserJSONRequestBody defines body for PostApiUserRecipesUser for application/json ContentType.
-type PostApiUserRecipesUserJSONRequestBody PostApiUserRecipesUserJSONBody
-
 // PutApiUserUsersJSONRequestBody defines body for PutApiUserUsers for application/json ContentType.
 type PutApiUserUsersJSONRequestBody PutApiUserUsersJSONBody
+
+// PostApiUserUsersRecipeJSONRequestBody defines body for PostApiUserUsersRecipe for application/json ContentType.
+type PostApiUserUsersRecipeJSONRequestBody PostApiUserUsersRecipeJSONBody
+
+// PutApiUserUsersRecipeRecipeIdJSONRequestBody defines body for PutApiUserUsersRecipeRecipeId for application/json ContentType.
+type PutApiUserUsersRecipeRecipeIdJSONRequestBody PutApiUserUsersRecipeRecipeIdJSONBody
 
 // AsCreateChefRecipeMethodSupplement0 returns the union data inside the CreateChefRecipe_Method_Supplement as a CreateChefRecipeMethodSupplement0
 func (t CreateChefRecipe_Method_Supplement) AsCreateChefRecipeMethodSupplement0() (CreateChefRecipeMethodSupplement0, error) {

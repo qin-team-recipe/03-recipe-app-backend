@@ -1176,6 +1176,9 @@ BEGIN
         access_level = (data->'accessLevel')::INTEGER
     WHERE
         recipe.id = update_recipe.id
+    AND
+        (usr_id IS NULL AND (data->>'usrId')::UUID IS NULL)
+     OR (usr_id IS NOT NULL AND usr_id = (data->>'usrId')::UUID)
     RETURNING
         recipe.id,
         chef_id,
@@ -1194,49 +1197,51 @@ BEGIN
     INTO
         rec;
 
-    ingredient_array = ARRAY[]::type_vrecipe_ingredient[];
-    FOR i IN 0..JSONB_ARRAY_LENGTH(data->'ingredient') - 1 LOOP
-        ingredient_id = (data->'ingredient'->i->>'id')::UUID;
-        IF ingredient_id IS NOT NULL THEN
-            UPDATE ingredient SET
-                idx        = i + 1,
-                name       = data->'ingredient'->i->>'name',
-                supplement = data->'ingredient'->i->>'supplement'
-            WHERE
-                recipe_id = update_recipe.id
-            AND
-                ingredient.id = ingredient_id
-            RETURNING
-                *
-            INTO
-                ingredient_rec;
-        ELSE
-            INSERT INTO ingredient
-            (
-                recipe_id,
-                idx,
-                name,
-                supplement
-            )
-            VALUES
-            (
-                update_recipe.id,
-                i + 1,
-                data->'ingredient'->i->>'name',
-                data->'ingredient'->i->>'supplement'
-            )
-            RETURNING
-                *
-            INTO
-                ingredient_rec;
-        END IF;
+    IF rec.id IS NOT NULL THEN
+        ingredient_array = ARRAY[]::type_vrecipe_ingredient[];
+        FOR i IN 0..JSONB_ARRAY_LENGTH(data->'ingredient') - 1 LOOP
+            ingredient_id = (data->'ingredient'->i->>'id')::UUID;
+            IF ingredient_id IS NOT NULL THEN
+                UPDATE ingredient SET
+                    idx        = i + 1,
+                    name       = data->'ingredient'->i->>'name',
+                    supplement = data->'ingredient'->i->>'supplement'
+                WHERE
+                    recipe_id = update_recipe.id
+                AND
+                    ingredient.id = ingredient_id
+                RETURNING
+                    *
+                INTO
+                    ingredient_rec;
+            ELSE
+                INSERT INTO ingredient
+                (
+                    recipe_id,
+                    idx,
+                    name,
+                    supplement
+                )
+                VALUES
+                (
+                    update_recipe.id,
+                    i + 1,
+                    data->'ingredient'->i->>'name',
+                    data->'ingredient'->i->>'supplement'
+                )
+                RETURNING
+                    *
+                INTO
+                    ingredient_rec;
+            END IF;
 
-        ingredient_array = ARRAY_APPEND(ingredient_array,
-            ROW(ingredient_rec.id,
-                ingredient_rec.name,
-                ingredient_rec.supplement)::type_vrecipe_ingredient);
-    END LOOP;
-    rec.ingredient = TO_JSONB(ingredient_array);
+            ingredient_array = ARRAY_APPEND(ingredient_array,
+                ROW(ingredient_rec.id,
+                    ingredient_rec.name,
+                    ingredient_rec.supplement)::type_vrecipe_ingredient);
+        END LOOP;
+        rec.ingredient = TO_JSONB(ingredient_array);
+    END IF;
 
     RETURN rec;
 END
