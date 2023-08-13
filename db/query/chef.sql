@@ -85,3 +85,23 @@ RETURNING
     updated_at,
     num_recipe,
     num_follower;
+
+-- name: SearchChef :many
+SELECT
+    id,
+    name,
+    image_url,
+    profile,
+    created_at,
+    updated_at,
+    num_recipe,
+    num_follower
+FROM
+    chef
+WHERE
+    name &@~ @query
+OR
+    profile &@~ @query
+ORDER BY
+    pgroonga_score(tableoid, ctid) DESC,
+    num_follower DESC;

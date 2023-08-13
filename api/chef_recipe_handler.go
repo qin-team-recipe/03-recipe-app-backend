@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"net/http"
+	"reflect"
 
 	db "github.com/aopontann/gin-sqlc/db/sqlc"
 	"github.com/aopontann/gin-sqlc/docs"
@@ -118,4 +119,35 @@ func (s *Server) DeleteChefRecipe(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, row)
+}
+
+func (s *Server) SearchChefRecipe(c *gin.Context) {
+	type searchChefRecipeResponse struct {
+		Data []db.SearchChefRecipeRow `json:"data"`
+	}
+
+	// クエリパラメータ取り出し
+	query := c.Query("q")
+
+	// 全文検索
+	var response searchChefRecipeResponse
+	var err error
+	response.Data, err = s.q.SearchChefRecipe(context.Background(), query)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	if response.Data == nil || reflect.ValueOf(response.Data).IsNil() {
+		response.Data = []db.SearchChefRecipeRow{}
+	}
+
+	// レスポンス型バリデーション
+	err = utils.ValidateStructTwoWay[searchChefRecipeResponse, docs.SearchChefRecipe](&response)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, response)
 }

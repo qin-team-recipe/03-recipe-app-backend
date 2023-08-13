@@ -65,6 +65,7 @@ func (s *Server) MountHandlers() {
 	api.PUT("/chefs/recipe/:recipe_id", s.UpdateChefRecipe)    // 有名シェフのレシピを更新するAPI
 	api.DELETE("/chefs/recipe/:recipe_id", s.DeleteChefRecipe) // 有名シェフのレシピを削除するAPI
 	api.POST("/chefs/:id/recipe", s.CreateChefRecipe)          // 有名シェフのレシピを新規登録するAPI
+	api.GET("/chefs/recipe/search", s.SearchChefRecipe)        // 有名シェフのレシピを全文検索するAPI
 
 	// 有名シェフ関連
 	api.GET("/chefs/:id", s.GetChef)               // 有名シェフを取得するAPI
@@ -72,6 +73,7 @@ func (s *Server) MountHandlers() {
 	api.DELETE("/chefs/:id", s.DeleteChef)         // 有名シェフを削除するAPI
 	api.POST("/chefs", s.CreateChef)               // 有名シェフを新規登録するAPI
 	api.GET("/chefs/featured", s.ListFeaturedChef) // 注目の有名シェフ一覧を取得するAPI
+	api.GET("/chefs/search", s.SearchChef)         // 有名シェフを全文検索するAPI
 
 	// レシピ関連
 	api.GET("/recipes/:id", s.GetRecipe)         // レシピを取得するAPI

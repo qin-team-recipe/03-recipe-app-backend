@@ -167,3 +167,34 @@ func (s *Server) DeleteChef(c *gin.Context) {
 
 	c.JSON(http.StatusOK, row)
 }
+
+func (s *Server) SearchChef(c *gin.Context) {
+	type searchChefResponse struct {
+		Data []db.SearchChefRow `json:"data"`
+	}
+
+	// クエリパラメータ取り出し
+	query := c.Query("q")
+
+	// 全文検索
+	var response searchChefResponse
+	var err error
+	response.Data, err = s.q.SearchChef(context.Background(), query)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	if response.Data == nil || reflect.ValueOf(response.Data).IsNil() {
+		response.Data = []db.SearchChefRow{}
+	}
+
+	// レスポンス型バリデーション
+	err = utils.ValidateStructTwoWay[searchChefResponse, docs.SearchChef](&response)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, response)
+}
