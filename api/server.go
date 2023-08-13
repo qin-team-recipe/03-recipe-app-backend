@@ -38,16 +38,9 @@ func (s *Server) MountHandlers() {
 	auth.GET("/google/login", s.OauthGoogleLogin)
 	auth.GET("/google/callback", s.OauthGoogleCallback)
 
-	// シェフ関連
-	api.GET("/chefs/:id", s.GetChef)
-	api.PUT("/chefs/:id", s.UpdateChef)
-	api.DELETE("/chefs/:id", s.DeleteChef)
-	api.POST("/chefs", s.CreateChef)
-	api.GET("/chefs/featured", s.ListFeaturedChef)
-
 	// ユーザー関連
-	api.POST("/users", s.CreateUser)
-	api.GET("/users/:id", s.GetUser)
+	api.POST("/users", s.CreateUser) // ユーザーを新規登録するAPI
+	api.GET("/users/:id", s.GetUser) // ユーザーを取得するAPI
 
 	//// 仮で作成　セッションの説明用 ////
 	// グループを作成
@@ -57,26 +50,39 @@ func (s *Server) MountHandlers() {
 	// ユーザIDのみ返すAPI
 	usr.GET("/id", s.GetUserId)
 
-	usr.GET("/users", s.GetSelf)
-	usr.PUT("/users", s.UpdateSelf)
-	usr.DELETE("/users", s.DeleteSelf)
+	usr.GET("/users", s.GetSelf)       // 自分を取得するAPI
+	usr.PUT("/users", s.UpdateSelf)    // 自分を更新するAPI
+	usr.DELETE("/users", s.DeleteSelf) // 自分を削除するAPI
+
+	// ユーザー（= 一般シェフ）のレシピ関連
+	//usr.GET("/users/recipe", s.GetUsrRecipe)
+	usr.PUT("/users/recipe/:recipe_id", s.UpdateUserRecipe)    // 一般シェフのマイレシピを更新するAPI
+	usr.DELETE("/users/recipe/:recipe_id", s.DeleteUserRecipe) // 一般シェフのマイレシピを削除するAPI
+	usr.POST("/users/recipe", s.CreateUsrRecipe)               // 一般シェフのマイレシピを新規登録するAPI
+
+	// 有名シェフのレシピ関連
+	//api.GET("/chefs/:id/recipe", s.GetChefRecipe)
+	api.PUT("/chefs/recipe/:recipe_id", s.UpdateChefRecipe)    // 有名シェフのレシピを更新するAPI
+	api.DELETE("/chefs/recipe/:recipe_id", s.DeleteChefRecipe) // 有名シェフのレシピを削除するAPI
+	api.POST("/chefs/:id/recipe", s.CreateChefRecipe)          // 有名シェフのレシピを新規登録するAPI
+
+	// 有名シェフ関連
+	api.GET("/chefs/:id", s.GetChef)               // 有名シェフを取得するAPI
+	api.PUT("/chefs/:id", s.UpdateChef)            // 有名シェフを更新するAPI
+	api.DELETE("/chefs/:id", s.DeleteChef)         // 有名シェフを削除するAPI
+	api.POST("/chefs", s.CreateChef)               // 有名シェフを新規登録するAPI
+	api.GET("/chefs/featured", s.ListFeaturedChef) // 注目の有名シェフ一覧を取得するAPI
 
 	// レシピ関連
-	api.GET("/recipes/:id", s.GetRecipe)
-	api.PUT("/recipes/:id", s.UpdateRecipe)
-	api.DELETE("/recipes/:id", s.DeleteRecipe)
-	api.POST("/recipes/chef", s.CreateChefRecipe)
-	usr.POST("/recipes/user", s.CreateUsrRecipe)
-	api.GET("/recipes/trend", s.ListTrendRecipe)
-	//api.GET("/recipes/chef/:chef_id", s.)
-	//api.GET("/recipes/user/:usr_id", s.)
+	api.GET("/recipes/:id", s.GetRecipe)         // レシピを取得するAPI
+	api.GET("/recipes/trend", s.ListTrendRecipe) // 話題のレシピ一覧を取得するAPI
 
 	// ショッピングリスト関連
-	usr.GET("/lists", s.ListShoppingList)
-	usr.GET("/lists/:recipe_id", s.GetShoppingList)
-	usr.PUT("/lists/:id", s.UpdateShoppingList)
-	usr.DELETE("/lists/:id", s.DeleteShoppingList)
-	usr.POST("/lists", s.CreateShoppingList)
+	usr.GET("/lists", s.ListShoppingList)                  // ユーザーの買い物リスト一覧を取得するAPI
+	usr.GET("/lists/recipe/:recipe_id", s.GetShoppingList) // 買い物リストを取得するAPI
+	usr.PUT("/lists/:id", s.UpdateShoppingList)            // 買い物リストを更新するAPI
+	usr.DELETE("/lists/:id", s.DeleteShoppingList)         // 買い物リストを削除するAPI
+	usr.POST("/lists", s.CreateShoppingList)               // 買い物リストを新規登録するAPI
 }
 
 func (s *Server) Start(addr string) error {
