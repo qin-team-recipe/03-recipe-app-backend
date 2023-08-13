@@ -141,7 +141,7 @@ paths:
       description: ''
   /api/chefs/featured:
     get:
-      summary: 注目の有名シェフ一覧
+      summary: 注目の有名シェフ一覧を取得
       operationId: get-api-chefs-featured
       responses:
         '200':
@@ -750,7 +750,7 @@ paths:
     parameters: []
   /api/recipes/trend:
     get:
-      summary: 話題のレシピ一覧
+      summary: 話題のレシピ一覧を取得
       operationId: get-api-recipes-trend
       responses:
         '200':
@@ -952,6 +952,43 @@ paths:
                 - rIdx
                 - isFairCopy
                 - item
+  /api/chefs/search:
+    get:
+      summary: 有名シェフを全文検索
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchChef'
+      operationId: get-api-chefs-search
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: q
+          description: 全文検索テキスト
+          required: true
+  /api/chefs/recipe/search:
+    get:
+      summary: 名シェフのレシピを全文検索
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchChefRecipe'
+      operationId: get-api-chefs-recipe-search
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: q
+          description: 全文検索テキスト
 components:
   schemas:
     CreateChef:
@@ -1005,6 +1042,8 @@ components:
         - id
         - name
         - link
+        - createdAt
+        - updatedAt
         - numRecipe
         - numFollower
     CreateChefRecipe:
@@ -1089,7 +1128,6 @@ components:
                   - type: array
                     items:
                       type: object
-                description: 補足
         imageUrl:
           type: string
           description: 画像
@@ -1110,6 +1148,7 @@ components:
           type: string
         numFav:
           type: integer
+          description: いいね数
       required:
         - id
         - chefId
@@ -1285,7 +1324,6 @@ components:
                   - type: array
                     items:
                       type: object
-                description: 補足
         imageUrl:
           type: string
           description: 画像
@@ -1306,6 +1344,7 @@ components:
           type: string
         numFav:
           type: integer
+          description: いいね数
       required:
         - id
         - usrId
@@ -1360,6 +1399,8 @@ components:
       required:
         - id
         - name
+        - createdAt
+        - updatedAt
         - numRecipe
         - numFollower
     DeletedRecipe:
@@ -1434,6 +1475,7 @@ components:
           type: string
         numFav:
           type: integer
+          description: いいね数
       required:
         - id
         - name
@@ -1680,6 +1722,8 @@ components:
         - id
         - name
         - link
+        - createdAt
+        - updatedAt
         - numRecipe
         - numFollower
     GetRecipe:
@@ -1764,7 +1808,6 @@ components:
                   - type: array
                     items:
                       type: object
-                description: 補足
         imageUrl:
           type: string
           description: 画像
@@ -1785,6 +1828,7 @@ components:
           type: string
         numFav:
           type: integer
+          description: いいね数
       required:
         - id
         - name
@@ -2074,6 +2118,109 @@ components:
         - createdAt
         - updatedAt
         - numRecipe
+    SearchChef:
+      type: object
+      x-examples:
+        Example 1:
+          data:
+            - id: 9a0ce94b-d275-4ea6-ae11-914612c79d62
+              name: Mシェフ
+              imageUrl: 'http://www.yahoo.co.jp'
+              profile: 平成14年事例Ⅱで出題されたMシェフ。三國清三がモデルではないか？と噂になった。
+              createdAt: '2023-08-13T12:25:46.050604+09:00'
+              updatedAt: '2023-08-13T12:44:19.090518+09:00'
+              numRecipe: 1
+              numFollower: 0
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              name:
+                type: string
+                description: 登録名
+              imageUrl:
+                type: string
+                description: プロフィール画像
+              profile:
+                type: string
+                description: シェフ紹介
+              createdAt:
+                type: string
+              updatedAt:
+                type: string
+              numRecipe:
+                type: integer
+                description: レシピ数
+              numFollower:
+                type: integer
+                description: フォロワー数
+            required:
+              - id
+              - name
+              - createdAt
+              - updatedAt
+              - numRecipe
+              - numFollower
+    SearchChefRecipe:
+      type: object
+      x-examples:
+        Example 1:
+          data:
+            - id: c8235d40-6daf-424e-a299-bd7e98aff7fa
+              chefId: 9a0ce94b-d275-4ea6-ae11-914612c79d62
+              name: グラタン
+              servings: 6
+              imageUrl: IMAGE_URL_1
+              introduction: INTRODUCTION_1
+              accessLevel: 2
+              createdAt: '2023-08-13T12:44:19.090518+09:00'
+              updatedAt: '2023-08-13T12:50:13.649757+09:00'
+              numFav: 0
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              chefId:
+                type: string
+              name:
+                type: string
+                description: レシピ名
+              servings:
+                type: integer
+                description: ＊人前
+              imageUrl:
+                type: string
+                description: 画像
+              introduction:
+                type: string
+                description: レシピの紹介文
+              accessLevel:
+                type: integer
+                description: 公開、限定公開、非公開、下書き
+              createdAt:
+                type: string
+              updatedAt:
+                type: string
+              numFav:
+                type: integer
+                description: いいね数
+            required:
+              - id
+              - chefId
+              - name
+              - servings
+              - accessLevel
+              - createdAt
+              - updatedAt
+              - numFav
     TrendRecipe:
       type: object
       x-stoplight:
@@ -2178,6 +2325,21 @@ components:
         - data
     UpdateChef:
       type: object
+      x-examples:
+        Example 1:
+          id: d309c90c-e318-410e-b342-bed6bc2dc96f
+          name: Mシェフ
+          imageUrl: 'http://www.yahoo.co.jp'
+          profile: 平成14年事例Ⅱで出題されたMシェフ。三國清三がモデルではないか？と噂になった。
+          link:
+            - label: LABEL_1
+              url: URL_1
+            - label: LABEL_2
+              url: URL_2
+          createdAt: '2023-08-09T05:46:08.569996+09:00'
+          updatedAt: '2023-08-09T05:46:46.296479+09:00'
+          numRecipe: 0
+          numFollower: 0
       properties:
         id:
           type: string
@@ -2214,23 +2376,10 @@ components:
         - id
         - name
         - link
+        - createdAt
+        - updatedAt
         - numRecipe
         - numFollower
-      x-examples:
-        Example 1:
-          id: d309c90c-e318-410e-b342-bed6bc2dc96f
-          name: Mシェフ
-          imageUrl: 'http://www.yahoo.co.jp'
-          profile: 平成14年事例Ⅱで出題されたMシェフ。三國清三がモデルではないか？と噂になった。
-          link:
-            - label: LABEL_1
-              url: URL_1
-            - label: LABEL_2
-              url: URL_2
-          createdAt: '2023-08-09T05:46:08.569996+09:00'
-          updatedAt: '2023-08-09T05:46:46.296479+09:00'
-          numRecipe: 0
-          numFollower: 0
     UpdateRecipe:
       type: object
       x-examples:
@@ -2313,7 +2462,6 @@ components:
                   - type: array
                     items:
                       type: object
-                description: 補足
         imageUrl:
           type: string
           description: 画像
@@ -2334,6 +2482,7 @@ components:
           type: string
         numFav:
           type: integer
+          description: いいね数
       required:
         - id
         - name

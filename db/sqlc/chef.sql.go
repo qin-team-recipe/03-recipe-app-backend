@@ -209,6 +209,67 @@ func (q *Queries) ListFeaturedChef(ctx context.Context, lim int32) ([]ListFeatur
 	return items, nil
 }
 
+const searchChef = `-- name: SearchChef :many
+SELECT
+    id,
+    name,
+    image_url,
+    profile,
+    created_at,
+    updated_at,
+    num_recipe,
+    num_follower
+FROM
+    chef
+WHERE
+    name &@~ $1
+OR
+    profile &@~ $1
+ORDER BY
+    pgroonga_score(tableoid, ctid) DESC,
+    num_follower DESC
+`
+
+type SearchChefRow struct {
+	ID          pgtype.UUID        `json:"id"`
+	Name        string             `json:"name"`
+	ImageUrl    pgtype.Text        `json:"imageUrl"`
+	Profile     pgtype.Text        `json:"profile"`
+	CreatedAt   pgtype.Timestamptz `json:"createdAt"`
+	UpdatedAt   pgtype.Timestamptz `json:"updatedAt"`
+	NumRecipe   int32              `json:"numRecipe"`
+	NumFollower int32              `json:"numFollower"`
+}
+
+func (q *Queries) SearchChef(ctx context.Context, query string) ([]SearchChefRow, error) {
+	rows, err := q.db.Query(ctx, searchChef, query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []SearchChefRow
+	for rows.Next() {
+		var i SearchChefRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.ImageUrl,
+			&i.Profile,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.NumRecipe,
+			&i.NumFollower,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const updateChef = `-- name: UpdateChef :one
 SELECT
     id,

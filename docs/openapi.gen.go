@@ -12,8 +12,8 @@ import (
 
 // CreateChef defines model for CreateChef.
 type CreateChef struct {
-	CreatedAt *string `json:"createdAt,omitempty"`
-	Id        string  `json:"id"`
+	CreatedAt string `json:"createdAt"`
+	Id        string `json:"id"`
 
 	// ImageUrl プロフィール画像
 	ImageUrl *string `json:"imageUrl,omitempty"`
@@ -35,7 +35,7 @@ type CreateChef struct {
 
 	// Profile シェフ紹介
 	Profile   *string `json:"profile,omitempty"`
-	UpdatedAt *string `json:"updatedAt,omitempty"`
+	UpdatedAt string  `json:"updatedAt"`
 }
 
 // CreateChefRecipe defines model for CreateChefRecipe.
@@ -72,15 +72,15 @@ type CreateChefRecipe struct {
 
 	// Method 作り方
 	Method []struct {
-		Html *string `json:"html,omitempty"`
-
-		// Supplement 補足
+		Html       *string                             `json:"html,omitempty"`
 		Supplement *CreateChefRecipe_Method_Supplement `json:"supplement,omitempty"`
 	} `json:"method"`
 
 	// Name レシピ名
-	Name   string `json:"name"`
-	NumFav int    `json:"numFav"`
+	Name string `json:"name"`
+
+	// NumFav いいね数
+	NumFav int `json:"numFav"`
 
 	// Servings ＊人前
 	Servings  int    `json:"servings"`
@@ -96,7 +96,7 @@ type CreateChefRecipeMethodSupplement0 = map[string]interface{}
 // CreateChefRecipeMethodSupplement1 defines model for .
 type CreateChefRecipeMethodSupplement1 = []map[string]interface{}
 
-// CreateChefRecipe_Method_Supplement 補足
+// CreateChefRecipe_Method_Supplement defines model for CreateChefRecipe.Method.Supplement.
 type CreateChefRecipe_Method_Supplement struct {
 	union json.RawMessage
 }
@@ -174,15 +174,15 @@ type CreateUsrRecipe struct {
 
 	// Method 作り方
 	Method []struct {
-		Html *string `json:"html,omitempty"`
-
-		// Supplement 補足
+		Html       *string                            `json:"html,omitempty"`
 		Supplement *CreateUsrRecipe_Method_Supplement `json:"supplement,omitempty"`
 	} `json:"method"`
 
 	// Name レシピ名
-	Name   string `json:"name"`
-	NumFav int    `json:"numFav"`
+	Name string `json:"name"`
+
+	// NumFav いいね数
+	NumFav int `json:"numFav"`
 
 	// Servings ＊人前
 	Servings  int    `json:"servings"`
@@ -198,15 +198,15 @@ type CreateUsrRecipeMethodSupplement0 = map[string]interface{}
 // CreateUsrRecipeMethodSupplement1 defines model for .
 type CreateUsrRecipeMethodSupplement1 = []map[string]interface{}
 
-// CreateUsrRecipe_Method_Supplement 補足
+// CreateUsrRecipe_Method_Supplement defines model for CreateUsrRecipe.Method.Supplement.
 type CreateUsrRecipe_Method_Supplement struct {
 	union json.RawMessage
 }
 
 // DeletedChef defines model for DeletedChef.
 type DeletedChef struct {
-	CreatedAt *string `json:"createdAt,omitempty"`
-	Id        string  `json:"id"`
+	CreatedAt string `json:"createdAt"`
+	Id        string `json:"id"`
 
 	// ImageUrl プロフィール画像
 	ImageUrl *string `json:"imageUrl,omitempty"`
@@ -222,7 +222,7 @@ type DeletedChef struct {
 
 	// Profile シェフ紹介
 	Profile   *string `json:"profile,omitempty"`
-	UpdatedAt *string `json:"updatedAt,omitempty"`
+	UpdatedAt string  `json:"updatedAt"`
 }
 
 // DeletedRecipe defines model for DeletedRecipe.
@@ -247,8 +247,10 @@ type DeletedRecipe struct {
 	Link *[]string `json:"link,omitempty"`
 
 	// Name レシピ名
-	Name   string `json:"name"`
-	NumFav int    `json:"numFav"`
+	Name string `json:"name"`
+
+	// NumFav いいね数
+	NumFav int `json:"numFav"`
 
 	// Servings ＊人前
 	Servings  int    `json:"servings"`
@@ -326,8 +328,8 @@ type FeaturedChef struct {
 
 // GetChef defines model for GetChef.
 type GetChef struct {
-	CreatedAt *string `json:"createdAt,omitempty"`
-	Id        string  `json:"id"`
+	CreatedAt string `json:"createdAt"`
+	Id        string `json:"id"`
 
 	// ImageUrl プロフィール画像
 	ImageUrl *string `json:"imageUrl,omitempty"`
@@ -349,7 +351,7 @@ type GetChef struct {
 
 	// Profile シェフ紹介
 	Profile   *string `json:"profile,omitempty"`
-	UpdatedAt *string `json:"updatedAt,omitempty"`
+	UpdatedAt string  `json:"updatedAt"`
 }
 
 // GetRecipe defines model for GetRecipe.
@@ -386,15 +388,15 @@ type GetRecipe struct {
 
 	// Method 作り方
 	Method []struct {
-		Html *string `json:"html,omitempty"`
-
-		// Supplement 補足
+		Html       *string                      `json:"html,omitempty"`
 		Supplement *GetRecipe_Method_Supplement `json:"supplement,omitempty"`
 	} `json:"method"`
 
 	// Name レシピ名
-	Name   string `json:"name"`
-	NumFav int    `json:"numFav"`
+	Name string `json:"name"`
+
+	// NumFav いいね数
+	NumFav int `json:"numFav"`
 
 	// Servings ＊人前
 	Servings  int    `json:"servings"`
@@ -410,7 +412,7 @@ type GetRecipeMethodSupplement0 = map[string]interface{}
 // GetRecipeMethodSupplement1 defines model for .
 type GetRecipeMethodSupplement1 = []map[string]interface{}
 
-// GetRecipe_Method_Supplement 補足
+// GetRecipe_Method_Supplement defines model for GetRecipe.Method.Supplement.
 type GetRecipe_Method_Supplement struct {
 	union json.RawMessage
 }
@@ -537,6 +539,57 @@ type GetUsr struct {
 	UpdatedAt string  `json:"updatedAt"`
 }
 
+// SearchChef defines model for SearchChef.
+type SearchChef struct {
+	Data *[]struct {
+		CreatedAt string `json:"createdAt"`
+		Id        string `json:"id"`
+
+		// ImageUrl プロフィール画像
+		ImageUrl *string `json:"imageUrl,omitempty"`
+
+		// Name 登録名
+		Name string `json:"name"`
+
+		// NumFollower フォロワー数
+		NumFollower int `json:"numFollower"`
+
+		// NumRecipe レシピ数
+		NumRecipe int `json:"numRecipe"`
+
+		// Profile シェフ紹介
+		Profile   *string `json:"profile,omitempty"`
+		UpdatedAt string  `json:"updatedAt"`
+	} `json:"data,omitempty"`
+}
+
+// SearchChefRecipe defines model for SearchChefRecipe.
+type SearchChefRecipe struct {
+	Data *[]struct {
+		// AccessLevel 公開、限定公開、非公開、下書き
+		AccessLevel int    `json:"accessLevel"`
+		ChefId      string `json:"chefId"`
+		CreatedAt   string `json:"createdAt"`
+		Id          string `json:"id"`
+
+		// ImageUrl 画像
+		ImageUrl *string `json:"imageUrl,omitempty"`
+
+		// Introduction レシピの紹介文
+		Introduction *string `json:"introduction,omitempty"`
+
+		// Name レシピ名
+		Name string `json:"name"`
+
+		// NumFav いいね数
+		NumFav int `json:"numFav"`
+
+		// Servings ＊人前
+		Servings  int    `json:"servings"`
+		UpdatedAt string `json:"updatedAt"`
+	} `json:"data,omitempty"`
+}
+
 // TrendRecipe defines model for TrendRecipe.
 type TrendRecipe struct {
 	Data []struct {
@@ -562,8 +615,8 @@ type TrendRecipe struct {
 
 // UpdateChef defines model for UpdateChef.
 type UpdateChef struct {
-	CreatedAt *string `json:"createdAt,omitempty"`
-	Id        string  `json:"id"`
+	CreatedAt string `json:"createdAt"`
+	Id        string `json:"id"`
 
 	// ImageUrl プロフィール画像
 	ImageUrl *string `json:"imageUrl,omitempty"`
@@ -585,7 +638,7 @@ type UpdateChef struct {
 
 	// Profile シェフ紹介
 	Profile   *string `json:"profile,omitempty"`
-	UpdatedAt *string `json:"updatedAt,omitempty"`
+	UpdatedAt string  `json:"updatedAt"`
 }
 
 // UpdateRecipe defines model for UpdateRecipe.
@@ -622,15 +675,15 @@ type UpdateRecipe struct {
 
 	// Method 作り方
 	Method []struct {
-		Html *string `json:"html,omitempty"`
-
-		// Supplement 補足
+		Html       *string                         `json:"html,omitempty"`
 		Supplement *UpdateRecipe_Method_Supplement `json:"supplement,omitempty"`
 	} `json:"method"`
 
 	// Name レシピ名
-	Name   string `json:"name"`
-	NumFav int    `json:"numFav"`
+	Name string `json:"name"`
+
+	// NumFav いいね数
+	NumFav int `json:"numFav"`
 
 	// Servings ＊人前
 	Servings  int    `json:"servings"`
@@ -646,7 +699,7 @@ type UpdateRecipeMethodSupplement0 = map[string]interface{}
 // UpdateRecipeMethodSupplement1 defines model for .
 type UpdateRecipeMethodSupplement1 = []map[string]interface{}
 
-// UpdateRecipe_Method_Supplement 補足
+// UpdateRecipe_Method_Supplement defines model for UpdateRecipe.Method.Supplement.
 type UpdateRecipe_Method_Supplement struct {
 	union json.RawMessage
 }
@@ -736,6 +789,12 @@ type PostApiChefsJSONBody struct {
 	Profile *string `json:"profile,omitempty"`
 }
 
+// GetApiChefsRecipeSearchParams defines parameters for GetApiChefsRecipeSearch.
+type GetApiChefsRecipeSearchParams struct {
+	// Q 全文検索テキスト
+	Q *string `form:"q,omitempty" json:"q,omitempty"`
+}
+
 // PutApiChefsRecipeRecipeIdJSONBody defines parameters for PutApiChefsRecipeRecipeId.
 type PutApiChefsRecipeRecipeIdJSONBody struct {
 	// AccessLevel 公開、限定公開、非公開、下書き
@@ -773,6 +832,12 @@ type PutApiChefsRecipeRecipeIdJSONBody struct {
 
 	// Servings ＊人前
 	Servings int `binding:"required" json:"servings"`
+}
+
+// GetApiChefsSearchParams defines parameters for GetApiChefsSearch.
+type GetApiChefsSearchParams struct {
+	// Q 全文検索テキスト
+	Q string `form:"q" json:"q"`
 }
 
 // PostApiChefsChefIdRecipeJSONBody defines parameters for PostApiChefsChefIdRecipe.
