@@ -79,12 +79,16 @@ func (s *Server) MountHandlers() {
 	api.GET("/recipes/:id", s.GetRecipe)         // レシピを取得するAPI
 	api.GET("/recipes/trend", s.ListTrendRecipe) // 話題のレシピ一覧を取得するAPI
 
-	// ショッピングリスト関連
+	// 買い物リスト関連
 	usr.GET("/lists", s.ListShoppingList)                  // ユーザーの買い物リスト一覧を取得するAPI
 	usr.GET("/lists/recipe/:recipe_id", s.GetShoppingList) // 買い物リストを取得するAPI
 	usr.PUT("/lists/:id", s.UpdateShoppingList)            // 買い物リストを更新するAPI
 	usr.DELETE("/lists/:id", s.DeleteShoppingList)         // 買い物リストを削除するAPI
 	usr.POST("/lists", s.CreateShoppingList)               // 買い物リストを新規登録するAPI
+
+	// 画像関連
+	api.GET("/images", s.GetImage)   // 画像を取得するAPI（webp限定）
+	api.POST("/images", s.PostImage) // 画像を新規登録するAPI（webp形式に変換される）
 }
 
 func (s *Server) Start(addr string) error {
