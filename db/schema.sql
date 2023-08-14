@@ -36,7 +36,7 @@ CREATE TYPE type_vrecipe_ingredient AS (
 );
 
 -- Project Name : チーム03
--- Date/Time    : 2023/08/11 13:59:26
+-- Date/Time    : 2023/08/15 6:56:49
 -- Author       : kaned
 -- RDBMS Type   : PostgreSQL
 -- Application  : A5:SQL Mk-2
@@ -61,6 +61,9 @@ CREATE TABLE following_user (
   , created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL
   , CONSTRAINT following_user_PKC PRIMARY KEY (id)
 ) ;
+
+CREATE UNIQUE INDEX following_user_IX1
+  ON following_user(followee_id,follower_id);
 
 -- 買い物明細
 -- * BackupToTempTable
@@ -152,6 +155,9 @@ CREATE TABLE favoring (
   , CONSTRAINT favoring_PKC PRIMARY KEY (id)
 ) ;
 
+CREATE UNIQUE INDEX favoring_IX1
+  ON favoring(recipe_id,usr_id);
+
 -- フォロー中シェフ
 -- * BackupToTempTable
 DROP TABLE if exists following_chef CASCADE;
@@ -164,6 +170,9 @@ CREATE TABLE following_chef (
   , created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL
   , CONSTRAINT following_chef_PKC PRIMARY KEY (id)
 ) ;
+
+CREATE UNIQUE INDEX following_chef_IX1
+  ON following_chef(chef_id,usr_id);
 
 -- ユーザー（一般シェフ）
 -- * BackupToTempTable
