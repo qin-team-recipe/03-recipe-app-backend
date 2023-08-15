@@ -89,6 +89,12 @@ func (s *Server) MountHandlers() {
 	// 画像関連
 	api.GET("/images", s.GetImage)   // 画像を取得するAPI（webp限定）
 	api.POST("/images", s.PostImage) // 画像を新規登録するAPI（webp形式に変換される）
+
+	// フォロー関連
+	usr.POST("/follow/chefs/:id", s.CreateFollowChef)
+	usr.DELETE("/follow/chefs/:id", s.DeleteFollowChef)
+	usr.GET("/follow/chefs/:id", s.ExistsFollowChef)
+	usr.GET("/follow/chefs", s.GetFollowChef)
 }
 
 func (s *Server) Start(addr string) error {
