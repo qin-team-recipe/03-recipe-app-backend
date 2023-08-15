@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/aopontann/gin-sqlc/utils"
 	"net/http"
+	"reflect"
 
 	db "github.com/aopontann/gin-sqlc/db/sqlc"
 	"github.com/gin-gonic/gin"
@@ -120,7 +121,7 @@ func (s *Server) ListFollowChef(c *gin.Context) {
 	type listFollowChefResponse struct {
 		Data []db.GetFollowChefRow `json:"data"`
 	}
-	var list listFollowChefResponse
+	var response listFollowChefResponse
 
 	// usrIdを取得
 	email := c.MustGet("email").(string)
@@ -131,10 +132,14 @@ func (s *Server) ListFollowChef(c *gin.Context) {
 	}
 
 	// フォローしている有名シェフ一覧を取得
-	list.Data, err = s.q.GetFollowChef(context.Background(), usrID)
+	response.Data, err = s.q.GetFollowChef(context.Background(), usrID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
+	}
+
+	if response.Data == nil || reflect.ValueOf(response.Data).IsNil() {
+		response.Data = []db.GetFollowChefRow{}
 	}
 
 	//// レスポンス型バリデーション
@@ -144,5 +149,5 @@ func (s *Server) ListFollowChef(c *gin.Context) {
 	//	return
 	//}
 
-	c.JSON(http.StatusOK, list)
+	c.JSON(http.StatusOK, response)
 }
