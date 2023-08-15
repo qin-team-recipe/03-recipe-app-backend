@@ -85,6 +85,12 @@ func (s *Server) MountHandlers() {
 	usr.PUT("/lists/:id", s.UpdateShoppingList)            // 買い物リストを更新するAPI
 	usr.DELETE("/lists/:id", s.DeleteShoppingList)         // 買い物リストを削除するAPI
 	usr.POST("/lists", s.CreateShoppingList)               // 買い物リストを新規登録するAPI
+
+	// フォロー関連
+	usr.POST("/follow/chefs/:id", s.CreateFollowChef)
+	usr.DELETE("/follow/chefs/:id", s.DeleteFollowChef)
+	usr.GET("/follow/chefs/:id", s.ExistsFollowChef)
+	usr.GET("/follow/chefs", s.GetFollowChef)
 }
 
 func (s *Server) Start(addr string) error {
