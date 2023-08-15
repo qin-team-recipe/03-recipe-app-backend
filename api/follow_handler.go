@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"github.com/aopontann/gin-sqlc/docs"
 	"github.com/aopontann/gin-sqlc/utils"
 	"net/http"
 	"reflect"
@@ -34,12 +35,12 @@ func (s *Server) CreateFollowChef(c *gin.Context) {
 		return
 	}
 
-	//// レスポンス型バリデーション
-	//err = utils.ValidateStructTwoWay[db.VRecipe, docs.CreateUsrRecipe](&row)
-	//if err != nil {
-	//	c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-	//	return
-	//}
+	// レスポンス型バリデーション
+	err = utils.ValidateStructTwoWay[db.FollowingChef, docs.CreateFollowChef](&row)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 
 	c.JSON(http.StatusOK, row)
 }
@@ -68,12 +69,12 @@ func (s *Server) DeleteFollowChef(c *gin.Context) {
 		return
 	}
 
-	//// レスポンス型バリデーション
-	//err = utils.ValidateStructTwoWay[db.VRecipe, docs.CreateUsrRecipe](&row)
-	//if err != nil {
-	//	c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-	//	return
-	//}
+	// レスポンス型バリデーション
+	err = utils.ValidateStructTwoWay[db.FollowingChef, docs.DeletedFollowChef](&row)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 
 	c.JSON(http.StatusOK, row)
 }
@@ -107,12 +108,12 @@ func (s *Server) ExistsFollowChef(c *gin.Context) {
 		return
 	}
 
-	//// レスポンス型バリデーション
-	//err = utils.ValidateStructTwoWay[db.VRecipe, docs.CreateUsrRecipe](&row)
-	//if err != nil {
-	//	c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-	//	return
-	//}
+	// レスポンス型バリデーション
+	err = utils.ValidateStructTwoWay[existsFollowResponse, docs.ExistsFollowChef](&response)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 
 	c.JSON(http.StatusOK, response)
 }
@@ -142,12 +143,12 @@ func (s *Server) ListFollowChef(c *gin.Context) {
 		response.Data = []db.GetFollowChefRow{}
 	}
 
-	//// レスポンス型バリデーション
-	//err = utils.ValidateStructTwoWay[db.VRecipe, docs.CreateUsrRecipe](&row)
-	//if err != nil {
-	//	c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-	//	return
-	//}
+	// レスポンス型バリデーション
+	err = utils.ValidateStructTwoWay[listFollowChefResponse, docs.ListFollowChef](&response)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 
 	c.JSON(http.StatusOK, response)
 }
