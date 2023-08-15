@@ -116,7 +116,12 @@ func (s *Server) ExistsFollowChef(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
-func (s *Server) GetFollowChef(c *gin.Context) {
+func (s *Server) ListFollowChef(c *gin.Context) {
+	type listFollowChefResponse struct {
+		Data []db.GetFollowChefRow `json:"data"`
+	}
+	var list listFollowChefResponse
+
 	// usrIdを取得
 	email := c.MustGet("email").(string)
 	usrID, err := s.q.GetUserId(context.Background(), email)
@@ -125,8 +130,8 @@ func (s *Server) GetFollowChef(c *gin.Context) {
 		return
 	}
 
-	// お気に入りしているか
-	list, err := s.q.GetFollowChef(context.Background(), usrID)
+	// フォローしている有名シェフ一覧を取得
+	list.Data, err = s.q.GetFollowChef(context.Background(), usrID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

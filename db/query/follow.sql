@@ -49,7 +49,7 @@ FROM
 WHERE
     EXISTS (
         SELECT
-            chef_id
+            1
         FROM
             following_chef
         WHERE
