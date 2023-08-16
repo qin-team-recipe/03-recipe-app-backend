@@ -167,7 +167,7 @@ func (s *Server) ListFollowChefNewRecipe(c *gin.Context) {
 		return
 	}
 
-	// フォローしている有名シェフ一覧を取得
+	// フォローしている有名シェフの新着レシピ一覧を取得
 	response.Data, err = s.q.ListFollowChefNewRecipe(context.Background(), usrID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -180,6 +180,154 @@ func (s *Server) ListFollowChefNewRecipe(c *gin.Context) {
 
 	// レスポンス型バリデーション
 	err = utils.ValidateStructTwoWay[followNewRecipeResponse, docs.ListFollowChefRecipe](&response)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, response)
+}
+
+func (s *Server) CreateFollowUser(c *gin.Context) {
+	// パスパラメータ取り出し
+	param := db.CreateFollowUserParams{}
+	var err error
+	param.FolloweeID, err = utils.StrToUUID(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	}
+
+	// usrIdを取得
+	email := c.MustGet("email").(string)
+	param.FollowerID, err = s.q.GetUserId(context.Background(), email)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// FolloweeIDとFollowerIDが同じのときエラー
+	if param.FolloweeID == param.FollowerID {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "自分をフォローすることはできません"})
+		return
+	}
+
+	// 新規登録処理
+	row, err := s.q.CreateFollowUser(context.Background(), param)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// レスポンス型バリデーション
+	err = utils.ValidateStructTwoWay[db.FollowingUser, docs.CreateFollowUser](&row)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, row)
+}
+
+func (s *Server) DeleteFollowUser(c *gin.Context) {
+	// パスパラメータ取り出し
+	param := db.DeleteFollowUserParams{}
+	var err error
+	param.FolloweeID, err = utils.StrToUUID(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	}
+
+	// usrIdを取得
+	email := c.MustGet("email").(string)
+	param.FollowerID, err = s.q.GetUserId(context.Background(), email)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// 登録解除処理
+	row, err := s.q.DeleteFollowUser(context.Background(), param)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// レスポンス型バリデーション
+	err = utils.ValidateStructTwoWay[db.FollowingUser, docs.DeletedFollowUser](&row)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, row)
+}
+
+func (s *Server) ExistsFollowUser(c *gin.Context) {
+	type existsFollowResponse struct {
+		Exists bool `json:"exists"`
+	}
+	var response existsFollowResponse
+
+	// パスパラメータ取り出し
+	param := db.ExistsFollowUserParams{}
+	var err error
+	param.FolloweeID, err = utils.StrToUUID(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	}
+
+	// usrIdを取得
+	email := c.MustGet("email").(string)
+	param.FollowerID, err = s.q.GetUserId(context.Background(), email)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// お気に入りしているか
+	response.Exists, err = s.q.ExistsFollowUser(context.Background(), param)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// レスポンス型バリデーション
+	err = utils.ValidateStructTwoWay[existsFollowResponse, docs.ExistsFollowUser](&response)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, response)
+}
+
+func (s *Server) ListFollowUser(c *gin.Context) {
+	type listFollowUserResponse struct {
+		Data []db.ListFollowUserRow `json:"data"`
+	}
+	var response listFollowUserResponse
+
+	// usrIdを取得
+	email := c.MustGet("email").(string)
+	followerID, err := s.q.GetUserId(context.Background(), email)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// フォローしている有名シェフ一覧を取得
+	response.Data, err = s.q.ListFollowUser(context.Background(), followerID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	if response.Data == nil || reflect.ValueOf(response.Data).IsNil() {
+		response.Data = []db.ListFollowUserRow{}
+	}
+
+	// レスポンス型バリデーション
+	err = utils.ValidateStructTwoWay[listFollowUserResponse, docs.ListFollowUser](&response)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

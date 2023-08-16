@@ -25,7 +25,7 @@ RETURNING
 -- name: ExistsFollowChef :one
 SELECT EXISTS (
     SELECT
-        *
+        1
     FROM
         following_chef
     WHERE
@@ -76,6 +76,8 @@ FROM
 WHERE
     access_level = 1
 AND
+    CURRENT_TIMESTAMP - INTERVAL '3 days' <= created_at
+AND
     EXISTS (
         SELECT
             1
@@ -85,6 +87,67 @@ AND
             following_chef.usr_id = @usr_id
         AND
             following_chef.chef_id = recipe.chef_id
+    )
+ORDER BY
+    created_at DESC;
+
+-- name: CreateFollowUser :one
+INSERT INTO following_user
+(
+    followee_id,
+    follower_id
+)
+VALUES
+(
+    @followee_id,
+    @follower_id
+)
+RETURNING
+    *;
+
+-- name: DeleteFollowUser :one
+DELETE FROM
+    following_user
+WHERE
+    followee_id = @followee_id
+AND
+    follower_id = @follower_id
+RETURNING
+    *;
+
+-- name: ExistsFollowUser :one
+SELECT EXISTS (
+    SELECT
+        1
+    FROM
+        following_user
+    WHERE
+        followee_id = @followee_id
+    AND
+        follower_id = @follower_id
+);
+
+-- name: ListFollowUser :many
+SELECT
+    id,
+    name,
+    image_url,
+    profile,
+    created_at,
+    updated_at,
+    num_recipe
+FROM
+    usr
+WHERE
+    EXISTS (
+        SELECT
+            1
+        FROM
+            following_user
+        WHERE
+            follower_id = @follower_id
+        AND
+            followee_id = usr.id
     )
 ORDER BY
     created_at DESC;

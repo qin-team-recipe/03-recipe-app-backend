@@ -43,6 +43,38 @@ func (q *Queries) CreateFollowChef(ctx context.Context, arg CreateFollowChefPara
 	return i, err
 }
 
+const createFollowUser = `-- name: CreateFollowUser :one
+INSERT INTO following_user
+(
+    followee_id,
+    follower_id
+)
+VALUES
+(
+    $1,
+    $2
+)
+RETURNING
+    id, followee_id, follower_id, created_at
+`
+
+type CreateFollowUserParams struct {
+	FolloweeID pgtype.UUID `json:"followeeId"`
+	FollowerID pgtype.UUID `json:"followerId"`
+}
+
+func (q *Queries) CreateFollowUser(ctx context.Context, arg CreateFollowUserParams) (FollowingUser, error) {
+	row := q.db.QueryRow(ctx, createFollowUser, arg.FolloweeID, arg.FollowerID)
+	var i FollowingUser
+	err := row.Scan(
+		&i.ID,
+		&i.FolloweeID,
+		&i.FollowerID,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
 const deleteFollowChef = `-- name: DeleteFollowChef :one
 DELETE FROM
     following_chef
@@ -71,10 +103,38 @@ func (q *Queries) DeleteFollowChef(ctx context.Context, arg DeleteFollowChefPara
 	return i, err
 }
 
+const deleteFollowUser = `-- name: DeleteFollowUser :one
+DELETE FROM
+    following_user
+WHERE
+    followee_id = $1
+AND
+    follower_id = $2
+RETURNING
+    id, followee_id, follower_id, created_at
+`
+
+type DeleteFollowUserParams struct {
+	FolloweeID pgtype.UUID `json:"followeeId"`
+	FollowerID pgtype.UUID `json:"followerId"`
+}
+
+func (q *Queries) DeleteFollowUser(ctx context.Context, arg DeleteFollowUserParams) (FollowingUser, error) {
+	row := q.db.QueryRow(ctx, deleteFollowUser, arg.FolloweeID, arg.FollowerID)
+	var i FollowingUser
+	err := row.Scan(
+		&i.ID,
+		&i.FolloweeID,
+		&i.FollowerID,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
 const existsFollowChef = `-- name: ExistsFollowChef :one
 SELECT EXISTS (
     SELECT
-        id, chef_id, usr_id, created_at
+        1
     FROM
         following_chef
     WHERE
@@ -91,6 +151,31 @@ type ExistsFollowChefParams struct {
 
 func (q *Queries) ExistsFollowChef(ctx context.Context, arg ExistsFollowChefParams) (bool, error) {
 	row := q.db.QueryRow(ctx, existsFollowChef, arg.ChefID, arg.UsrID)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}
+
+const existsFollowUser = `-- name: ExistsFollowUser :one
+SELECT EXISTS (
+    SELECT
+        1
+    FROM
+        following_user
+    WHERE
+        followee_id = $1
+    AND
+        follower_id = $2
+)
+`
+
+type ExistsFollowUserParams struct {
+	FolloweeID pgtype.UUID `json:"followeeId"`
+	FollowerID pgtype.UUID `json:"followerId"`
+}
+
+func (q *Queries) ExistsFollowUser(ctx context.Context, arg ExistsFollowUserParams) (bool, error) {
+	row := q.db.QueryRow(ctx, existsFollowUser, arg.FolloweeID, arg.FollowerID)
 	var exists bool
 	err := row.Scan(&exists)
 	return exists, err
@@ -179,6 +264,8 @@ FROM
 WHERE
     access_level = 1
 AND
+    CURRENT_TIMESTAMP - INTERVAL '3 days' <= created_at
+AND
     EXISTS (
         SELECT
             1
@@ -224,6 +311,70 @@ func (q *Queries) ListFollowChefNewRecipe(ctx context.Context, usrID pgtype.UUID
 			&i.CreatedAt,
 			&i.UpdatedAt,
 			&i.NumFav,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listFollowUser = `-- name: ListFollowUser :many
+SELECT
+    id,
+    name,
+    image_url,
+    profile,
+    created_at,
+    updated_at,
+    num_recipe
+FROM
+    usr
+WHERE
+    EXISTS (
+        SELECT
+            1
+        FROM
+            following_user
+        WHERE
+            follower_id = $1
+        AND
+            followee_id = usr.id
+    )
+ORDER BY
+    created_at DESC
+`
+
+type ListFollowUserRow struct {
+	ID        pgtype.UUID        `json:"id"`
+	Name      string             `json:"name"`
+	ImageUrl  pgtype.Text        `json:"imageUrl"`
+	Profile   pgtype.Text        `json:"profile"`
+	CreatedAt pgtype.Timestamptz `json:"createdAt"`
+	UpdatedAt pgtype.Timestamptz `json:"updatedAt"`
+	NumRecipe int32              `json:"numRecipe"`
+}
+
+func (q *Queries) ListFollowUser(ctx context.Context, followerID pgtype.UUID) ([]ListFollowUserRow, error) {
+	rows, err := q.db.Query(ctx, listFollowUser, followerID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ListFollowUserRow
+	for rows.Next() {
+		var i ListFollowUserRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.ImageUrl,
+			&i.Profile,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.NumRecipe,
 		); err != nil {
 			return nil, err
 		}

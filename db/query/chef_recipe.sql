@@ -42,6 +42,8 @@ SELECT
 FROM
     recipe
 WHERE
+    access_level = 1
+AND
     chef_id IS NOT NULL
 AND (
     name &@~ @query
