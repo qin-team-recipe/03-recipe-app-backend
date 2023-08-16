@@ -1008,7 +1008,7 @@ paths:
                 $ref: '#/components/schemas/ExistsFollowChef'
       operationId: get-api-user-follow-chefs-id
     post:
-      summary: 有名シェフをフォローするAPI
+      summary: 有名シェフをフォローする
       operationId: post-api-user-follow-chefs-id
       responses:
         '200':
@@ -1018,7 +1018,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/CreateFollowChef'
     delete:
-      summary: 有名シェフのフォローを解除するAPI
+      summary: 有名シェフのフォローを解除する
       operationId: delete-api-user-follow-chefs-id
       responses:
         '200':
@@ -1029,7 +1029,7 @@ paths:
                 $ref: '#/components/schemas/DeletedFollowChef'
   /api/user/follow/chefs:
     get:
-      summary: フォローしている有名シェフの一覧を取得するAPI
+      summary: フォローしている有名シェフの一覧を取得する
       tags: []
       responses:
         '200':
@@ -1041,7 +1041,7 @@ paths:
       operationId: get-api-user-follow-chefs
   /api/user/follow/chefs/recipes:
     get:
-      summary: フォローしているシェフの新着レシピ一覧を取得するAPI
+      summary: フォローしているシェフの新着レシピ一覧を取得する
       tags: []
       responses:
         '200':
@@ -1051,6 +1051,57 @@ paths:
               schema:
                 $ref: '#/components/schemas/ListFollowChefRecipe'
       operationId: get-api-user-follow-chefs-recipes
+  '/api/user/follow/users/{id}':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+    get:
+      summary: 一般シェフをフォローしているか
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExistsFollowUser'
+      operationId: get-api-user-follow-users-id
+    post:
+      summary: 一般シェフをフォローする
+      operationId: post-api-user-follow-users-id
+      responses:
+        '200':
+          description: OK
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateFollowUser'
+    delete:
+      summary: 一般シェフのフォローを解除する
+      operationId: delete-api-user-follow-users-id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeletedFollowUser'
+  /api/user/follow/users:
+    get:
+      summary: フォローしている一般シェフの一覧を取得する
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListFollowUser'
+      operationId: get-api-user-follow-users
 components:
   schemas:
     CreateChef:
@@ -1245,6 +1296,30 @@ components:
         - id
         - chefId
         - usrId
+        - createdAt
+    CreateFollowUser:
+      type: object
+      x-examples:
+        Example 1:
+          id: 840f467b-7991-4aa4-86e9-499745d9a89c
+          followeeId: 8642eb31-7801-4284-b69b-225aee3b1826
+          followerId: d3d7b0d2-679e-4ca3-adbb-a5ce674560e0
+          createdAt: '2023-08-16T19:55:01.517424+09:00'
+      properties:
+        id:
+          type: string
+        followeeId:
+          type: string
+          description: フォロイーID
+        followerId:
+          type: string
+          description: フォロワーID
+        createdAt:
+          type: string
+      required:
+        - id
+        - followeeId
+        - followerId
         - createdAt
     CreateShoppingList:
       type: object
@@ -1513,6 +1588,30 @@ components:
         - chefId
         - usrId
         - createdAt
+    DeletedFollowUser:
+      type: object
+      x-examples:
+        Example 1:
+          id: 840f467b-7991-4aa4-86e9-499745d9a89c
+          followeeId: 8642eb31-7801-4284-b69b-225aee3b1826
+          followerId: d3d7b0d2-679e-4ca3-adbb-a5ce674560e0
+          createdAt: '2023-08-16T19:55:01.517424+09:00'
+      properties:
+        id:
+          type: string
+        followeeId:
+          type: string
+          description: フォロイーID
+        followerId:
+          type: string
+          description: フォロワーID
+        createdAt:
+          type: string
+      required:
+        - id
+        - followeeId
+        - followerId
+        - createdAt
     DeletedRecipe:
       type: object
       x-stoplight:
@@ -1692,6 +1791,16 @@ components:
         - updatedAt
         - numRecipe
     ExistsFollowChef:
+      type: object
+      x-examples:
+        Example 1:
+          exists: true
+      properties:
+        exists:
+          type: boolean
+      required:
+        - exists
+    ExistsFollowUser:
       type: object
       x-examples:
         Example 1:
@@ -2341,6 +2450,51 @@ components:
               - createdAt
               - updatedAt
               - numFav
+      required:
+        - data
+    ListFollowUser:
+      type: object
+      x-examples:
+        Example 1:
+          data:
+            - id: 8642eb31-7801-4284-b69b-225aee3b1826
+              name: NAME_1
+              imageUrl: imageUrl
+              profile: PROFILE_1
+              createdAt: '2023-08-16T19:48:45.97564+09:00'
+              updatedAt: '2023-08-16T19:48:45.97564+09:00'
+              numRecipe: 0
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                description: ユーザーID（一般シェフID）
+              name:
+                type: string
+                description: ニックネーム
+              imageUrl:
+                type: string
+                description: プロフィール画像
+              profile:
+                type: string
+                description: 自己紹介
+              createdAt:
+                type: string
+              updatedAt:
+                type: string
+              numRecipe:
+                type: integer
+                description: レシピ数
+            required:
+              - id
+              - name
+              - createdAt
+              - updatedAt
+              - numRecipe
       required:
         - data
     SearchChef:

@@ -98,6 +98,8 @@ FROM
 INNER JOIN
     recipe
 ON
+    recipe.access_level = 1
+AND
     history.recipe_id = recipe.id
 ORDER BY
     score DESC
