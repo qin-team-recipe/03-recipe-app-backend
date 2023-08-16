@@ -1039,6 +1039,18 @@ paths:
               schema:
                 $ref: '#/components/schemas/ListFollowChef'
       operationId: get-api-user-follow-chefs
+  /api/user/follow/chefs/recipes:
+    get:
+      summary: フォローしているシェフの新着レシピ一覧を取得するAPI
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListFollowChefRecipe'
+      operationId: get-api-user-follow-chefs-recipes
 components:
   schemas:
     CreateChef:
@@ -2274,6 +2286,61 @@ components:
               - updatedAt
               - numRecipe
               - numFollower
+      required:
+        - data
+    ListFollowChefRecipe:
+      type: object
+      x-examples:
+        Example 1:
+          data:
+            - id: c8235d40-6daf-424e-a299-bd7e98aff7fa
+              chefId: 9a0ce94b-d275-4ea6-ae11-914612c79d62
+              name: グラタン
+              servings: 6
+              imageUrl: IMAGE_URL_1
+              introduction: INTRODUCTION_1
+              createdAt: '2023-08-13T12:44:19.090518+09:00'
+              updatedAt: '2023-08-16T18:56:28.756937+09:00'
+              numFav: 0
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                description: レシピID
+              chefId:
+                type: string
+                description: シェフID
+              name:
+                type: string
+                description: レシピ名
+              servings:
+                type: integer
+                description: ＊人前
+              imageUrl:
+                type: string
+                description: 画像
+              introduction:
+                type: string
+                description: レシピの紹介文
+              createdAt:
+                type: string
+              updatedAt:
+                type: string
+              numFav:
+                type: integer
+                description: ファボられ数
+            required:
+              - id
+              - chefId
+              - name
+              - servings
+              - createdAt
+              - updatedAt
+              - numFav
       required:
         - data
     SearchChef:

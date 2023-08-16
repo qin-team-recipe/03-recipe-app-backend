@@ -34,7 +34,7 @@ SELECT EXISTS (
         usr_id = @usr_id
 );
 
--- name: GetFollowChef :many
+-- name: ListFollowChef :many
 SELECT
     id,
     name,
@@ -59,3 +59,32 @@ WHERE
     )
 ORDER BY
     num_follower DESC;
+
+-- name: ListFollowChefNewRecipe :many
+SELECT
+    id,
+    chef_id,
+    name,
+    servings,
+    image_url,
+    introduction,
+    created_at,
+    updated_at,
+    num_fav
+FROM
+    recipe
+WHERE
+    access_level = 1
+AND
+    EXISTS (
+        SELECT
+            1
+        FROM
+            following_chef
+        WHERE
+            following_chef.usr_id = @usr_id
+        AND
+            following_chef.chef_id = recipe.chef_id
+    )
+ORDER BY
+    created_at DESC;

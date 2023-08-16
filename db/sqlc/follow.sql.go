@@ -96,7 +96,7 @@ func (q *Queries) ExistsFollowChef(ctx context.Context, arg ExistsFollowChefPara
 	return exists, err
 }
 
-const getFollowChef = `-- name: GetFollowChef :many
+const listFollowChef = `-- name: ListFollowChef :many
 SELECT
     id,
     name,
@@ -111,7 +111,7 @@ FROM
 WHERE
     EXISTS (
         SELECT
-            chef_id
+            1
         FROM
             following_chef
         WHERE
@@ -123,7 +123,7 @@ ORDER BY
     num_follower DESC
 `
 
-type GetFollowChefRow struct {
+type ListFollowChefRow struct {
 	ID          pgtype.UUID        `json:"id"`
 	Name        string             `json:"name"`
 	ImageUrl    pgtype.Text        `json:"imageUrl"`
@@ -134,15 +134,15 @@ type GetFollowChefRow struct {
 	NumFollower int32              `json:"numFollower"`
 }
 
-func (q *Queries) GetFollowChef(ctx context.Context, usrID pgtype.UUID) ([]GetFollowChefRow, error) {
-	rows, err := q.db.Query(ctx, getFollowChef, usrID)
+func (q *Queries) ListFollowChef(ctx context.Context, usrID pgtype.UUID) ([]ListFollowChefRow, error) {
+	rows, err := q.db.Query(ctx, listFollowChef, usrID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []GetFollowChefRow
+	var items []ListFollowChefRow
 	for rows.Next() {
-		var i GetFollowChefRow
+		var i ListFollowChefRow
 		if err := rows.Scan(
 			&i.ID,
 			&i.Name,
@@ -152,6 +152,78 @@ func (q *Queries) GetFollowChef(ctx context.Context, usrID pgtype.UUID) ([]GetFo
 			&i.UpdatedAt,
 			&i.NumRecipe,
 			&i.NumFollower,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listFollowChefNewRecipe = `-- name: ListFollowChefNewRecipe :many
+SELECT
+    id,
+    chef_id,
+    name,
+    servings,
+    image_url,
+    introduction,
+    created_at,
+    updated_at,
+    num_fav
+FROM
+    recipe
+WHERE
+    access_level = 1
+AND
+    EXISTS (
+        SELECT
+            1
+        FROM
+            following_chef
+        WHERE
+            following_chef.usr_id = $1
+        AND
+            following_chef.chef_id = recipe.chef_id
+    )
+ORDER BY
+    created_at DESC
+`
+
+type ListFollowChefNewRecipeRow struct {
+	ID           pgtype.UUID        `json:"id"`
+	ChefID       pgtype.UUID        `json:"chefId"`
+	Name         string             `json:"name"`
+	Servings     int32              `json:"servings"`
+	ImageUrl     pgtype.Text        `json:"imageUrl"`
+	Introduction pgtype.Text        `json:"introduction"`
+	CreatedAt    pgtype.Timestamptz `json:"createdAt"`
+	UpdatedAt    pgtype.Timestamptz `json:"updatedAt"`
+	NumFav       int32              `json:"numFav"`
+}
+
+func (q *Queries) ListFollowChefNewRecipe(ctx context.Context, usrID pgtype.UUID) ([]ListFollowChefNewRecipeRow, error) {
+	rows, err := q.db.Query(ctx, listFollowChefNewRecipe, usrID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ListFollowChefNewRecipeRow
+	for rows.Next() {
+		var i ListFollowChefNewRecipeRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.ChefID,
+			&i.Name,
+			&i.Servings,
+			&i.ImageUrl,
+			&i.Introduction,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.NumFav,
 		); err != nil {
 			return nil, err
 		}

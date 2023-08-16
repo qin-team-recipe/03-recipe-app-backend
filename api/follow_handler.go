@@ -120,7 +120,7 @@ func (s *Server) ExistsFollowChef(c *gin.Context) {
 
 func (s *Server) ListFollowChef(c *gin.Context) {
 	type listFollowChefResponse struct {
-		Data []db.GetFollowChefRow `json:"data"`
+		Data []db.ListFollowChefRow `json:"data"`
 	}
 	var response listFollowChefResponse
 
@@ -133,18 +133,53 @@ func (s *Server) ListFollowChef(c *gin.Context) {
 	}
 
 	// フォローしている有名シェフ一覧を取得
-	response.Data, err = s.q.GetFollowChef(context.Background(), usrID)
+	response.Data, err = s.q.ListFollowChef(context.Background(), usrID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
 	if response.Data == nil || reflect.ValueOf(response.Data).IsNil() {
-		response.Data = []db.GetFollowChefRow{}
+		response.Data = []db.ListFollowChefRow{}
 	}
 
 	// レスポンス型バリデーション
 	err = utils.ValidateStructTwoWay[listFollowChefResponse, docs.ListFollowChef](&response)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, response)
+}
+
+func (s *Server) ListFollowChefNewRecipe(c *gin.Context) {
+	type followNewRecipeResponse struct {
+		Data []db.ListFollowChefNewRecipeRow `json:"data"`
+	}
+	var response followNewRecipeResponse
+
+	// usrIdを取得
+	email := c.MustGet("email").(string)
+	usrID, err := s.q.GetUserId(context.Background(), email)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// フォローしている有名シェフ一覧を取得
+	response.Data, err = s.q.ListFollowChefNewRecipe(context.Background(), usrID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	if response.Data == nil || reflect.ValueOf(response.Data).IsNil() {
+		response.Data = []db.ListFollowChefNewRecipeRow{}
+	}
+
+	// レスポンス型バリデーション
+	err = utils.ValidateStructTwoWay[followNewRecipeResponse, docs.ListFollowChefRecipe](&response)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
