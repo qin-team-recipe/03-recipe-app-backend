@@ -12,9 +12,33 @@ RETURNING id, name, email;
 -- name: GetUserId :one
 SELECT id FROM usr WHERE email = $1;
 
+-- name: GetSelf :one
+SELECT
+    id,
+    email,
+    name,
+    image_url,
+    profile,
+    link,
+    created_at,
+    updated_at,
+    num_recipe
+FROM
+    v_usr
+WHERE
+    email = @email;
+
 -- name: GetUser :one
 SELECT
-    *
+    id,
+    email,
+    name,
+    image_url,
+    profile,
+    link,
+    created_at,
+    updated_at,
+    num_recipe
 FROM
     v_usr
 WHERE
@@ -22,6 +46,29 @@ WHERE
 
 -- name: UpdateUser :one
 SELECT
-    *
+    id,
+    email,
+    name,
+    image_url,
+    profile,
+    link,
+    created_at,
+    updated_at,
+    num_recipe
 FROM
-    update_usr(@id, @data);
+    update_usr(@email, @data);
+
+-- name: DeleteUser :one
+DELETE FROM
+    usr
+WHERE
+    email = @email
+RETURNING
+    id,
+    email,
+    name,
+    image_url,
+    profile,
+    created_at,
+    updated_at,
+    num_recipe;

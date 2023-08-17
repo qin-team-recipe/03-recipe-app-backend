@@ -7,245 +7,336 @@ info:
 servers:
   - url: 'http://localhost:8080'
 paths:
-  /api/featuredChef:
+  '/api/chefs/{id}':
     get:
-      summary: featuredChef API：注目のシェフ一覧
-      operationId: get-api-featuredChef
+      summary: 有名シェフ取得
+      tags: []
+      operationId: get-api-chefs-id
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/featuredChef'
-      servers:
-        - url: 'http://localhost:8080'
-  /api/trendRecipe:
-    get:
-      summary: trendRecipe API：話題のレシピ一覧
-      operationId: get-api-trendRecipe
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/trendRecipe'
-      servers:
-        - url: 'http://localhost:8080'
-  /api/createUsrRecipe:
-    post:
-      summary: createUsrRecipe：マイレシピ登録
-      operationId: post-api-createUsrRecipe
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                usrId:
-                  type: string
-                  description: ユーザーID
-                  format: uuid
-                  x-oapi-codegen-extra-tags:
-                    binding: required
-                name:
-                  type: string
-                  description: レシピ名
-                  x-oapi-codegen-extra-tags:
-                    binding: required
-                servings:
-                  type: integer
-                  description: ＊人前
-                  x-oapi-codegen-extra-tags:
-                    binding: required
-                method:
-                  type: array
-                  description: 作り方
-                  items:
-                    type: object
-                    properties:
-                      html:
-                        type: string
-                      supplement:
-                        type: object
-                        description: 補足
-                  x-oapi-codegen-extra-tags:
-                    binding: required
-                imageUrl:
-                  type: string
-                  description: 画像
-                introduction:
-                  type: string
-                  description: レシピの紹介文
-                link:
-                  type: array
-                  description: リンク
-                  items:
-                    type: string
-                  x-oapi-codegen-extra-tags:
-                    binding: required
-                accessLevel:
-                  type: integer
-                  description: 公開、限定公開、非公開、下書き
-                  x-oapi-codegen-extra-tags:
-                    binding: required
-              required:
-                - usrId
-                - name
-                - servings
-                - method
-                - link
-                - accessLevel
-              x-examples:
-                Example 1:
-                  usrId: 8080411a-5482-4cee-b03b-6bb570a28f9a
-                  name: ラーメン
-                  servings: 2
-                  method:
-                    - html: <h1>作り方1</h1>
-                      supplement:
-                        image: 1.webp
-                    - html: <h1>作り方2</h1>
-                      supplement:
-                        link: 'https://youtu.be/uCkkCRcs81I'
-                  imageUrl: 'https://pbs.twimg.com/media/Er7dlbJVQAIWVsW?format=jpg&name=small'
-                  introduction: 私のラーメン
-                  link:
-                    - 'https://youtu.be/RGZNv1_oVK0'
-                    - 'https://youtu.be/viAP4lzks7k'
-                    - 'https://youtu.be/QM22Tc8PdKI'
-                  accessLevel: 1
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/createUsrRecipe'
-      servers:
-        - url: 'http://localhost:8080'
-  /api/createChefRecipe:
-    post:
-      summary: createChefRecipe：シェフレシピ登録
-      operationId: post-api-createChefRecipe
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                chefId:
-                  type: string
-                  description: シェフID
-                  format: uuid
-                  x-oapi-codegen-extra-tags:
-                    binding: required
-                name:
-                  type: string
-                  description: レシピ名
-                  x-oapi-codegen-extra-tags:
-                    binding: required
-                servings:
-                  type: integer
-                  description: ＊人前
-                  x-oapi-codegen-extra-tags:
-                    binding: required
-                method:
-                  type: array
-                  description: 作り方
-                  items:
-                    type: object
-                    properties:
-                      html:
-                        type: string
-                      supplement:
-                        type: object
-                        description: 補足
-                  x-oapi-codegen-extra-tags:
-                    binding: required
-                imageUrl:
-                  type: string
-                  description: 画像
-                introduction:
-                  type: string
-                  description: レシピの紹介文
-                link:
-                  type: array
-                  description: リンク
-                  items:
-                    type: string
-                  x-oapi-codegen-extra-tags:
-                    binding: required
-                accessLevel:
-                  type: integer
-                  description: 公開、限定公開、非公開、下書き
-                  x-oapi-codegen-extra-tags:
-                    binding: required
-              required:
-                - chefId
-                - name
-                - servings
-                - method
-                - link
-                - accessLevel
-              x-examples:
-                Example 1:
-                  chefId: 5c6f635e-6b17-4834-b9ff-a971ff595271
-                  name: グラタン
-                  servings: 2
-                  method:
-                    - html: <h1>作り方1</h1>
-                      supplement:
-                        image: 1.webp
-                    - html: <h1>作り方2</h1>
-                      supplement:
-                        link: 'https://youtu.be/uCkkCRcs81I'
-                  imageUrl: 'https://pbs.twimg.com/media/Er7dlbJVQAIWVsW?format=jpg&name=small'
-                  introduction: 二人に捧げるグラタン
-                  link:
-                    - 'https://youtu.be/RGZNv1_oVK0'
-                    - 'https://youtu.be/viAP4lzks7k'
-                    - 'https://youtu.be/QM22Tc8PdKI'
-                  accessLevel: 1
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/createChefRecipe'
-      servers:
-        - url: 'http://localhost:8080'
-  '/api/updateRecipe/{id}':
+                $ref: '#/components/schemas/GetChef'
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
     put:
-      summary: updateRecipe：レシピ更新
-      operationId: put-api-updateRecipe
-      parameters:
-        - name: id
-          in: path
-          description: レシピID
-          required: true
-          schema:
-            type: string
+      summary: 有名シェフ更新
+      operationId: put-api-chefs-id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateChef'
       requestBody:
         content:
           application/json:
             schema:
               type: object
+              x-examples:
+                Example 1:
+                  name: Mシェフ
+                  imageUrl: 'http://www.yahoo.co.jp'
+                  profile: 平成14年事例Ⅱで出題されたMシェフ。三國清三がモデルではないか？と噂になった。
+                  link:
+                    - label: LABEL_1
+                      url: URL_1
+                    - label: LABEL_2
+                      url: URL_2
               properties:
                 name:
                   type: string
-                  description: レシピ名
                   x-oapi-codegen-extra-tags:
                     binding: required
+                  description: 登録名
+                imageUrl:
+                  type: string
+                  description: プロフィール画像
+                profile:
+                  type: string
+                  description: シェフ紹介
+                link:
+                  type: array
+                  x-oapi-codegen-extra-tags:
+                    binding: required
+                  description: リンク
+                  items:
+                    type: object
+                    properties:
+                      label:
+                        type: string
+                      url:
+                        type: string
+              required:
+                - name
+                - link
+    delete:
+      summary: 有名シェフ削除
+      operationId: delete-api-chefs-id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeletedChef'
+  /api/chefs:
+    post:
+      summary: 有名シェフ新規登録
+      operationId: post-api-chefs
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateChef'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              x-examples:
+                Example 1:
+                  name: シェフ1
+                  imageUrl: 'http://www.yahoo.co.jp'
+                  profile: PROFILE_1
+                  link:
+                    - label: LABEL_1
+                      url: URL_1
+              properties:
+                name:
+                  type: string
+                  x-oapi-codegen-extra-tags:
+                    binding: required
+                  description: 登録名
+                imageUrl:
+                  type: string
+                  description: プロフィール画像
+                profile:
+                  type: string
+                  description: シェフ紹介
+                link:
+                  type: array
+                  x-oapi-codegen-extra-tags:
+                    binding: required
+                  description: リンク
+                  items:
+                    type: object
+                    properties:
+                      label:
+                        type: string
+                      url:
+                        type: string
+              required:
+                - name
+                - link
+      description: ''
+  /api/chefs/featured:
+    get:
+      summary: 注目の有名シェフ一覧を取得
+      operationId: get-api-chefs-featured
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeaturedChef'
+      servers:
+        - url: 'http://localhost:8080'
+    parameters: []
+  /api/user/users:
+    get:
+      summary: 自分を取得
+      tags: []
+      operationId: get-api-user-users
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetUsr'
+    put:
+      summary: 自分を更新
+      operationId: put-api-user-users
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateUsr'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              x-examples:
+                Example 1:
+                  name: NAME_1
+                  imageUrl: 'http://www.yahoo.co.jp'
+                  profile: PROFILE_1
+                  link:
+                    - label: LABEL_1
+                      url: 'http://www.yahoo.co.jp'
+                    - label: LABEL_2
+                      url: 'http://www.yahoo.co.jp'
+              properties:
+                name:
+                  type: string
+                  x-oapi-codegen-extra-tags:
+                    binding: required
+                  description: ニックネーム
+                imageUrl:
+                  type: string
+                  description: プロフィール画像（任意）
+                profile:
+                  type: string
+                  description: 自己紹介（任意）
+                link:
+                  type: array
+                  x-oapi-codegen-extra-tags:
+                    binding: required
+                  description: リンク（任意）
+                  items:
+                    type: object
+                    properties:
+                      label:
+                        type: string
+                      url:
+                        type: string
+              required:
+                - name
+                - link
+    delete:
+      summary: 自分を削除
+      operationId: delete-api-user-users
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeletedUsr'
+  '/api/users/{id}':
+    get:
+      summary: ユーザー取得
+      tags: []
+      operationId: get-api-users-id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetUsr'
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+  '/api/recipes/{id}':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+        description: レシピID
+    get:
+      summary: レシピ取得
+      operationId: get-api-recipes-id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetRecipe'
+  '/api/chefs/recipe/{recipe_id}':
+    put:
+      summary: 有名シェフのレシピ更新
+      operationId: put-api-chefs-recipe-recipe_id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateRecipe'
+      x-stoplight:
+        id: v8smkyhzs45kj
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              x-examples:
+                Example 1:
+                  name: オムライス
+                  servings: 6
+                  ingredient:
+                    - name: 卵
+                      supplement: 鶏卵
+                    - name: トマト
+                      supplement: ケチャップ
+                  method:
+                    - html: <p>卵を焼く</p>
+                      supplement: {}
+                    - html: <p>ケチャップをかける</p>
+                      supplement: []
+                  imageUrl: IMAGE_URL_1
+                  introduction: INTRODUCTION_1
+                  link:
+                    - 'https://www.yahoo.co.jp'
+                    - 'https://www.amazon.co.jp'
+                  accessLevel: 2
+              properties:
+                name:
+                  type: string
+                  x-oapi-codegen-extra-tags:
+                    binding: required
+                  description: レシピ名
                 servings:
                   type: integer
-                  description: ＊人前
                   x-oapi-codegen-extra-tags:
                     binding: required
+                  description: ＊人前
+                ingredient:
+                  type: array
+                  x-oapi-codegen-extra-tags:
+                    binding: required
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+                        description: 材料ID
+                      name:
+                        type: string
+                        x-oapi-codegen-extra-tags:
+                          binding: required
+                        description: 材料名
+                      supplement:
+                        type: string
+                        description: 補足
+                    required:
+                      - name
                 method:
                   type: array
+                  x-oapi-codegen-extra-tags:
+                    binding: required
                   description: 作り方
                   items:
                     type: object
@@ -253,10 +344,13 @@ paths:
                       html:
                         type: string
                       supplement:
-                        type: object
+                        oneOf:
+                          - type: object
+                          - type: array
+                            items:
+                              type: object
+                        x-go-type: any
                         description: 補足
-                  x-oapi-codegen-extra-tags:
-                    binding: required
                 imageUrl:
                   type: string
                   description: 画像
@@ -265,83 +359,1232 @@ paths:
                   description: レシピの紹介文
                 link:
                   type: array
+                  x-oapi-codegen-extra-tags:
+                    binding: required
                   description: リンク
                   items:
                     type: string
-                  x-oapi-codegen-extra-tags:
-                    binding: required
                 accessLevel:
                   type: integer
-                  description: 公開、限定公開、非公開、下書き
                   x-oapi-codegen-extra-tags:
                     binding: required
+                  description: 公開、限定公開、非公開、下書き
               required:
                 - name
                 - servings
+                - ingredient
                 - method
                 - link
                 - accessLevel
-              x-examples:
-                Example 1:
-                  name: 平べったいたこ焼き
-                  servings: 4
-                  method:
-                    - html: <p>作り方1</p>
-                      supplement:
-                        image: 1.webp
-                    - html: <p>作り方2</p>
-                      supplement:
-                        link: 'https://youtu.be/uCkkCRcs81I'
-                  imageUrl: 'https://pbs.twimg.com/media/Er7dlbJVQAIWVsW?format=jpg&name=small'
-                  introduction: お好み焼き
-                  link:
-                    - 'https://youtu.be/RGZNv1_oVK0'
-                    - 'https://youtu.be/viAP4lzks7k'
-                    - 'https://youtu.be/QM22Tc8PdKI'
-                  accessLevel: 2
+    parameters:
+      - schema:
+          type: string
+        name: recipe_id
+        in: path
+        required: true
+    delete:
+      summary: 有名シェフのレシピ削除
+      operationId: delete-api-chefs-recipe-recipe_id
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/updateRecipe'
+                $ref: '#/components/schemas/DeletedRecipe'
+  '/api/user/users/recipe/{recipe_id}':
+    put:
+      summary: 一般シェフのマイレシピ更新
+      operationId: put-api-user-users-recipe-recipe_id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateRecipe'
+      x-stoplight:
+        id: v8smkyhzs45kj
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              x-examples:
+                Example 1:
+                  name: オムライス
+                  servings: 6
+                  ingredient:
+                    - name: 卵
+                      supplement: 鶏卵
+                    - name: トマト
+                      supplement: ケチャップ
+                  method:
+                    - html: <p>卵を焼く</p>
+                      supplement: {}
+                    - html: <p>ケチャップをかける</p>
+                      supplement: []
+                  imageUrl: IMAGE_URL_1
+                  introduction: INTRODUCTION_1
+                  link:
+                    - 'https://www.yahoo.co.jp'
+                    - 'https://www.amazon.co.jp'
+                  accessLevel: 2
+              properties:
+                name:
+                  type: string
+                  x-oapi-codegen-extra-tags:
+                    binding: required
+                  description: レシピ名
+                servings:
+                  type: integer
+                  x-oapi-codegen-extra-tags:
+                    binding: required
+                  description: ＊人前
+                ingredient:
+                  type: array
+                  x-oapi-codegen-extra-tags:
+                    binding: required
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+                        description: 材料ID
+                      name:
+                        type: string
+                        x-oapi-codegen-extra-tags:
+                          binding: required
+                        description: 材料名
+                      supplement:
+                        type: string
+                        description: 補足
+                    required:
+                      - name
+                method:
+                  type: array
+                  x-oapi-codegen-extra-tags:
+                    binding: required
+                  description: 作り方
+                  items:
+                    type: object
+                    properties:
+                      html:
+                        type: string
+                      supplement:
+                        oneOf:
+                          - type: object
+                          - type: array
+                            items:
+                              type: object
+                        x-go-type: any
+                        description: 補足
+                imageUrl:
+                  type: string
+                  description: 画像
+                introduction:
+                  type: string
+                  description: レシピの紹介文
+                link:
+                  type: array
+                  x-oapi-codegen-extra-tags:
+                    binding: required
+                  description: リンク
+                  items:
+                    type: string
+                accessLevel:
+                  type: integer
+                  x-oapi-codegen-extra-tags:
+                    binding: required
+                  description: 公開、限定公開、非公開、下書き
+              required:
+                - name
+                - servings
+                - ingredient
+                - method
+                - link
+                - accessLevel
+    parameters:
+      - schema:
+          type: string
+        name: recipe_id
+        in: path
+        required: true
+    delete:
+      summary: 一般シェフのマイレシピ削除
+      operationId: delete-api-user-users-recipe-recipe_id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeletedRecipe'
+  '/api/chefs/{chef_id}/recipe':
+    post:
+      summary: 有名シェフのレシピ新規登録
+      operationId: post-api-chefs-chef_id-recipe
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateChefRecipe'
       servers:
         - url: 'http://localhost:8080'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              x-examples:
+                Example 1:
+                  chefId: f4da8c3d-64d7-4dcf-858d-f3161304531b
+                  name: マカロニグラタン
+                  servings: 4
+                  ingredient:
+                    - name: マカロニ
+                      supplement: パスタ
+                    - name: グラタン
+                      supplement: チーズ
+                  method:
+                    - html: <p>煮る</p>
+                      supplement: {}
+                    - html: <p>焼く</p>
+                      supplement: []
+                  imageUrl: IMAGE_URL_1
+                  introduction: INTRODUCTION_1
+                  link:
+                    - 'https://www.yahoo.co.jp'
+                    - 'https://www.amazon.co.jp'
+                  accessLevel: 2
+              properties:
+                name:
+                  type: string
+                  x-oapi-codegen-extra-tags:
+                    binding: required
+                  description: レシピ名
+                servings:
+                  type: integer
+                  x-oapi-codegen-extra-tags:
+                    binding: required
+                  description: ＊人前
+                ingredient:
+                  type: array
+                  x-oapi-codegen-extra-tags:
+                    binding: required
+                  items:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        x-oapi-codegen-extra-tags:
+                          binding: required
+                        description: 材料名
+                      supplement:
+                        type: string
+                        description: 補足
+                    required:
+                      - name
+                method:
+                  type: array
+                  x-oapi-codegen-extra-tags:
+                    binding: required
+                  description: 作り方
+                  items:
+                    type: object
+                    properties:
+                      html:
+                        type: string
+                      supplement:
+                        oneOf:
+                          - type: object
+                          - type: array
+                            items:
+                              type: object
+                        x-go-type: any
+                        description: 補足
+                imageUrl:
+                  type: string
+                  description: 画像
+                introduction:
+                  type: string
+                  description: レシピの紹介文
+                link:
+                  type: array
+                  x-oapi-codegen-extra-tags:
+                    binding: required
+                  description: リンク
+                  items:
+                    type: string
+                accessLevel:
+                  type: integer
+                  x-oapi-codegen-extra-tags:
+                    binding: required
+                  description: 公開、限定公開、非公開、下書き
+              required:
+                - name
+                - servings
+                - ingredient
+                - method
+                - link
+                - accessLevel
+      description: ''
+    parameters:
+      - schema:
+          type: string
+        name: chef_id
+        in: path
+        required: true
+  /api/user/users/recipe:
+    post:
+      summary: 一般シェフのマイレシピ新規登録
+      operationId: post-api-user-users-recipe
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateUsrRecipe'
+      servers:
+        - url: 'http://localhost:8080'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              x-examples:
+                Example 1:
+                  name: オムライス
+                  servings: 6
+                  ingredient:
+                    - name: 卵
+                      supplement: 鶏卵
+                    - name: トマト
+                      supplement: ケチャップ
+                  method:
+                    - html: <p>卵を焼く</p>
+                      supplement: {}
+                    - html: <p>ケチャップをかける</p>
+                      supplement: []
+                  imageUrl: IMAGE_URL_1
+                  introduction: INTRODUCTION_1
+                  link:
+                    - 'https://www.yahoo.co.jp'
+                    - 'https://www.amazon.co.jp'
+                  accessLevel: 2
+              properties:
+                name:
+                  type: string
+                  x-oapi-codegen-extra-tags:
+                    binding: required
+                  description: レシピ名
+                servings:
+                  type: integer
+                  x-oapi-codegen-extra-tags:
+                    binding: required
+                  description: ＊人前
+                ingredient:
+                  type: array
+                  x-oapi-codegen-extra-tags:
+                    binding: required
+                  items:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        x-oapi-codegen-extra-tags:
+                          binding: required
+                        description: 材料名
+                      supplement:
+                        type: string
+                        description: 補足
+                    required:
+                      - name
+                method:
+                  type: array
+                  x-oapi-codegen-extra-tags:
+                    binding: required
+                  description: 作り方
+                  items:
+                    type: object
+                    properties:
+                      html:
+                        type: string
+                      supplement:
+                        oneOf:
+                          - type: object
+                          - type: array
+                            items:
+                              type: object
+                        x-go-type: any
+                        description: 補足
+                imageUrl:
+                  type: string
+                  description: 画像
+                introduction:
+                  type: string
+                  description: レシピの紹介文
+                link:
+                  type: array
+                  x-oapi-codegen-extra-tags:
+                    binding: required
+                  description: リンク
+                  items:
+                    type: string
+                accessLevel:
+                  type: integer
+                  x-oapi-codegen-extra-tags:
+                    binding: required
+                  description: 公開、限定公開、非公開、下書き
+              required:
+                - name
+                - servings
+                - ingredient
+                - method
+                - link
+                - accessLevel
+    parameters: []
+  /api/recipes/trend:
+    get:
+      summary: 話題のレシピ一覧を取得
+      operationId: get-api-recipes-trend
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrendRecipe'
+      servers:
+        - url: 'http://localhost:8080'
+    parameters: []
+  /api/user/lists:
+    get:
+      summary: ユーザーの買い物リスト一覧
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetShoppingLists'
+      operationId: get-api-user-lists
+    post:
+      summary: 買い物リスト登録
+      operationId: post-api-user-lists
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateShoppingList'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              x-examples:
+                Example 1:
+                  recipeId: 41eb8f23-7b27-4094-b2fc-b3e576e36b54
+                  description: 2人前
+                  isFairCopy: true
+                  item:
+                    - ingredientId: d511d238-bbb9-4eb0-ba0e-811e3ec7b591
+                      name: 卵
+                      supplement: 鶏卵
+                    - ingredientId: d0a35ca6-6478-4339-aa8f-76a6628ee796
+                      name: トマト
+                      supplement: ケチャップ
+                    - ingredientId: 0b9dba90-2f45-484b-a6c3-9ffc66a21b35
+                      name: マカロニ
+                      supplement: パスタ
+              properties:
+                recipeId:
+                  type: string
+                  description: レシピID（メモリストのときはnull）
+                description:
+                  type: string
+                  description: 「*人前」「メモリスト」
+                isFairCopy:
+                  type: boolean
+                  x-oapi-codegen-extra-tags:
+                    binding: required
+                  description: true：清書、false：下書き
+                item:
+                  type: array
+                  x-oapi-codegen-extra-tags:
+                    binding: required
+                  description: 買い物明細
+                  items:
+                    type: object
+                    properties:
+                      ingredientId:
+                        type: string
+                        description: 材料ID（メモリストのときはnull）
+                      name:
+                        type: string
+                        x-oapi-codegen-extra-tags:
+                          binding: required
+                        description: 材料名
+                      supplement:
+                        type: string
+                        description: 補足
+                    required:
+                      - name
+              required:
+                - isFairCopy
+                - item
+  '/api/user/lists/recipe/{recipe_id}':
+    get:
+      summary: 買い物リスト取得
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetShoppingList'
+      operationId: get-api-user-lists-recipe-recipe_id
+    parameters:
+      - schema:
+          type: string
+        name: recipe_id
+        in: path
+        required: true
+  '/api/user/lists/{id}':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+    delete:
+      summary: 買い物リスト削除
+      operationId: delete-api-user-lists-id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeletedShoppingList'
+    put:
+      summary: 買い物リスト更新
+      operationId: put-api-user-lists-id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateShoppingList'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              x-examples:
+                Example 1:
+                  usr_id: 37823a93-2569-4f6b-832f-5dfe47f39200
+                  recipeId: 41eb8f23-7b27-4094-b2fc-b3e576e36b54
+                  rIdx: 2
+                  description: 4人前
+                  isFairCopy: false
+                  item:
+                    - id: 98edbf48-112a-437b-8c3c-37a7c10a5162
+                      name: 卵
+                      supplement: 鶏卵
+                    - id: 944fce73-06d5-4087-a1c5-40fd82a9e62b
+                      name: トマト
+                      supplement: ケチャップ
+                    - ingredientId: f986c6b0-6b03-427a-aa6a-890f0bb4a97b
+                      name: グラタン
+                      supplement: チーズ
+              properties:
+                recipeId:
+                  type: string
+                  description: レシピID（メモリストのときはnull）
+                rIdx:
+                  type: integer
+                  x-oapi-codegen-extra-tags:
+                    binding: required
+                  description: リバースインデックス
+                description:
+                  type: string
+                  description: 「*人前」「メモリスト」
+                isFairCopy:
+                  type: boolean
+                  x-oapi-codegen-extra-tags:
+                    binding: required
+                  description: true：清書、false：下書き
+                item:
+                  type: array
+                  x-oapi-codegen-extra-tags:
+                    binding: required
+                  description: 買い物明細
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        description: 買い物明細ID（新規登録のときはnull）
+                      name:
+                        type: string
+                        x-oapi-codegen-extra-tags:
+                          binding: required
+                        description: 材料名
+                      supplement:
+                        type: string
+                        description: 補足
+                      ingredientId:
+                        type: string
+                        description: 材料ID（メモリストのときはnull）
+                    required:
+                      - name
+              required:
+                - rIdx
+                - isFairCopy
+                - item
+  /api/chefs/search:
+    get:
+      summary: 有名シェフを全文検索
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchChef'
+      operationId: get-api-chefs-search
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: q
+          description: 全文検索テキスト
+          required: true
+  /api/chefs/recipe/search:
+    get:
+      summary: 名シェフのレシピを全文検索
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchChefRecipe'
+      operationId: get-api-chefs-recipe-search
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: q
+          description: 全文検索テキスト
 components:
   schemas:
-    featuredChef:
+    CreateChef:
       type: object
-      title: featuredChef
+      x-examples:
+        Example 1:
+          id: d309c90c-e318-410e-b342-bed6bc2dc96f
+          name: シェフ1
+          imageUrl: 'http://www.yahoo.co.jp'
+          profile: PROFILE_1
+          link:
+            - label: LABEL_1
+              url: URL_1
+          createdAt: '2023-08-09T05:46:08.569996+09:00'
+          updatedAt: '2023-08-09T05:46:08.569996+09:00'
+          numRecipe: 0
+          numFollower: 0
       properties:
-        data:
+        id:
+          type: string
+        name:
+          type: string
+          description: 登録名
+        imageUrl:
+          type: string
+          description: プロフィール画像
+        profile:
+          type: string
+          description: シェフ紹介
+        link:
           type: array
+          description: リンク
           items:
             type: object
             properties:
-              chefId:
+              label:
                 type: string
-                description: シェフID
+              url:
+                type: string
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+        numRecipe:
+          type: integer
+          description: レシピ数
+        numFollower:
+          type: integer
+          description: フォロワー数
+      required:
+        - id
+        - name
+        - link
+        - createdAt
+        - updatedAt
+        - numRecipe
+        - numFollower
+    CreateChefRecipe:
+      type: object
+      x-examples:
+        Example 1:
+          id: fcd040c9-8ea9-4833-a42d-95e57c47a745
+          chefId: f4da8c3d-64d7-4dcf-858d-f3161304531b
+          usrId: null
+          name: 名前を変えてみる
+          servings: 4
+          ingredient:
+            - id: 157e8f3d-033f-47b4-b74c-332d2caf2437
+              name: 修正1
+              supplement: 修正補足1
+            - id: 8b830fd4-d3f8-48ea-8956-dd4f28e40984
+              name: 追加2
+              supplement: 追加補足2
+          method:
+            - html: <p>作り方1</p>
+              supplement: {}
+            - html: <p>作り方2</p>
+              supplement: []
+          imageUrl: IMAGE_URL_1
+          introduction: INTRODUCTION_1
+          link:
+            - 'https://www.yahoo.co.jp'
+            - 'https://www.amazon.co.jp'
+          accessLevel: 2
+          createdAt: '2023-08-06T06:14:53.749359+09:00'
+          updatedAt: '2023-08-06T17:22:06.900841+09:00'
+          numFav: 0
+      title: createChefRecipe
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: レシピID
+        chefId:
+          type: string
+          format: uuid
+          description: シェフID
+        usrId:
+          type: string
+          format: uuid
+          description: ユーザーID
+        name:
+          type: string
+          description: レシピ名
+        servings:
+          type: integer
+          description: ＊人前
+        ingredient:
+          type: array
+          description: 材料
+          items:
+            type: object
+            properties:
+              id:
+                type: string
                 format: uuid
               name:
                 type: string
-                description: シェフ登録名
-              imageUrl:
+                description: 材料名
+              supplement:
                 type: string
-                description: プロフィール画像
-              numFollower:
-                type: integer
-                description: フォロワー数
-              score:
-                type: integer
-                description: 注目度→実際のデータはscoreの降順でソートされる
+                description: 補足
             required:
-              - chefId
+              - id
               - name
-              - numFollower
-              - score
+        method:
+          type: array
+          description: 作り方
+          items:
+            type: object
+            properties:
+              html:
+                type: string
+              supplement:
+                oneOf:
+                  - type: object
+                  - type: array
+                    items:
+                      type: object
+        imageUrl:
+          type: string
+          description: 画像
+        introduction:
+          type: string
+          description: レシピの紹介文
+        link:
+          type: array
+          description: リンク
+          items:
+            type: string
+        accessLevel:
+          type: integer
+          description: 公開、限定公開、非公開、下書き
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+        numFav:
+          type: integer
+          description: いいね数
       required:
-        - data
+        - id
+        - chefId
+        - name
+        - servings
+        - ingredient
+        - method
+        - accessLevel
+        - createdAt
+        - updatedAt
+        - numFav
+    CreateShoppingList:
+      type: object
+      x-examples:
+        Example 1:
+          id: bff38254-4632-4c83-b4e0-09ac3de89c2a
+          usrId: 37823a93-2569-4f6b-832f-5dfe47f39200
+          recipeId: 41eb8f23-7b27-4094-b2fc-b3e576e36b54
+          rIdx: 1
+          description: 2人前
+          isFairCopy: true
+          createdAt: '2023-08-12T15:35:25.866045+09:00'
+          updatedAt: '2023-08-12T15:35:25.866045+09:00'
+          item:
+            - id: 98edbf48-112a-437b-8c3c-37a7c10a5162
+              ingredientId: d511d238-bbb9-4eb0-ba0e-811e3ec7b591
+              name: 卵
+              supplement: 鶏卵
+            - id: 944fce73-06d5-4087-a1c5-40fd82a9e62b
+              ingredientId: d0a35ca6-6478-4339-aa8f-76a6628ee796
+              name: トマト
+              supplement: ケチャップ
+            - id: 8a1acf5d-18b4-4ed7-94de-74d3cc0de2e0
+              ingredientId: 0b9dba90-2f45-484b-a6c3-9ffc66a21b35
+              name: マカロニ
+              supplement: パスタ
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: 買い物リストID
+        usrId:
+          type: string
+          format: uuid
+          description: ユーザーID
+        recipeId:
+          type: string
+          format: uuid
+          description: レシピID
+        rIdx:
+          type: integer
+          description: リバースインデックス
+        description:
+          type: string
+          description: 「*人前」「メモリスト」
+        isFairCopy:
+          type: boolean
+          description: true：清書、false：下書き
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+        item:
+          type: array
+          description: 買い物明細
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                format: uuid
+                description: 買い物明細ID
+              ingredientId:
+                type: string
+                format: uuid
+                description: 材料ID
+              name:
+                type: string
+                description: 材料名
+              supplement:
+                type: string
+                description: 補足
+            required:
+              - id
+              - name
+      required:
+        - id
+        - usrId
+        - rIdx
+        - isFairCopy
+        - createdAt
+        - updatedAt
+        - item
+    CreateUsrRecipe:
+      type: object
+      x-examples:
+        Example 1:
+          id: 41eb8f23-7b27-4094-b2fc-b3e576e36b54
+          chefId: null
+          usrId: 2c92aad1-a117-451b-88d1-70935c360fdf
+          name: オムライス
+          servings: 6
+          ingredient:
+            - id: d511d238-bbb9-4eb0-ba0e-811e3ec7b591
+              name: 卵
+              supplement: 鶏卵
+            - id: d0a35ca6-6478-4339-aa8f-76a6628ee796
+              name: トマト
+              supplement: ケチャップ
+          method:
+            - html: <p>卵を焼く</p>
+              supplement: {}
+            - html: <p>ケチャップをかける</p>
+              supplement: []
+          imageUrl: IMAGE_URL_1
+          introduction: INTRODUCTION_1
+          link:
+            - 'https://www.yahoo.co.jp'
+            - 'https://www.amazon.co.jp'
+          accessLevel: 2
+          createdAt: '2023-08-06T17:23:10.558309+09:00'
+          updatedAt: '2023-08-06T17:23:10.558309+09:00'
+          numFav: 0
+      title: createUsrRecipe
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: レシピID
+        chefId:
+          type: string
+          format: uuid
+          description: シェフID
+        usrId:
+          type: string
+          format: uuid
+          description: ユーザーID
+        name:
+          type: string
+          description: レシピ名
+        servings:
+          type: integer
+          description: ＊人前
+        ingredient:
+          type: array
+          description: 材料
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                format: uuid
+              name:
+                type: string
+                description: 材料名
+              supplement:
+                type: string
+                description: 補足
+            required:
+              - id
+              - name
+        method:
+          type: array
+          description: 作り方
+          items:
+            type: object
+            properties:
+              html:
+                type: string
+              supplement:
+                oneOf:
+                  - type: object
+                  - type: array
+                    items:
+                      type: object
+        imageUrl:
+          type: string
+          description: 画像
+        introduction:
+          type: string
+          description: レシピの紹介文
+        link:
+          type: array
+          description: リンク
+          items:
+            type: string
+        accessLevel:
+          type: integer
+          description: 公開、限定公開、非公開、下書き
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+        numFav:
+          type: integer
+          description: いいね数
+      required:
+        - id
+        - usrId
+        - name
+        - servings
+        - ingredient
+        - method
+        - accessLevel
+        - createdAt
+        - updatedAt
+        - numFav
+    DeletedChef:
+      type: object
+      x-stoplight:
+        id: 0sabxjvap6cxx
+      x-examples:
+        Example 1:
+          id: f4da8c3d-64d7-4dcf-858d-f3161304531b
+          name: NAME_1
+          imageUrl: 'http://www.yahoo.co.jp'
+          profile: PROFILE_1
+          link:
+            - label: LABEL_1
+              url: null
+          createdAt: '2023-07-30T16:04:30.100876+09:00'
+          updatedAt: '2023-08-06T17:16:30.121799+09:00'
+          numRecipe: 7
+          numFollower: 0
+      title: deletedChef
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+          description: 登録名
+        imageUrl:
+          type: string
+          description: プロフィール画像
+        profile:
+          type: string
+          description: シェフ紹介
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+        numRecipe:
+          type: integer
+          description: レシピ数
+        numFollower:
+          type: integer
+          description: フォロワー数
+      required:
+        - id
+        - name
+        - createdAt
+        - updatedAt
+        - numRecipe
+        - numFollower
+    DeletedRecipe:
+      type: object
+      x-stoplight:
+        id: 7ylw045makklq
+      x-examples:
+        Example 1:
+          id: fcd040c9-8ea9-4833-a42d-95e57c47a745
+          chefId: f4da8c3d-64d7-4dcf-858d-f3161304531b
+          usrId: null
+          name: 名前1
+          servings: 4
+          ingredient:
+            - id: 157e8f3d-033f-47b4-b74c-332d2caf2437
+              name: キャベツ
+              supplement: 補足1
+            - id: 66605cad-fa1e-4405-97a5-e669018ead6e
+              name: トマト
+              supplement: 補足2
+          method:
+            - html: <p>作り方1</p>
+              supplement: {}
+            - html: <p>作り方2</p>
+              supplement: []
+          imageUrl: IMAGE_URL_1
+          introduction: INTRODUCTION_1
+          link:
+            - 'https://www.yahoo.co.jp'
+            - 'https://www.amazon.co.jp'
+          accessLevel: 2
+          createdAt: '2023-08-06T06:14:53.749359+09:00'
+          updatedAt: '2023-08-06T12:45:56.980533+09:00'
+          numFav: 0
+      title: deletedRecipe
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: レシピID
+        chefId:
+          type: string
+          format: uuid
+          description: シェフID
+        usrId:
+          type: string
+          format: uuid
+          description: ユーザーID
+        name:
+          type: string
+          description: レシピ名
+        servings:
+          type: integer
+          description: ＊人前
+        imageUrl:
+          type: string
+          description: 画像
+        introduction:
+          type: string
+          description: レシピの紹介文
+        link:
+          type: array
+          description: リンク
+          items:
+            type: string
+        accessLevel:
+          type: integer
+          description: 公開、限定公開、非公開、下書き
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+        numFav:
+          type: integer
+          description: いいね数
+      required:
+        - id
+        - name
+        - servings
+        - accessLevel
+        - createdAt
+        - updatedAt
+        - numFav
+    DeletedShoppingList:
+      type: object
+      x-stoplight:
+        id: 39e2824a562ca
+      x-examples:
+        Example 1:
+          id: bff38254-4632-4c83-b4e0-09ac3de89c2a
+          usrId: 37823a93-2569-4f6b-832f-5dfe47f39200
+          recipeId: 41eb8f23-7b27-4094-b2fc-b3e576e36b54
+          rIdx: 2
+          description: 4人前
+          isFairCopy: false
+          createdAt: '2023-08-12T15:35:25.866045+09:00'
+          updatedAt: '2023-08-12T15:36:42.235739+09:00'
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: 買い物リストID
+        usrId:
+          type: string
+          format: uuid
+          description: ユーザーID
+        recipeId:
+          type: string
+          format: uuid
+          description: レシピID
+        rIdx:
+          type: integer
+          description: リバースインデックス
+        description:
+          type: string
+          description: 「*人前」「メモリスト」
+        isFairCopy:
+          type: boolean
+          description: true：清書、false：下書き
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+      required:
+        - id
+        - usrId
+        - rIdx
+        - isFairCopy
+        - createdAt
+        - updatedAt
+      title: ''
+    DeletedUsr:
+      type: object
+      x-stoplight:
+        id: su3z8zcw3jki8
+      x-examples:
+        Example 1:
+          id: 1c6fc87e-430b-4e71-af55-103fe3a16bee
+          email: kaneda@gmail.com
+          name: NAME_1
+          imageUrl: 'http://www.yahoo.co.jp'
+          profile: PROFILE_1
+          link:
+            - label: LABEL_1
+              url: 'http://www.yahoo.co.jp'
+            - label: LABEL_2
+              url: 'http://www.yahoo.co.jp'
+          createdAt: '2023-08-08T18:48:40.89562+09:00'
+          updatedAt: '2023-08-08T19:56:55.402664+09:00'
+          numRecipe: 0
+      title: deletedUsr
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+          description: ログインemail
+        name:
+          type: string
+          description: ニックネーム
+        imageUrl:
+          type: string
+          description: プロフィール画像（任意）
+        profile:
+          type: string
+          description: 自己紹介（任意）
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+        numRecipe:
+          type: integer
+          description: マイレシピ数
+      required:
+        - id
+        - email
+        - name
+        - createdAt
+        - updatedAt
+        - numRecipe
+    FeaturedChef:
+      type: object
+      x-stoplight:
+        id: kqy0v29ewm515
       x-examples:
         Example 1:
           data:
@@ -395,43 +1638,593 @@ components:
               imageUrl: 'https://source.unsplash.com/random/300x300?v=1'
               numFollower: 458
               score: 2
-      x-tags:
-        - chef
-    trendRecipe:
-      type: object
-      title: trendRecipe
+      title: featuredChef
       properties:
         data:
           type: array
           items:
             type: object
             properties:
+              chefId:
+                type: string
+                format: uuid
+                description: シェフID
+              name:
+                type: string
+                description: シェフ登録名
+              imageUrl:
+                type: string
+                description: プロフィール画像
+              numFollower:
+                type: integer
+                description: フォロワー数
+              score:
+                type: integer
+                description: 注目度→実際のデータはscoreの降順でソートされる
+            required:
+              - chefId
+              - name
+              - numFollower
+              - score
+      required:
+        - data
+      x-internal: false
+      x-tags:
+        - chef
+    GetChef:
+      type: object
+      x-examples:
+        Example 1:
+          id: f4da8c3d-64d7-4dcf-858d-f3161304531b
+          name: NAME_1
+          imageUrl: 'http://www.yahoo.co.jp'
+          profile: PROFILE_1
+          link:
+            - label: LABEL_1
+              url: null
+          createdAt: '2023-07-30T16:04:30.100876+09:00'
+          updatedAt: '2023-08-06T17:16:30.121799+09:00'
+          numRecipe: 7
+          numFollower: 0
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+          description: 登録名
+        imageUrl:
+          type: string
+          description: プロフィール画像
+        profile:
+          type: string
+          description: シェフ紹介
+        link:
+          type: array
+          description: リンク
+          items:
+            type: object
+            properties:
+              label:
+                type: string
+              url:
+                type: string
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+        numRecipe:
+          type: integer
+          description: レシピ数
+        numFollower:
+          type: integer
+          description: フォロワー数
+      required:
+        - id
+        - name
+        - link
+        - createdAt
+        - updatedAt
+        - numRecipe
+        - numFollower
+    GetRecipe:
+      type: object
+      x-examples:
+        Example 1:
+          id: fcd040c9-8ea9-4833-a42d-95e57c47a745
+          chefId: f4da8c3d-64d7-4dcf-858d-f3161304531b
+          usrId: null
+          name: 名前1
+          servings: 4
+          ingredient:
+            - id: 157e8f3d-033f-47b4-b74c-332d2caf2437
+              name: キャベツ
+              supplement: 補足1
+            - id: 66605cad-fa1e-4405-97a5-e669018ead6e
+              name: トマト
+              supplement: 補足2
+          method:
+            - html: <p>作り方1</p>
+              supplement: {}
+            - html: <p>作り方2</p>
+              supplement: []
+          imageUrl: IMAGE_URL_1
+          introduction: INTRODUCTION_1
+          link:
+            - 'https://www.yahoo.co.jp'
+            - 'https://www.amazon.co.jp'
+          accessLevel: 2
+          createdAt: '2023-08-06T06:14:53.749359+09:00'
+          updatedAt: '2023-08-06T12:45:56.980533+09:00'
+          numFav: 0
+      title: getRecipe
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: レシピID
+        chefId:
+          type: string
+          format: uuid
+          description: シェフID
+        usrId:
+          type: string
+          format: uuid
+          description: ユーザーID
+        name:
+          type: string
+          description: レシピ名
+        servings:
+          type: integer
+          description: ＊人前
+        ingredient:
+          type: array
+          description: 材料
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                format: uuid
+              name:
+                type: string
+                description: 材料名
+              supplement:
+                type: string
+                description: 補足
+            required:
+              - id
+              - name
+        method:
+          type: array
+          description: 作り方
+          items:
+            type: object
+            properties:
+              html:
+                type: string
+              supplement:
+                oneOf:
+                  - type: object
+                  - type: array
+                    items:
+                      type: object
+        imageUrl:
+          type: string
+          description: 画像
+        introduction:
+          type: string
+          description: レシピの紹介文
+        link:
+          type: array
+          description: リンク
+          items:
+            type: string
+        accessLevel:
+          type: integer
+          description: 公開、限定公開、非公開、下書き
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+        numFav:
+          type: integer
+          description: いいね数
+      required:
+        - id
+        - name
+        - servings
+        - ingredient
+        - method
+        - accessLevel
+        - createdAt
+        - updatedAt
+        - numFav
+    GetShoppingList:
+      type: object
+      x-examples:
+        Example 1:
+          id: bff38254-4632-4c83-b4e0-09ac3de89c2a
+          usrId: 37823a93-2569-4f6b-832f-5dfe47f39200
+          recipeId: 41eb8f23-7b27-4094-b2fc-b3e576e36b54
+          rIdx: 2
+          recipeName: オムライス
+          chefName: null
+          generalChefName: NAME_1
+          description: 4人前
+          isFairCopy: false
+          createdAt: '2023-08-12T15:35:25.866045+09:00'
+          updatedAt: '2023-08-12T15:36:42.235739+09:00'
+          item:
+            - id: 98edbf48-112a-437b-8c3c-37a7c10a5162
+              ingredientId: d511d238-bbb9-4eb0-ba0e-811e3ec7b591
+              name: 卵
+              supplement: 鶏卵
+            - id: 944fce73-06d5-4087-a1c5-40fd82a9e62b
+              ingredientId: d0a35ca6-6478-4339-aa8f-76a6628ee796
+              name: トマト
+              supplement: ケチャップ
+            - id: a0181a86-c9dc-48ca-8127-71c64ff5d186
+              ingredientId: f986c6b0-6b03-427a-aa6a-890f0bb4a97b
+              name: グラタン
+              supplement: チーズ
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: 買い物リストID
+        usrId:
+          type: string
+          format: uuid
+          description: ユーザーID
+        recipeId:
+          type: string
+          format: uuid
+        rIdx:
+          type: integer
+          description: リバースインデックス
+        recipeName:
+          type: string
+          description: レシピ名
+        chefName:
+          type: string
+          description: 有名シェフ名
+        generalChefName:
+          type: string
+          description: 一般シェフ名
+        description:
+          type: string
+          description: 「*人前」「メモリスト」
+        isFairCopy:
+          type: boolean
+          description: true：清書、false：下書き
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+        item:
+          type: array
+          description: 買い物明細
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                format: uuid
+                description: 買い物明細ID
+              ingredientId:
+                type: string
+                format: uuid
+                description: 材料ID
+              name:
+                type: string
+                description: 材料名
+              supplement:
+                type: string
+                description: 補足
+            required:
+              - id
+              - name
+      required:
+        - id
+        - usrId
+        - rIdx
+        - recipeName
+        - isFairCopy
+        - createdAt
+        - updatedAt
+        - item
+    GetShoppingLists:
+      type: object
+      x-examples:
+        Example 1:
+          data:
+            - id: bff38254-4632-4c83-b4e0-09ac3de89c2a
+              usrId: 37823a93-2569-4f6b-832f-5dfe47f39200
+              recipeId: 41eb8f23-7b27-4094-b2fc-b3e576e36b54
+              rIdx: 2
+              recipeName: オムライス
+              chefName: null
+              generalChefName: NAME_1
+              description: 4人前
+              isFairCopy: false
+              createdAt: '2023-08-12T15:35:25.866045+09:00'
+              updatedAt: '2023-08-12T15:36:42.235739+09:00'
+              item:
+                - id: 98edbf48-112a-437b-8c3c-37a7c10a5162
+                  ingredientId: d511d238-bbb9-4eb0-ba0e-811e3ec7b591
+                  name: 卵
+                  supplement: 鶏卵
+                - id: 944fce73-06d5-4087-a1c5-40fd82a9e62b
+                  ingredientId: d0a35ca6-6478-4339-aa8f-76a6628ee796
+                  name: トマト
+                  supplement: ケチャップ
+                - id: a0181a86-c9dc-48ca-8127-71c64ff5d186
+                  ingredientId: f986c6b0-6b03-427a-aa6a-890f0bb4a97b
+                  name: グラタン
+                  supplement: チーズ
+            - id: 2901c3ed-c4ca-4053-938b-cbfa48e560e0
+              usrId: 37823a93-2569-4f6b-832f-5dfe47f39200
+              recipeId: null
+              rIdx: 2
+              recipeName: (メモリスト)
+              chefName: (メモリスト)
+              generalChefName: (メモリスト)
+              description: メモリスト
+              isFairCopy: false
+              createdAt: '2023-08-12T15:49:44.722821+09:00'
+              updatedAt: '2023-08-12T15:56:19.801672+09:00'
+              item:
+                - id: e44c5e0b-a963-451c-8059-30fe27fbd535
+                  ingredientId: null
+                  name: 卵
+                  supplement: 鶏卵
+                - id: 5f6d82a0-b826-4c9d-a3a5-8b4efb4468bb
+                  ingredientId: null
+                  name: トマト
+                  supplement: ケチャップ
+                - id: 0da719eb-9923-4eae-be8b-e0356f31de6b
+                  ingredientId: null
+                  name: グラタン
+                  supplement: チーズ
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                description: 買い物リストID
+                format: uuid
+              usrId:
+                type: string
+                description: ユーザーID
+                format: uuid
               recipeId:
                 type: string
                 description: レシピID
                 format: uuid
+              rIdx:
+                type: integer
+                description: リバースインデックス
+              recipeName:
+                type: string
+                description: レシピ名
+              chefName:
+                type: string
+                description: 有名シェフ名
+              generalChefName:
+                type: string
+                description: 一般シェフ名
+              description:
+                type: string
+                description: 「*人前」「メモリスト」
+              isFairCopy:
+                type: boolean
+                description: true：清書、false：下書き
+              createdAt:
+                type: string
+              updatedAt:
+                type: string
+              item:
+                type: array
+                description: 買い物明細
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      description: 買い物明細ID
+                      format: uuid
+                    ingredientId:
+                      type: string
+                      description: 材料ID
+                      format: uuid
+                    name:
+                      type: string
+                      description: 材料名
+                    supplement:
+                      type: string
+                      description: 補足
+                  required:
+                    - id
+                    - name
+            required:
+              - id
+              - usrId
+              - rIdx
+              - recipeName
+              - isFairCopy
+              - createdAt
+              - updatedAt
+              - item
+      required:
+        - data
+    GetUsr:
+      type: object
+      x-examples:
+        Example 1:
+          id: 1c6fc87e-430b-4e71-af55-103fe3a16bee
+          email: kaneda@gmail.com
+          name: NAME_1
+          imageUrl: 'http://www.yahoo.co.jp'
+          profile: PROFILE_1
+          link:
+            - label: LABEL_1
+              url: 'http://www.yahoo.co.jp'
+            - label: LABEL_2
+              url: 'http://www.yahoo.co.jp'
+          createdAt: '2023-08-08T18:48:40.89562+09:00'
+          updatedAt: '2023-08-08T19:56:55.402664+09:00'
+          numRecipe: 0
+      title: getUsr
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+          description: ログインemail
+        name:
+          type: string
+          description: ニックネーム
+        imageUrl:
+          type: string
+          description: プロフィール画像（任意）
+        profile:
+          type: string
+          description: 自己紹介（任意）
+        link:
+          type: array
+          description: リンク（任意）
+          items:
+            type: object
+            properties:
+              label:
+                type: string
+              url:
+                type: string
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+        numRecipe:
+          type: integer
+          description: マイレシピ数
+      required:
+        - id
+        - email
+        - name
+        - link
+        - createdAt
+        - updatedAt
+        - numRecipe
+    SearchChef:
+      type: object
+      x-examples:
+        Example 1:
+          data:
+            - id: 9a0ce94b-d275-4ea6-ae11-914612c79d62
+              name: Mシェフ
+              imageUrl: 'http://www.yahoo.co.jp'
+              profile: 平成14年事例Ⅱで出題されたMシェフ。三國清三がモデルではないか？と噂になった。
+              createdAt: '2023-08-13T12:25:46.050604+09:00'
+              updatedAt: '2023-08-13T12:44:19.090518+09:00'
+              numRecipe: 1
+              numFollower: 0
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              name:
+                type: string
+                description: 登録名
+              imageUrl:
+                type: string
+                description: プロフィール画像
+              profile:
+                type: string
+                description: シェフ紹介
+              createdAt:
+                type: string
+              updatedAt:
+                type: string
+              numRecipe:
+                type: integer
+                description: レシピ数
+              numFollower:
+                type: integer
+                description: フォロワー数
+            required:
+              - id
+              - name
+              - createdAt
+              - updatedAt
+              - numRecipe
+              - numFollower
+    SearchChefRecipe:
+      type: object
+      x-examples:
+        Example 1:
+          data:
+            - id: c8235d40-6daf-424e-a299-bd7e98aff7fa
+              chefId: 9a0ce94b-d275-4ea6-ae11-914612c79d62
+              name: グラタン
+              servings: 6
+              imageUrl: IMAGE_URL_1
+              introduction: INTRODUCTION_1
+              accessLevel: 2
+              createdAt: '2023-08-13T12:44:19.090518+09:00'
+              updatedAt: '2023-08-13T12:50:13.649757+09:00'
+              numFav: 0
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              chefId:
+                type: string
               name:
                 type: string
                 description: レシピ名
+              servings:
+                type: integer
+                description: ＊人前
+              imageUrl:
+                type: string
+                description: 画像
               introduction:
                 type: string
                 description: レシピの紹介文
-              imageUrl:
+              accessLevel:
+                type: integer
+                description: 公開、限定公開、非公開、下書き
+              createdAt:
                 type: string
-                description: レシピ画像
+              updatedAt:
+                type: string
               numFav:
                 type: integer
-                description: ファボられ数
-              score:
-                type: integer
-                description: 話題度→実際のデータはscoreの降順でソートされる
+                description: いいね数
             required:
-              - recipeId
+              - id
+              - chefId
               - name
+              - servings
+              - accessLevel
+              - createdAt
+              - updatedAt
               - numFav
-              - score
-      required:
-        - data
+    TrendRecipe:
+      type: object
+      x-stoplight:
+        id: h8hgl2ffqlwu5
       x-examples:
         Example 1:
           data:
@@ -497,198 +2290,164 @@ components:
               score: 46
       x-tags:
         - recipe
-    createUsrRecipe:
-      type: object
-      title: createUsrRecipe
+      title: trendRecipe
       properties:
-        id:
-          type: string
-          description: レシピID
-          format: uuid
-        chefId:
-          type: string
-          description: シェフID
-          format: uuid
-        usrId:
-          type: string
-          description: ユーザーID
-          format: uuid
-        name:
-          type: string
-          description: レシピ名
-        servings:
-          type: integer
-          description: ＊人前
-        method:
+        data:
           type: array
-          description: 作り方
           items:
             type: object
             properties:
-              html:
+              recipeId:
                 type: string
-              supplement:
-                type: object
-                description: 補足
-        imageUrl:
-          type: string
-          description: 画像
-        introduction:
-          type: string
-          description: レシピの紹介文
-        link:
-          type: array
-          description: リンク
-          items:
-            type: string
-        accessLevel:
-          type: integer
-          description: 公開、限定公開、非公開、下書き
-        createdAt:
-          type: string
-        updatedAt:
-          type: string
+                description: レシピID
+                format: uuid
+              name:
+                type: string
+                description: レシピ名
+              introduction:
+                type: string
+                description: レシピの紹介文
+              imageUrl:
+                type: string
+                description: レシピ画像
+              numFav:
+                type: integer
+                description: ファボられ数
+              score:
+                type: integer
+                description: 話題度→実際のデータはscoreの降順でソートされる
+            required:
+              - recipeId
+              - name
+              - numFav
+              - score
       required:
-        - id
-        - usrId
-        - name
-        - servings
-        - method
-        - accessLevel
-        - createdAt
-        - updatedAt
+        - data
+    UpdateChef:
+      type: object
       x-examples:
         Example 1:
-          id: 5b34aa63-6c35-424c-bfc2-6cec8010707f
-          chefId: null
-          usrId: 8080411a-5482-4cee-b03b-6bb570a28f9a
-          name: ラーメン
-          servings: 2
-          method:
-            - html: <h1>作り方1</h1>
-              supplement:
-                image: 1.webp
-            - html: <h1>作り方2</h1>
-              supplement:
-                link: 'https://youtu.be/uCkkCRcs81I'
-          imageUrl: 'https://pbs.twimg.com/media/Er7dlbJVQAIWVsW?format=jpg&name=small'
-          introduction: 私のラーメン
+          id: d309c90c-e318-410e-b342-bed6bc2dc96f
+          name: Mシェフ
+          imageUrl: 'http://www.yahoo.co.jp'
+          profile: 平成14年事例Ⅱで出題されたMシェフ。三國清三がモデルではないか？と噂になった。
           link:
-            - 'https://youtu.be/RGZNv1_oVK0'
-            - 'https://youtu.be/viAP4lzks7k'
-            - 'https://youtu.be/QM22Tc8PdKI'
-          accessLevel: 0
-          createdAt: '2023-07-29T23:08:45.4666+09:00'
-          updatedAt: '2023-07-29T23:08:45.4666+09:00'
-      x-tags:
-        - recipe
-    createChefRecipe:
-      type: object
-      title: createChefRecipe
+            - label: LABEL_1
+              url: URL_1
+            - label: LABEL_2
+              url: URL_2
+          createdAt: '2023-08-09T05:46:08.569996+09:00'
+          updatedAt: '2023-08-09T05:46:46.296479+09:00'
+          numRecipe: 0
+          numFollower: 0
       properties:
         id:
           type: string
-          description: レシピID
-          format: uuid
-        chefId:
-          type: string
-          description: シェフID
-          format: uuid
-        usrId:
-          type: string
-          description: ユーザーID
-          format: uuid
         name:
           type: string
-          description: レシピ名
-        servings:
-          type: integer
-          description: ＊人前
-        method:
-          type: array
-          description: 作り方
-          items:
-            type: object
-            properties:
-              html:
-                type: string
-              supplement:
-                type: object
-                description: 補足
+          description: 登録名
         imageUrl:
           type: string
-          description: 画像
-        introduction:
+          description: プロフィール画像
+        profile:
           type: string
-          description: レシピの紹介文
+          description: シェフ紹介
         link:
           type: array
           description: リンク
           items:
-            type: string
-        accessLevel:
-          type: integer
-          description: 公開、限定公開、非公開、下書き
+            type: object
+            properties:
+              label:
+                type: string
+              url:
+                type: string
         createdAt:
           type: string
         updatedAt:
           type: string
+        numRecipe:
+          type: integer
+          description: レシピ数
+        numFollower:
+          type: integer
+          description: フォロワー数
       required:
         - id
-        - chefId
         - name
-        - servings
-        - method
-        - accessLevel
+        - link
         - createdAt
         - updatedAt
+        - numRecipe
+        - numFollower
+    UpdateRecipe:
+      type: object
       x-examples:
         Example 1:
-          id: c7adb3eb-383e-43f4-b2d2-0bc915a16aa6
-          chefId: 5c6f635e-6b17-4834-b9ff-a971ff595271
+          id: fcd040c9-8ea9-4833-a42d-95e57c47a745
+          chefId: f4da8c3d-64d7-4dcf-858d-f3161304531b
           usrId: null
-          name: グラタン
-          servings: 2
+          name: 名前を変えてみる
+          servings: 4
+          ingredient:
+            - id: 157e8f3d-033f-47b4-b74c-332d2caf2437
+              name: 修正1
+              supplement: 修正補足1
+            - id: 8b830fd4-d3f8-48ea-8956-dd4f28e40984
+              name: 追加2
+              supplement: 追加補足2
           method:
-            - html: <h1>作り方1</h1>
-              supplement:
-                image: 1.webp
-            - html: <h1>作り方2</h1>
-              supplement:
-                link: 'https://youtu.be/uCkkCRcs81I'
-          imageUrl: 'https://pbs.twimg.com/media/Er7dlbJVQAIWVsW?format=jpg&name=small'
-          introduction: 二人に捧げるグラタン
+            - html: <p>作り方1</p>
+              supplement: {}
+            - html: <p>作り方2</p>
+              supplement: []
+          imageUrl: IMAGE_URL_1
+          introduction: INTRODUCTION_1
           link:
-            - 'https://youtu.be/RGZNv1_oVK0'
-            - 'https://youtu.be/viAP4lzks7k'
-            - 'https://youtu.be/QM22Tc8PdKI'
-          accessLevel: 0
-          createdAt: '2023-07-29T23:59:06.838145+09:00'
-          updatedAt: '2023-07-29T23:59:06.838145+09:00'
-      x-tags:
-        - recipe
-    updateRecipe:
-      type: object
+            - 'https://www.yahoo.co.jp'
+            - 'https://www.amazon.co.jp'
+          accessLevel: 2
+          createdAt: '2023-08-06T06:14:53.749359+09:00'
+          updatedAt: '2023-08-06T17:22:06.900841+09:00'
+          numFav: 0
       title: updateRecipe
       properties:
         id:
           type: string
-          description: レシピID
           format: uuid
+          description: レシピID
         chefId:
           type: string
-          description: シェフID
           format: uuid
+          description: シェフID
         usrId:
           type: string
-          description: ユーザーID
           format: uuid
+          description: ユーザーID
         name:
           type: string
           description: レシピ名
         servings:
           type: integer
           description: ＊人前
+        ingredient:
+          type: array
+          description: 材料
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                format: uuid
+              name:
+                type: string
+                description: 材料名
+              supplement:
+                type: string
+                description: 補足
+            required:
+              - id
+              - name
         method:
           type: array
           description: 作り方
@@ -698,8 +2457,11 @@ components:
               html:
                 type: string
               supplement:
-                type: object
-                description: 補足
+                oneOf:
+                  - type: object
+                  - type: array
+                    items:
+                      type: object
         imageUrl:
           type: string
           description: 画像
@@ -718,37 +2480,155 @@ components:
           type: string
         updatedAt:
           type: string
+        numFav:
+          type: integer
+          description: いいね数
       required:
         - id
-        - chefId
         - name
         - servings
+        - ingredient
         - method
         - accessLevel
         - createdAt
         - updatedAt
+        - numFav
+    UpdateShoppingList:
+      type: object
       x-examples:
         Example 1:
-          id: dcfa1310-de06-4333-8f32-1fad484e7a68
-          chefId: 64de3de5-8481-47c8-ad49-b765791b6a77
-          usrId: null
-          name: 平べったいたこ焼き
-          servings: 4
-          method:
-            - html: <p>作り方1</p>
+          id: bff38254-4632-4c83-b4e0-09ac3de89c2a
+          usrId: 37823a93-2569-4f6b-832f-5dfe47f39200
+          recipeId: 41eb8f23-7b27-4094-b2fc-b3e576e36b54
+          rIdx: 2
+          description: 4人前
+          isFairCopy: false
+          createdAt: '2023-08-12T15:35:25.866045+09:00'
+          updatedAt: '2023-08-12T15:36:42.235739+09:00'
+          item:
+            - id: 98edbf48-112a-437b-8c3c-37a7c10a5162
+              ingredientId: d511d238-bbb9-4eb0-ba0e-811e3ec7b591
+              name: 卵
+              supplement: 鶏卵
+            - id: 944fce73-06d5-4087-a1c5-40fd82a9e62b
+              ingredientId: d0a35ca6-6478-4339-aa8f-76a6628ee796
+              name: トマト
+              supplement: ケチャップ
+            - id: a0181a86-c9dc-48ca-8127-71c64ff5d186
+              ingredientId: f986c6b0-6b03-427a-aa6a-890f0bb4a97b
+              name: グラタン
+              supplement: チーズ
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: 買い物リストID
+        usrId:
+          type: string
+          format: uuid
+          description: ユーザーID
+        recipeId:
+          type: string
+          format: uuid
+          description: レシピID
+        rIdx:
+          type: integer
+          description: リバースインデックス
+        description:
+          type: string
+          description: 「*人前」「メモリスト」
+        isFairCopy:
+          type: boolean
+          description: true：清書、false：下書き
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+        item:
+          type: array
+          description: 買い物明細
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                description: 買い物明細ID
+                format: uuid
+              ingredientId:
+                type: string
+                description: 材料ID
+                format: uuid
+              name:
+                type: string
+                description: 材料名
               supplement:
-                image: 1.webp
-            - html: <p>作り方2</p>
-              supplement:
-                link: 'https://youtu.be/uCkkCRcs81I'
-          imageUrl: 'https://pbs.twimg.com/media/Er7dlbJVQAIWVsW?format=jpg&name=small'
-          introduction: お好み焼き
+                type: string
+                description: 補足
+            required:
+              - id
+              - name
+      required:
+        - id
+        - usrId
+        - rIdx
+        - isFairCopy
+        - createdAt
+        - updatedAt
+        - item
+    UpdateUsr:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+          description: ログインemail
+        name:
+          type: string
+          description: ニックネーム
+        imageUrl:
+          type: string
+          description: プロフィール画像（任意）
+        profile:
+          type: string
+          description: 自己紹介（任意）
+        link:
+          type: array
+          description: リンク（任意）
+          items:
+            type: object
+            properties:
+              label:
+                type: string
+              url:
+                type: string
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+        numRecipe:
+          type: integer
+          description: マイレシピ数
+      required:
+        - id
+        - email
+        - name
+        - link
+        - createdAt
+        - updatedAt
+        - numRecipe
+      x-examples:
+        Example 1:
+          id: 1c6fc87e-430b-4e71-af55-103fe3a16bee
+          email: kaneda@gmail.com
+          name: NAME_1
+          imageUrl: 'http://www.yahoo.co.jp'
+          profile: PROFILE_1
           link:
-            - 'https://youtu.be/RGZNv1_oVK0'
-            - 'https://youtu.be/viAP4lzks7k'
-            - 'https://youtu.be/QM22Tc8PdKI'
-          accessLevel: 2
-          createdAt: '2023-07-30T14:56:12.981361+09:00'
-          updatedAt: '2023-07-30T14:56:44.803972+09:00'
-      x-tags:
-        - recipe
+            - label: LABEL_1
+              url: 'http://www.yahoo.co.jp'
+            - label: LABEL_2
+              url: 'http://www.yahoo.co.jp'
+          createdAt: '2023-08-08T18:48:40.89562+09:00'
+          updatedAt: '2023-08-08T19:56:55.402664+09:00'
+          numRecipe: 0

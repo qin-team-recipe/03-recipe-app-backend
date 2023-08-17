@@ -37,3 +37,14 @@ sql:
               import: "github.com/aopontann/gin-sqlc/db/dto"
               package: "dto"
               type: "RecipeIngredientArrayDto"
+          - column: "v_shopping_list.item"
+            go_type:
+              import: "github.com/aopontann/gin-sqlc/db/dto"
+              package: "dto"
+              type: "ShoppingItemArrayDto"
+          - column: "v_shopping_list.chef_name"
+            go_type:
+              type: "pgtype.Text"
+          - column: "v_shopping_list.general_chef_name"
+            go_type:
+              type: "pgtype.Text"

@@ -3,12 +3,13 @@ package api
 import (
 	"context"
 	"encoding/json"
-	"github.com/aopontann/gin-sqlc/utils"
 	"net/http"
 	"regexp"
 	"time"
 
 	db "github.com/aopontann/gin-sqlc/db/sqlc"
+	"github.com/aopontann/gin-sqlc/docs"
+	"github.com/aopontann/gin-sqlc/utils"
 	"github.com/gin-gonic/gin"
 )
 
@@ -89,42 +90,52 @@ func (s *Server) GetUser(c *gin.Context) {
 		return
 	}
 
-	//// レスポンス型バリデーション
-	//err = utils.ValidateStructTwoWay[db.VUsr, docs.GetUser](&row)
-	//if err != nil {
-	//	c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-	//	return
-	//}
+	// レスポンス型バリデーション
+	err = utils.ValidateStructTwoWay[db.GetUserRow, docs.GetUsr](&row)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 
 	c.JSON(http.StatusOK, row)
 }
 
-func (s *Server) UpdateUser(c *gin.Context) {
-	var param db.UpdateUserParams
-	var err error
+func (s *Server) GetSelf(c *gin.Context) {
+	email := c.MustGet("email").(string)
 
-	// パスパラメータ取り出し
-	param.ID, err = utils.StrToUUID(c.Param("id"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-	}
-
-	//// リクエストボディを構造体にバインド
-	//reqb := docs.PutApiUpdateUserJSONRequestBody{}
-	//if err := c.ShouldBind(&reqb); err != nil {
-	//	c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-	//	return
-	//}
-	//
-	//// 構造体からJSONに変換
-	//param.Data, err = json.Marshal(&reqb)
-	//if err != nil {
-	//	c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-	//}
-	param.Data, err = c.GetRawData()
+	// 問い合わせ処理
+	row, err := s.q.GetSelf(context.Background(), email)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
+	}
+
+	// レスポンス型バリデーション
+	err = utils.ValidateStructTwoWay[db.GetSelfRow, docs.GetUsr](&row)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, row)
+}
+
+func (s *Server) UpdateSelf(c *gin.Context) {
+	var param db.UpdateUserParams
+	var err error
+	param.Email = c.MustGet("email").(string)
+
+	// リクエストボディを構造体にバインド
+	reqb := docs.PutApiUserUsersJSONRequestBody{}
+	if err := c.ShouldBind(&reqb); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// 構造体からJSONに変換
+	param.Data, err = json.Marshal(&reqb)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
 
 	// 更新処理
@@ -134,12 +145,32 @@ func (s *Server) UpdateUser(c *gin.Context) {
 		return
 	}
 
-	//// レスポンス型バリデーション
-	//err = utils.ValidateStructTwoWay[db.VUser, docs.UpdateUser](&row)
-	//if err != nil {
-	//	c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-	//	return
-	//}
+	// レスポンス型バリデーション
+	err = utils.ValidateStructTwoWay[db.UpdateUserRow, docs.UpdateUsr](&row)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, row)
+}
+
+func (s *Server) DeleteSelf(c *gin.Context) {
+	email := c.MustGet("email").(string)
+
+	// 削除処理
+	row, err := s.q.DeleteUser(context.Background(), email)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// レスポンス型バリデーション
+	err = utils.ValidateStructTwoWay[db.DeleteUserRow, docs.DeletedUsr](&row)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 
 	c.JSON(http.StatusOK, row)
 }

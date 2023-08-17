@@ -8,6 +8,7 @@ package db
 import (
 	"context"
 
+	dto "github.com/aopontann/gin-sqlc/db/dto"
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
@@ -45,6 +46,49 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (CreateU
 	return i, err
 }
 
+const deleteUser = `-- name: DeleteUser :one
+DELETE FROM
+    usr
+WHERE
+    email = $1
+RETURNING
+    id,
+    email,
+    name,
+    image_url,
+    profile,
+    created_at,
+    updated_at,
+    num_recipe
+`
+
+type DeleteUserRow struct {
+	ID        pgtype.UUID        `json:"id"`
+	Email     string             `json:"email"`
+	Name      string             `json:"name"`
+	ImageUrl  pgtype.Text        `json:"imageUrl"`
+	Profile   pgtype.Text        `json:"profile"`
+	CreatedAt pgtype.Timestamptz `json:"createdAt"`
+	UpdatedAt pgtype.Timestamptz `json:"updatedAt"`
+	NumRecipe int32              `json:"numRecipe"`
+}
+
+func (q *Queries) DeleteUser(ctx context.Context, email string) (DeleteUserRow, error) {
+	row := q.db.QueryRow(ctx, deleteUser, email)
+	var i DeleteUserRow
+	err := row.Scan(
+		&i.ID,
+		&i.Email,
+		&i.Name,
+		&i.ImageUrl,
+		&i.Profile,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.NumRecipe,
+	)
+	return i, err
+}
+
 const existsUser = `-- name: ExistsUser :one
 SELECT EXISTS (SELECT id, email, name, image_url, profile, link, auth_server, auth_userinfo, created_at, updated_at, num_recipe FROM usr WHERE email = $1)
 `
@@ -56,18 +100,38 @@ func (q *Queries) ExistsUser(ctx context.Context, email string) (bool, error) {
 	return exists, err
 }
 
-const getUser = `-- name: GetUser :one
+const getSelf = `-- name: GetSelf :one
 SELECT
-    id, email, name, image_url, profile, link, auth_server, auth_userinfo, created_at, updated_at, num_recipe
+    id,
+    email,
+    name,
+    image_url,
+    profile,
+    link,
+    created_at,
+    updated_at,
+    num_recipe
 FROM
     v_usr
 WHERE
-    id = $1
+    email = $1
 `
 
-func (q *Queries) GetUser(ctx context.Context, id pgtype.UUID) (VUsr, error) {
-	row := q.db.QueryRow(ctx, getUser, id)
-	var i VUsr
+type GetSelfRow struct {
+	ID        pgtype.UUID          `json:"id"`
+	Email     string               `json:"email"`
+	Name      string               `json:"name"`
+	ImageUrl  pgtype.Text          `json:"imageUrl"`
+	Profile   pgtype.Text          `json:"profile"`
+	Link      dto.ChefLinkArrayDto `json:"link"`
+	CreatedAt pgtype.Timestamptz   `json:"createdAt"`
+	UpdatedAt pgtype.Timestamptz   `json:"updatedAt"`
+	NumRecipe int32                `json:"numRecipe"`
+}
+
+func (q *Queries) GetSelf(ctx context.Context, email string) (GetSelfRow, error) {
+	row := q.db.QueryRow(ctx, getSelf, email)
+	var i GetSelfRow
 	err := row.Scan(
 		&i.ID,
 		&i.Email,
@@ -75,8 +139,52 @@ func (q *Queries) GetUser(ctx context.Context, id pgtype.UUID) (VUsr, error) {
 		&i.ImageUrl,
 		&i.Profile,
 		&i.Link,
-		&i.AuthServer,
-		&i.AuthUserinfo,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.NumRecipe,
+	)
+	return i, err
+}
+
+const getUser = `-- name: GetUser :one
+SELECT
+    id,
+    email,
+    name,
+    image_url,
+    profile,
+    link,
+    created_at,
+    updated_at,
+    num_recipe
+FROM
+    v_usr
+WHERE
+    id = $1
+`
+
+type GetUserRow struct {
+	ID        pgtype.UUID          `json:"id"`
+	Email     string               `json:"email"`
+	Name      string               `json:"name"`
+	ImageUrl  pgtype.Text          `json:"imageUrl"`
+	Profile   pgtype.Text          `json:"profile"`
+	Link      dto.ChefLinkArrayDto `json:"link"`
+	CreatedAt pgtype.Timestamptz   `json:"createdAt"`
+	UpdatedAt pgtype.Timestamptz   `json:"updatedAt"`
+	NumRecipe int32                `json:"numRecipe"`
+}
+
+func (q *Queries) GetUser(ctx context.Context, id pgtype.UUID) (GetUserRow, error) {
+	row := q.db.QueryRow(ctx, getUser, id)
+	var i GetUserRow
+	err := row.Scan(
+		&i.ID,
+		&i.Email,
+		&i.Name,
+		&i.ImageUrl,
+		&i.Profile,
+		&i.Link,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.NumRecipe,
@@ -97,19 +205,39 @@ func (q *Queries) GetUserId(ctx context.Context, email string) (pgtype.UUID, err
 
 const updateUser = `-- name: UpdateUser :one
 SELECT
-    id, email, name, image_url, profile, link, auth_server, auth_userinfo, created_at, updated_at, num_recipe
+    id,
+    email,
+    name,
+    image_url,
+    profile,
+    link,
+    created_at,
+    updated_at,
+    num_recipe
 FROM
     update_usr($1, $2)
 `
 
 type UpdateUserParams struct {
-	ID   pgtype.UUID `json:"id"`
-	Data []byte      `json:"data"`
+	Email string `json:"email"`
+	Data  []byte `json:"data"`
 }
 
-func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (VUsr, error) {
-	row := q.db.QueryRow(ctx, updateUser, arg.ID, arg.Data)
-	var i VUsr
+type UpdateUserRow struct {
+	ID        pgtype.UUID          `json:"id"`
+	Email     string               `json:"email"`
+	Name      string               `json:"name"`
+	ImageUrl  pgtype.Text          `json:"imageUrl"`
+	Profile   pgtype.Text          `json:"profile"`
+	Link      dto.ChefLinkArrayDto `json:"link"`
+	CreatedAt pgtype.Timestamptz   `json:"createdAt"`
+	UpdatedAt pgtype.Timestamptz   `json:"updatedAt"`
+	NumRecipe int32                `json:"numRecipe"`
+}
+
+func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (UpdateUserRow, error) {
+	row := q.db.QueryRow(ctx, updateUser, arg.Email, arg.Data)
+	var i UpdateUserRow
 	err := row.Scan(
 		&i.ID,
 		&i.Email,
@@ -117,8 +245,6 @@ func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (VUsr, e
 		&i.ImageUrl,
 		&i.Profile,
 		&i.Link,
-		&i.AuthServer,
-		&i.AuthUserinfo,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.NumRecipe,

@@ -40,52 +40,6 @@ func (q *Queries) CreateRecipe(ctx context.Context, data []byte) (VRecipe, error
 	return i, err
 }
 
-const getChefRecipes = `-- name: GetChefRecipes :many
-SELECT
-    id, chef_id, usr_id, name, servings, ingredient, method, image_url, introduction, link, access_level, created_at, updated_at, num_fav
-FROM
-    v_recipe
-WHERE
-    chef_id = $1
-ORDER BY
-    created_at DESC
-`
-
-func (q *Queries) GetChefRecipes(ctx context.Context, chefID pgtype.UUID) ([]VRecipe, error) {
-	rows, err := q.db.Query(ctx, getChefRecipes, chefID)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []VRecipe
-	for rows.Next() {
-		var i VRecipe
-		if err := rows.Scan(
-			&i.ID,
-			&i.ChefID,
-			&i.UsrID,
-			&i.Name,
-			&i.Servings,
-			&i.Ingredient,
-			&i.Method,
-			&i.ImageUrl,
-			&i.Introduction,
-			&i.Link,
-			&i.AccessLevel,
-			&i.CreatedAt,
-			&i.UpdatedAt,
-			&i.NumFav,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
 const getRecipe = `-- name: GetRecipe :one
 SELECT
     id, chef_id, usr_id, name, servings, ingredient, method, image_url, introduction, link, access_level, created_at, updated_at, num_fav
@@ -115,52 +69,6 @@ func (q *Queries) GetRecipe(ctx context.Context, id pgtype.UUID) (VRecipe, error
 		&i.NumFav,
 	)
 	return i, err
-}
-
-const getUsrRecipes = `-- name: GetUsrRecipes :many
-SELECT
-    id, chef_id, usr_id, name, servings, ingredient, method, image_url, introduction, link, access_level, created_at, updated_at, num_fav
-FROM
-    v_recipe
-WHERE
-    usr_id = $1
-ORDER BY
-    created_at DESC
-`
-
-func (q *Queries) GetUsrRecipes(ctx context.Context, usrID pgtype.UUID) ([]VRecipe, error) {
-	rows, err := q.db.Query(ctx, getUsrRecipes, usrID)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []VRecipe
-	for rows.Next() {
-		var i VRecipe
-		if err := rows.Scan(
-			&i.ID,
-			&i.ChefID,
-			&i.UsrID,
-			&i.Name,
-			&i.Servings,
-			&i.Ingredient,
-			&i.Method,
-			&i.ImageUrl,
-			&i.Introduction,
-			&i.Link,
-			&i.AccessLevel,
-			&i.CreatedAt,
-			&i.UpdatedAt,
-			&i.NumFav,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
 }
 
 const listTrendRecipe = `-- name: ListTrendRecipe :many

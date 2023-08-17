@@ -7,7 +7,7 @@ CREATE SCHEMA IF NOT EXISTS "public";
 --
 
 CREATE EXTENSION IF NOT EXISTS pgroonga;
-SET enable_seqscan = off;
+SET enable_seqscan = on;
 
 --
 -- データ型を登録
@@ -36,7 +36,7 @@ CREATE TYPE type_vrecipe_ingredient AS (
 );
 
 -- Project Name : チーム03
--- Date/Time    : 2023/07/28 22:39:47
+-- Date/Time    : 2023/08/15 6:56:49
 -- Author       : kaned
 -- RDBMS Type   : PostgreSQL
 -- Application  : A5:SQL Mk-2
@@ -62,6 +62,9 @@ CREATE TABLE following_user (
   , CONSTRAINT following_user_PKC PRIMARY KEY (id)
 ) ;
 
+CREATE UNIQUE INDEX following_user_IX1
+  ON following_user(followee_id,follower_id);
+
 -- 買い物明細
 -- * BackupToTempTable
 DROP TABLE if exists shopping_item CASCADE;
@@ -72,6 +75,8 @@ CREATE TABLE shopping_item (
   , shopping_list_id UUID NOT NULL
   , ingredient_id UUID
   , idx INTEGER NOT NULL
+  , name TEXT NOT NULL
+  , supplement TEXT
   , created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL
   , updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL
   , CONSTRAINT shopping_item_PKC PRIMARY KEY (id)
@@ -126,12 +131,16 @@ CREATE TABLE shopping_list (
   id UUID DEFAULT GEN_RANDOM_UUID() NOT NULL
   , usr_id UUID NOT NULL
   , recipe_id UUID
+  , r_idx INTEGER NOT NULL
   , description TEXT
   , is_fair_copy BOOLEAN NOT NULL
   , created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL
   , updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL
   , CONSTRAINT shopping_list_PKC PRIMARY KEY (id)
 ) ;
+
+CREATE UNIQUE INDEX shopping_list_IX1
+  ON shopping_list(usr_id,recipe_id);
 
 -- ファボ中
 -- * BackupToTempTable
@@ -146,6 +155,9 @@ CREATE TABLE favoring (
   , CONSTRAINT favoring_PKC PRIMARY KEY (id)
 ) ;
 
+CREATE UNIQUE INDEX favoring_IX1
+  ON favoring(recipe_id,usr_id);
+
 -- フォロー中シェフ
 -- * BackupToTempTable
 DROP TABLE if exists following_chef CASCADE;
@@ -158,6 +170,9 @@ CREATE TABLE following_chef (
   , created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL
   , CONSTRAINT following_chef_PKC PRIMARY KEY (id)
 ) ;
+
+CREATE UNIQUE INDEX following_chef_IX1
+  ON following_chef(chef_id,usr_id);
 
 -- ユーザー（一般シェフ）
 -- * BackupToTempTable
@@ -307,6 +322,8 @@ COMMENT ON COLUMN shopping_item.id IS '';
 COMMENT ON COLUMN shopping_item.shopping_list_id IS '';
 COMMENT ON COLUMN shopping_item.ingredient_id IS '';
 COMMENT ON COLUMN shopping_item.idx IS 'インデックス';
+COMMENT ON COLUMN shopping_item.name IS '材料名';
+COMMENT ON COLUMN shopping_item.supplement IS '補足';
 COMMENT ON COLUMN shopping_item.created_at IS '';
 COMMENT ON COLUMN shopping_item.updated_at IS '';
 
@@ -335,6 +352,7 @@ COMMENT ON TABLE shopping_list IS '買い物リスト';
 COMMENT ON COLUMN shopping_list.id IS '';
 COMMENT ON COLUMN shopping_list.usr_id IS '';
 COMMENT ON COLUMN shopping_list.recipe_id IS 'NULL：メモリスト／削除レシピ';
+COMMENT ON COLUMN shopping_list.r_idx IS 'リバースインデックス';
 COMMENT ON COLUMN shopping_list.description IS '「*人前」「メモリスト」';
 COMMENT ON COLUMN shopping_list.is_fair_copy IS '清書or下書き';
 COMMENT ON COLUMN shopping_list.created_at IS '';
@@ -479,6 +497,86 @@ SELECT
     num_follower
 FROM
     chef;
+
+DROP VIEW if exists v_shopping_list CASCADE;
+
+CREATE VIEW v_shopping_list AS
+SELECT
+    shopping_list.id,
+    shopping_list.usr_id,
+    shopping_list.recipe_id,
+    CASE
+    WHEN shopping_list.recipe_id IS NOT NULL THEN
+        recipe.name
+    ELSE
+        '(メモリスト)'
+    END AS recipe_name,
+    CASE
+    WHEN shopping_list.recipe_id IS NOT NULL THEN
+        CASE
+        WHEN recipe.chef_id IS NOT NULL THEN
+            (SELECT
+                name
+            FROM
+                chef
+            WHERE
+                chef.id = recipe.chef_id)
+        ELSE
+            NULL::TEXT
+        END
+    ELSE
+        '(メモリスト)'
+    END AS chef_name,
+    CASE
+    WHEN recipe_id IS NOT NULL THEN
+        CASE
+        WHEN recipe.usr_id IS NOT NULL THEN
+            (SELECT
+                name
+            FROM
+                usr
+            WHERE
+                usr.id = recipe.usr_id)
+        ELSE
+            NULL::TEXT
+        END
+    ELSE
+        '(メモリスト)'
+    END AS general_chef_name,
+    shopping_list.description,
+    shopping_list.is_fair_copy,
+    shopping_list.created_at,
+    shopping_list.updated_at,
+    COALESCE(
+        (
+            SELECT JSONB_AGG(
+                JSONB_BUILD_OBJECT('id', id) ||
+                JSONB_BUILD_OBJECT('ingredientId', ingredient_id) ||
+                JSONB_BUILD_OBJECT('name', name) ||
+                JSONB_BUILD_OBJECT('supplement', supplement)
+--                 JSONB_BUILD_OBJECT('createdAt', created_at) ||
+--                 JSONB_BUILD_OBJECT('updatedAt', updated_at)
+            )
+            FROM
+            (
+                SELECT
+                    *
+                FROM
+                    shopping_item
+                WHERE
+                    shopping_list_id = shopping_list.id
+                ORDER BY idx
+            ) AS ingre
+        ),
+        TO_JSONB(ARRAY[]::INTEGER[])
+    ) AS item,
+    shopping_list.r_idx
+FROM
+    shopping_list
+LEFT OUTER JOIN
+    recipe
+ON
+    shopping_list.recipe_id = recipe.id;
 
 --
 -- TRIGGER関連作成
@@ -970,7 +1068,7 @@ $$;
 DROP FUNCTION if exists update_usr CASCADE;
 
 CREATE OR REPLACE FUNCTION update_usr(
-    id UUID,
+    email TEXT,
     data JSONB
 )
     RETURNS v_usr
@@ -990,7 +1088,6 @@ BEGIN
     END LOOP;
 
     UPDATE usr SET
---         email         = data->>'email',
         name          = data->>'name',
         image_url     = data->>'imageUrl',
         profile       = data->>'profile',
@@ -998,10 +1095,10 @@ BEGIN
 --         auth_server   = data->>'authServer',
 --         auth_userinfo = data->'authUserinfo'
     WHERE
-        usr.id = update_usr.id
+        usr.email = update_usr.email
     RETURNING
-        usr.id,
-        email,
+        id,
+        usr.email,
         name,
         image_url,
         profile,
@@ -1168,6 +1265,9 @@ BEGIN
         access_level = (data->'accessLevel')::INTEGER
     WHERE
         recipe.id = update_recipe.id
+    AND
+        (usr_id IS NULL AND (data->>'usrId')::UUID IS NULL)
+     OR (usr_id IS NOT NULL AND usr_id = (data->>'usrId')::UUID)
     RETURNING
         recipe.id,
         chef_id,
@@ -1186,50 +1286,67 @@ BEGIN
     INTO
         rec;
 
-    ingredient_array = ARRAY[]::type_vrecipe_ingredient[];
-    FOR i IN 0..JSONB_ARRAY_LENGTH(data->'ingredient') - 1 LOOP
-        ingredient_id = (data->'ingredient'->i->>'id')::UUID;
-        IF ingredient_id IS NOT NULL THEN
-            UPDATE ingredient SET
-                idx        = i + 1,
-                name       = data->'ingredient'->i->>'name',
-                supplement = data->'ingredient'->i->>'supplement'
-            WHERE
-                recipe_id = update_recipe.id
-            AND
-                ingredient.id = ingredient_id
-            RETURNING
-                *
-            INTO
-                ingredient_rec;
-        ELSE
-            INSERT INTO ingredient
-            (
-                recipe_id,
-                idx,
-                name,
-                supplement
-            )
-            VALUES
-            (
-                update_recipe.id,
-                i + 1,
-                data->'ingredient'->i->>'name',
-                data->'ingredient'->i->>'supplement'
-            )
-            RETURNING
-                *
-            INTO
-                ingredient_rec;
-        END IF;
+    IF rec.id IS NOT NULL THEN
+        ingredient_array = ARRAY[]::type_vrecipe_ingredient[];
+        FOR i IN 0..JSONB_ARRAY_LENGTH(data->'ingredient') - 1 LOOP
+            ingredient_id = (data->'ingredient'->i->>'id')::UUID;
+            IF ingredient_id IS NOT NULL THEN
+                UPDATE ingredient SET
+                    idx        = i + 1,
+                    name       = data->'ingredient'->i->>'name',
+                    supplement = data->'ingredient'->i->>'supplement'
+                WHERE
+                    recipe_id = update_recipe.id
+                AND
+                    ingredient.id = ingredient_id
+                RETURNING
+                    *
+                INTO
+                    ingredient_rec;
+            ELSE
+                INSERT INTO ingredient
+                (
+                    recipe_id,
+                    idx,
+                    name,
+                    supplement
+                )
+                VALUES
+                (
+                    update_recipe.id,
+                    i + 1,
+                    data->'ingredient'->i->>'name',
+                    data->'ingredient'->i->>'supplement'
+                )
+                RETURNING
+                    *
+                INTO
+                    ingredient_rec;
+            END IF;
 
-        ingredient_array = ARRAY_APPEND(ingredient_array,
-            ROW(ingredient_rec.id,
-                ingredient_rec.name,
-                ingredient_rec.supplement)::type_vrecipe_ingredient);
-    END LOOP;
-    rec.ingredient = TO_JSONB(ingredient_array);
+            ingredient_array = ARRAY_APPEND(ingredient_array,
+                ROW(ingredient_rec.id,
+                    ingredient_rec.name,
+                    ingredient_rec.supplement)::type_vrecipe_ingredient);
+        END LOOP;
+        rec.ingredient = TO_JSONB(ingredient_array);
+    END IF;
 
     RETURN rec;
 END
 $$;
+
+--
+-- PGroonga
+--
+DROP INDEX if exists pgroonga_chef_name_index;
+CREATE INDEX pgroonga_chef_name_index ON chef USING pgroonga (name);
+
+DROP INDEX if exists pgroonga_chef_profile_index;
+CREATE INDEX pgroonga_chef_profile_index ON chef USING pgroonga (profile);
+
+DROP INDEX if exists pgroonga_recipe_name_index;
+CREATE INDEX pgroonga_recipe_name_index ON recipe USING pgroonga (name);
+
+DROP INDEX if exists pgroonga_recipe_introduction_index;
+CREATE INDEX pgroonga_recipe_introduction_index ON recipe USING pgroonga (introduction);
