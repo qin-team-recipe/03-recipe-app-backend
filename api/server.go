@@ -90,12 +90,6 @@ func (s *Server) MountHandlers() {
 	api.GET("/images", s.GetImage)   // 画像を取得するAPI（webp限定）
 	api.POST("/images", s.PostImage) // 画像を新規登録するAPI（webp形式に変換される）
 
-	// フォロー関連
-	usr.POST("/follow/chefs/:id", s.CreateFollowChef)
-	usr.DELETE("/follow/chefs/:id", s.DeleteFollowChef)
-	usr.GET("/follow/chefs/:id", s.ExistsFollowChef)
-	usr.GET("/follow/chefs", s.GetFollowChef)
-
 	// 有名シェフフォロー関連
 	usr.POST("/follow/chefs/:id", s.CreateFollowChef)           // 有名シェフをフォローするAPI
 	usr.DELETE("/follow/chefs/:id", s.DeleteFollowChef)         // 有名シェフのフォローを解除するAPI
@@ -108,10 +102,6 @@ func (s *Server) MountHandlers() {
 	usr.DELETE("/follow/users/:id", s.DeleteFollowUser) // 一般シェフのフォローを解除するAPI
 	usr.GET("/follow/users/:id", s.ExistsFollowUser)    // 一般シェフをフォローしているか
 	usr.GET("/follow/users", s.ListFollowUser)          // フォローしている一般シェフの一覧を取得するAPI
-
-	// 画像関連
-	api.GET("/images", s.GetImage)   // 画像を取得するAPI（webp限定）
-	api.POST("/images", s.PostImage) // 画像を新規登録するAPI（webp形式に変換される）
 }
 
 func (s *Server) Start(addr string) error {
