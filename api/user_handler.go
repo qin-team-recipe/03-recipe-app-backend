@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"regexp"
 	"time"
@@ -40,9 +41,6 @@ func (s *Server) CreateUser(c *gin.Context) {
 		return
 	}
 
-	// redisに保存されているユーザ情報をメールアドレスで上書きする
-	s.rbd.Set(context.Background(), sid, uInfo.Email, 24*time.Hour)
-
 	// メールアドレスが google かチェック
 	var authServer string
 	re := regexp.MustCompile(`@gmail.com$`)
@@ -60,6 +58,14 @@ func (s *Server) CreateUser(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
+
+	strID := fmt.Sprintf("%x-%x-%x-%x-%x", res.ID.Bytes[0:4], res.ID.Bytes[4:6], res.ID.Bytes[6:8], res.ID.Bytes[8:10], res.ID.Bytes[10:16])
+	// 構造体のまま redis に保存できないため、byte型に変換する
+	b, err := json.Marshal(redisValue{ID: strID, Email: res.Email})
+	if err != nil {
+		return
+	}
+	s.rbd.Set(context.Background(), sid, b, 24*time.Hour)
 
 	c.JSON(http.StatusOK, gin.H{"id": res.ID, "name": res.Name, "email": res.Email})
 }

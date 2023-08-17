@@ -25,6 +25,11 @@ type userInfo struct {
 	Picture       string `json:"picture"`
 }
 
+type redisValue struct {
+	ID    string `json:"id"`
+	Email string `json:"email"`
+}
+
 // Scopes: OAuth 2.0 scopes provide a way to limit the amount of access that is granted to an access token.
 var googleOauthConfig = &oauth2.Config{
 	RedirectURL:  "http://localhost:8080/auth/google/callback",
@@ -76,19 +81,28 @@ func (s *Server) OauthGoogleCallback(c *gin.Context) {
 		return
 	}
 
-	isExists, err := s.q.ExistsUser(context.Background(), uInfo.Email)
+	uid, err := s.q.GetUserId(context.Background(), uInfo.Email)
+	if !uid.Valid {
+		s.rbd.Set(context.Background(), guid.String(), data, 3600*time.Second)
+		afterLoginUrl, err := c.Cookie("after_login_url")
+		if (err != nil) || (afterLoginUrl == "") {
+			c.Redirect(http.StatusTemporaryRedirect, "http://localhost:3000/create-user")
+			return
+		}
+		c.Redirect(http.StatusTemporaryRedirect, afterLoginUrl)
+		return
+	}
 	if err != nil {
 		fmt.Printf("ExistsUser Error: %s\n", err.Error())
 		return
 	}
-	if isExists {
-		// redis に セッションIDをKeyとして、ユーザ情報を Value として保存する
-		s.rbd.Set(context.Background(), guid.String(), uInfo.Email, 3600*time.Second)
-		c.Redirect(http.StatusTemporaryRedirect, "http://localhost:3000")
+
+	strID := fmt.Sprintf("%x-%x-%x-%x-%x", uid.Bytes[0:4], uid.Bytes[4:6], uid.Bytes[6:8], uid.Bytes[8:10], uid.Bytes[10:16])
+	b, err := json.Marshal(redisValue{ID: strID, Email: uInfo.Email})
+	if err != nil {
 		return
 	}
-
-	s.rbd.Set(context.Background(), guid.String(), data, 3600*time.Second)
+	s.rbd.Set(context.Background(), guid.String(), b, 3600*time.Second)
 	afterLoginUrl, err := c.Cookie("after_login_url")
 	if (err != nil) || (afterLoginUrl == "") {
 		c.Redirect(http.StatusTemporaryRedirect, "http://localhost:3000")
