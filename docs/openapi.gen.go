@@ -101,6 +101,29 @@ type CreateChefRecipe_Method_Supplement struct {
 	union json.RawMessage
 }
 
+// CreateFollowChef defines model for CreateFollowChef.
+type CreateFollowChef struct {
+	// ChefId シェフID
+	ChefId    string `json:"chefId"`
+	CreatedAt string `json:"createdAt"`
+	Id        string `json:"id"`
+
+	// UsrId ユーザーID
+	UsrId string `json:"usrId"`
+}
+
+// CreateFollowUser defines model for CreateFollowUser.
+type CreateFollowUser struct {
+	CreatedAt string `json:"createdAt"`
+
+	// FolloweeId フォロイーID
+	FolloweeId string `json:"followeeId"`
+
+	// FollowerId フォロワーID
+	FollowerId string `json:"followerId"`
+	Id         string `json:"id"`
+}
+
 // CreateShoppingList defines model for CreateShoppingList.
 type CreateShoppingList struct {
 	CreatedAt string `json:"createdAt"`
@@ -225,6 +248,29 @@ type DeletedChef struct {
 	UpdatedAt string  `json:"updatedAt"`
 }
 
+// DeletedFollowChef defines model for DeletedFollowChef.
+type DeletedFollowChef struct {
+	// ChefId シェフID
+	ChefId    string `json:"chefId"`
+	CreatedAt string `json:"createdAt"`
+	Id        string `json:"id"`
+
+	// UsrId ユーザーID
+	UsrId string `json:"usrId"`
+}
+
+// DeletedFollowUser defines model for DeletedFollowUser.
+type DeletedFollowUser struct {
+	CreatedAt string `json:"createdAt"`
+
+	// FolloweeId フォロイーID
+	FolloweeId string `json:"followeeId"`
+
+	// FollowerId フォロワーID
+	FollowerId string `json:"followerId"`
+	Id         string `json:"id"`
+}
+
 // DeletedRecipe defines model for DeletedRecipe.
 type DeletedRecipe struct {
 	// AccessLevel 公開、限定公開、非公開、下書き
@@ -304,6 +350,16 @@ type DeletedUsr struct {
 	// Profile 自己紹介（任意）
 	Profile   *string `json:"profile,omitempty"`
 	UpdatedAt string  `json:"updatedAt"`
+}
+
+// ExistsFollowChef defines model for ExistsFollowChef.
+type ExistsFollowChef struct {
+	Exists bool `json:"exists"`
+}
+
+// ExistsFollowUser defines model for ExistsFollowUser.
+type ExistsFollowUser struct {
+	Exists bool `json:"exists"`
 }
 
 // FeaturedChef defines model for FeaturedChef.
@@ -537,6 +593,83 @@ type GetUsr struct {
 	// Profile 自己紹介（任意）
 	Profile   *string `json:"profile,omitempty"`
 	UpdatedAt string  `json:"updatedAt"`
+}
+
+// ListFollowChef defines model for ListFollowChef.
+type ListFollowChef struct {
+	Data []struct {
+		CreatedAt string `json:"createdAt"`
+
+		// Id シェフID
+		Id string `json:"id"`
+
+		// ImageUrl プロフィール画像
+		ImageUrl *string `json:"imageUrl,omitempty"`
+
+		// Name 登録名
+		Name string `json:"name"`
+
+		// NumFollower フォロワー数
+		NumFollower int `json:"numFollower"`
+
+		// NumRecipe レシピ数
+		NumRecipe int `json:"numRecipe"`
+
+		// Profile シェフ紹介
+		Profile   *string `json:"profile,omitempty"`
+		UpdatedAt string  `json:"updatedAt"`
+	} `json:"data"`
+}
+
+// ListFollowChefRecipe defines model for ListFollowChefRecipe.
+type ListFollowChefRecipe struct {
+	Data []struct {
+		// ChefId シェフID
+		ChefId    string `json:"chefId"`
+		CreatedAt string `json:"createdAt"`
+
+		// Id レシピID
+		Id string `json:"id"`
+
+		// ImageUrl 画像
+		ImageUrl *string `json:"imageUrl,omitempty"`
+
+		// Introduction レシピの紹介文
+		Introduction *string `json:"introduction,omitempty"`
+
+		// Name レシピ名
+		Name string `json:"name"`
+
+		// NumFav ファボられ数
+		NumFav int `json:"numFav"`
+
+		// Servings ＊人前
+		Servings  int    `json:"servings"`
+		UpdatedAt string `json:"updatedAt"`
+	} `json:"data"`
+}
+
+// ListFollowUser defines model for ListFollowUser.
+type ListFollowUser struct {
+	Data []struct {
+		CreatedAt string `json:"createdAt"`
+
+		// Id ユーザーID（一般シェフID）
+		Id string `json:"id"`
+
+		// ImageUrl プロフィール画像
+		ImageUrl *string `json:"imageUrl,omitempty"`
+
+		// Name ニックネーム
+		Name string `json:"name"`
+
+		// NumRecipe レシピ数
+		NumRecipe int `json:"numRecipe"`
+
+		// Profile 自己紹介
+		Profile   *string `json:"profile,omitempty"`
+		UpdatedAt string  `json:"updatedAt"`
+	} `json:"data"`
 }
 
 // SearchChef defines model for SearchChef.
@@ -1052,6 +1185,9 @@ type PostApiChefsChefIdRecipeJSONRequestBody PostApiChefsChefIdRecipeJSONBody
 
 // PutApiChefsIdJSONRequestBody defines body for PutApiChefsId for application/json ContentType.
 type PutApiChefsIdJSONRequestBody PutApiChefsIdJSONBody
+
+// PostApiUserFollowUsersIdJSONRequestBody defines body for PostApiUserFollowUsersId for application/json ContentType.
+type PostApiUserFollowUsersIdJSONRequestBody = CreateFollowUser
 
 // PostApiUserListsJSONRequestBody defines body for PostApiUserLists for application/json ContentType.
 type PostApiUserListsJSONRequestBody PostApiUserListsJSONBody

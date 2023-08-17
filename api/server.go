@@ -85,6 +85,19 @@ func (s *Server) MountHandlers() {
 	usr.PUT("/lists/:id", s.UpdateShoppingList)            // 買い物リストを更新するAPI
 	usr.DELETE("/lists/:id", s.DeleteShoppingList)         // 買い物リストを削除するAPI
 	usr.POST("/lists", s.CreateShoppingList)               // 買い物リストを新規登録するAPI
+
+	// 有名シェフフォロー関連
+	usr.POST("/follow/chefs/:id", s.CreateFollowChef)           // 有名シェフをフォローするAPI
+	usr.DELETE("/follow/chefs/:id", s.DeleteFollowChef)         // 有名シェフのフォローを解除するAPI
+	usr.GET("/follow/chefs/:id", s.ExistsFollowChef)            // 有名シェフをフォローしているか
+	usr.GET("/follow/chefs", s.ListFollowChef)                  // フォローしている有名シェフの一覧を取得するAPI
+	usr.GET("/follow/chefs/recipes", s.ListFollowChefNewRecipe) // フォローしているシェフの新着レシピ一覧を取得するAPI
+
+	// 一般シェフフォロー関連
+	usr.POST("/follow/users/:id", s.CreateFollowUser)   // 一般シェフをフォローするAPI
+	usr.DELETE("/follow/users/:id", s.DeleteFollowUser) // 一般シェフのフォローを解除するAPI
+	usr.GET("/follow/users/:id", s.ExistsFollowUser)    // 一般シェフをフォローしているか
+	usr.GET("/follow/users", s.ListFollowUser)          // フォローしている一般シェフの一覧を取得するAPI
 }
 
 func (s *Server) Start(addr string) error {

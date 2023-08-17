@@ -989,6 +989,119 @@ paths:
           in: query
           name: q
           description: 全文検索テキスト
+  '/api/user/follow/chefs/{id}':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+    get:
+      summary: 有名シェフをフォローしているか
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExistsFollowChef'
+      operationId: get-api-user-follow-chefs-id
+    post:
+      summary: 有名シェフをフォローする
+      operationId: post-api-user-follow-chefs-id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateFollowChef'
+    delete:
+      summary: 有名シェフのフォローを解除する
+      operationId: delete-api-user-follow-chefs-id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeletedFollowChef'
+  /api/user/follow/chefs:
+    get:
+      summary: フォローしている有名シェフの一覧を取得する
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListFollowChef'
+      operationId: get-api-user-follow-chefs
+  /api/user/follow/chefs/recipes:
+    get:
+      summary: フォローしているシェフの新着レシピ一覧を取得する
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListFollowChefRecipe'
+      operationId: get-api-user-follow-chefs-recipes
+  '/api/user/follow/users/{id}':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+    get:
+      summary: 一般シェフをフォローしているか
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExistsFollowUser'
+      operationId: get-api-user-follow-users-id
+    post:
+      summary: 一般シェフをフォローする
+      operationId: post-api-user-follow-users-id
+      responses:
+        '200':
+          description: OK
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateFollowUser'
+    delete:
+      summary: 一般シェフのフォローを解除する
+      operationId: delete-api-user-follow-users-id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeletedFollowUser'
+  /api/user/follow/users:
+    get:
+      summary: フォローしている一般シェフの一覧を取得する
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListFollowUser'
+      operationId: get-api-user-follow-users
 components:
   schemas:
     CreateChef:
@@ -1160,6 +1273,54 @@ components:
         - createdAt
         - updatedAt
         - numFav
+    CreateFollowChef:
+      type: object
+      x-examples:
+        Example 1:
+          id: b30f569b-3aae-43f6-8213-e1d8366883bb
+          chefId: 9a0ce94b-d275-4ea6-ae11-914612c79d62
+          usrId: d3d7b0d2-679e-4ca3-adbb-a5ce674560e0
+          createdAt: '2023-08-16T07:23:15.291575+09:00'
+      properties:
+        id:
+          type: string
+        chefId:
+          type: string
+          description: シェフID
+        usrId:
+          type: string
+          description: ユーザーID
+        createdAt:
+          type: string
+      required:
+        - id
+        - chefId
+        - usrId
+        - createdAt
+    CreateFollowUser:
+      type: object
+      x-examples:
+        Example 1:
+          id: 840f467b-7991-4aa4-86e9-499745d9a89c
+          followeeId: 8642eb31-7801-4284-b69b-225aee3b1826
+          followerId: d3d7b0d2-679e-4ca3-adbb-a5ce674560e0
+          createdAt: '2023-08-16T19:55:01.517424+09:00'
+      properties:
+        id:
+          type: string
+        followeeId:
+          type: string
+          description: フォロイーID
+        followerId:
+          type: string
+          description: フォロワーID
+        createdAt:
+          type: string
+      required:
+        - id
+        - followeeId
+        - followerId
+        - createdAt
     CreateShoppingList:
       type: object
       x-examples:
@@ -1403,6 +1564,54 @@ components:
         - updatedAt
         - numRecipe
         - numFollower
+    DeletedFollowChef:
+      type: object
+      x-examples:
+        Example 1:
+          id: 421ea818-c27f-40af-83ab-8ce3a1bfed71
+          chefId: 9a0ce94b-d275-4ea6-ae11-914612c79d62
+          usrId: d3d7b0d2-679e-4ca3-adbb-a5ce674560e0
+          createdAt: '2023-08-15T19:35:41.456019+09:00'
+      properties:
+        id:
+          type: string
+        chefId:
+          type: string
+          description: シェフID
+        usrId:
+          type: string
+          description: ユーザーID
+        createdAt:
+          type: string
+      required:
+        - id
+        - chefId
+        - usrId
+        - createdAt
+    DeletedFollowUser:
+      type: object
+      x-examples:
+        Example 1:
+          id: 840f467b-7991-4aa4-86e9-499745d9a89c
+          followeeId: 8642eb31-7801-4284-b69b-225aee3b1826
+          followerId: d3d7b0d2-679e-4ca3-adbb-a5ce674560e0
+          createdAt: '2023-08-16T19:55:01.517424+09:00'
+      properties:
+        id:
+          type: string
+        followeeId:
+          type: string
+          description: フォロイーID
+        followerId:
+          type: string
+          description: フォロワーID
+        createdAt:
+          type: string
+      required:
+        - id
+        - followeeId
+        - followerId
+        - createdAt
     DeletedRecipe:
       type: object
       x-stoplight:
@@ -1581,6 +1790,26 @@ components:
         - createdAt
         - updatedAt
         - numRecipe
+    ExistsFollowChef:
+      type: object
+      x-examples:
+        Example 1:
+          exists: true
+      properties:
+        exists:
+          type: boolean
+      required:
+        - exists
+    ExistsFollowUser:
+      type: object
+      x-examples:
+        Example 1:
+          exists: true
+      properties:
+        exists:
+          type: boolean
+      required:
+        - exists
     FeaturedChef:
       type: object
       x-stoplight:
@@ -2118,6 +2347,156 @@ components:
         - createdAt
         - updatedAt
         - numRecipe
+    ListFollowChef:
+      type: object
+      x-examples:
+        Example 1:
+          data:
+            - id: 9a0ce94b-d275-4ea6-ae11-914612c79d62
+              name: Mシェフ
+              imageUrl: 'http://www.yahoo.co.jp'
+              profile: 平成14年事例Ⅱで出題されたMシェフ。三國清三がモデルではないか？と噂になった。
+              createdAt: '2023-08-13T12:25:46.050604+09:00'
+              updatedAt: '2023-08-16T07:23:15.291575+09:00'
+              numRecipe: 1
+              numFollower: 1
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                description: シェフID
+              name:
+                type: string
+                description: 登録名
+              imageUrl:
+                type: string
+                description: プロフィール画像
+              profile:
+                type: string
+                description: シェフ紹介
+              createdAt:
+                type: string
+              updatedAt:
+                type: string
+              numRecipe:
+                type: integer
+                description: レシピ数
+              numFollower:
+                type: integer
+                description: フォロワー数
+            required:
+              - id
+              - name
+              - createdAt
+              - updatedAt
+              - numRecipe
+              - numFollower
+      required:
+        - data
+    ListFollowChefRecipe:
+      type: object
+      x-examples:
+        Example 1:
+          data:
+            - id: c8235d40-6daf-424e-a299-bd7e98aff7fa
+              chefId: 9a0ce94b-d275-4ea6-ae11-914612c79d62
+              name: グラタン
+              servings: 6
+              imageUrl: IMAGE_URL_1
+              introduction: INTRODUCTION_1
+              createdAt: '2023-08-13T12:44:19.090518+09:00'
+              updatedAt: '2023-08-16T18:56:28.756937+09:00'
+              numFav: 0
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                description: レシピID
+              chefId:
+                type: string
+                description: シェフID
+              name:
+                type: string
+                description: レシピ名
+              servings:
+                type: integer
+                description: ＊人前
+              imageUrl:
+                type: string
+                description: 画像
+              introduction:
+                type: string
+                description: レシピの紹介文
+              createdAt:
+                type: string
+              updatedAt:
+                type: string
+              numFav:
+                type: integer
+                description: ファボられ数
+            required:
+              - id
+              - chefId
+              - name
+              - servings
+              - createdAt
+              - updatedAt
+              - numFav
+      required:
+        - data
+    ListFollowUser:
+      type: object
+      x-examples:
+        Example 1:
+          data:
+            - id: 8642eb31-7801-4284-b69b-225aee3b1826
+              name: NAME_1
+              imageUrl: imageUrl
+              profile: PROFILE_1
+              createdAt: '2023-08-16T19:48:45.97564+09:00'
+              updatedAt: '2023-08-16T19:48:45.97564+09:00'
+              numRecipe: 0
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                description: ユーザーID（一般シェフID）
+              name:
+                type: string
+                description: ニックネーム
+              imageUrl:
+                type: string
+                description: プロフィール画像
+              profile:
+                type: string
+                description: 自己紹介
+              createdAt:
+                type: string
+              updatedAt:
+                type: string
+              numRecipe:
+                type: integer
+                description: レシピ数
+            required:
+              - id
+              - name
+              - createdAt
+              - updatedAt
+              - numRecipe
+      required:
+        - data
     SearchChef:
       type: object
       x-examples:
