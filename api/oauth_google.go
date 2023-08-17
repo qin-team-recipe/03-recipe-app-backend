@@ -6,7 +6,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -113,7 +113,7 @@ func getUserDataFromGoogle(code string) ([]byte, error) {
 		return nil, fmt.Errorf("failed getting user info: %s", err.Error())
 	}
 	defer response.Body.Close()
-	contents, err := ioutil.ReadAll(response.Body)
+	contents, err := io.ReadAll(response.Body)
 	if err != nil {
 		return nil, fmt.Errorf("failed read response: %s", err.Error())
 	}
