@@ -1,9 +1,11 @@
 name: "CI"
-on: ["push", "pull_request"]
+on: ["push"]
 
 jobs:
   ci:
     name: "Run CI"
+    container:
+      image: aopontann/dev_go_opencv:latest
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
