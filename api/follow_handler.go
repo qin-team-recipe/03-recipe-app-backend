@@ -21,10 +21,10 @@ func (s *Server) CreateFollowChef(c *gin.Context) {
 	}
 
 	// usrIdを取得
-	email := c.MustGet("email").(string)
-	param.UsrID, err = s.q.GetUserId(context.Background(), email)
+	var status int
+	param.UsrID, _, err, status = GetRedisInfo(c, s)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(status, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -55,10 +55,10 @@ func (s *Server) DeleteFollowChef(c *gin.Context) {
 	}
 
 	// usrIdを取得
-	email := c.MustGet("email").(string)
-	param.UsrID, err = s.q.GetUserId(context.Background(), email)
+	var status int
+	param.UsrID, _, err, status = GetRedisInfo(c, s)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(status, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -94,10 +94,10 @@ func (s *Server) ExistsFollowChef(c *gin.Context) {
 	}
 
 	// usrIdを取得
-	email := c.MustGet("email").(string)
-	param.UsrID, err = s.q.GetUserId(context.Background(), email)
+	var status int
+	param.UsrID, _, err, status = GetRedisInfo(c, s)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(status, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -125,10 +125,9 @@ func (s *Server) ListFollowChef(c *gin.Context) {
 	var response listFollowChefResponse
 
 	// usrIdを取得
-	email := c.MustGet("email").(string)
-	usrID, err := s.q.GetUserId(context.Background(), email)
+	usrID, _, err, status := GetRedisInfo(c, s)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(status, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -160,10 +159,9 @@ func (s *Server) ListFollowChefNewRecipe(c *gin.Context) {
 	var response followNewRecipeResponse
 
 	// usrIdを取得
-	email := c.MustGet("email").(string)
-	usrID, err := s.q.GetUserId(context.Background(), email)
+	usrID, _, err, status := GetRedisInfo(c, s)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(status, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -198,10 +196,10 @@ func (s *Server) CreateFollowUser(c *gin.Context) {
 	}
 
 	// usrIdを取得
-	email := c.MustGet("email").(string)
-	param.FollowerID, err = s.q.GetUserId(context.Background(), email)
+	var status int
+	param.FollowerID, _, err, status = GetRedisInfo(c, s)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(status, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -238,10 +236,10 @@ func (s *Server) DeleteFollowUser(c *gin.Context) {
 	}
 
 	// usrIdを取得
-	email := c.MustGet("email").(string)
-	param.FollowerID, err = s.q.GetUserId(context.Background(), email)
+	var status int
+	param.FollowerID, _, err, status = GetRedisInfo(c, s)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(status, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -277,10 +275,10 @@ func (s *Server) ExistsFollowUser(c *gin.Context) {
 	}
 
 	// usrIdを取得
-	email := c.MustGet("email").(string)
-	param.FollowerID, err = s.q.GetUserId(context.Background(), email)
+	var status int
+	param.FollowerID, _, err, status = GetRedisInfo(c, s)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(status, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -308,10 +306,9 @@ func (s *Server) ListFollowUser(c *gin.Context) {
 	var response listFollowUserResponse
 
 	// usrIdを取得
-	email := c.MustGet("email").(string)
-	followerID, err := s.q.GetUserId(context.Background(), email)
+	followerID, _, err, status := GetRedisInfo(c, s)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(status, gin.H{"error": err.Error()})
 		return
 	}
 

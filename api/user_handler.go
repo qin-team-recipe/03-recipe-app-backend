@@ -107,7 +107,12 @@ func (s *Server) GetUser(c *gin.Context) {
 }
 
 func (s *Server) GetSelf(c *gin.Context) {
-	email := c.MustGet("email").(string)
+	// emailを取得
+	_, email, err, status := GetRedisInfo(c, s)
+	if err != nil {
+		c.JSON(status, gin.H{"error": err.Error()})
+		return
+	}
 
 	// 問い合わせ処理
 	row, err := s.q.GetSelf(context.Background(), email)
@@ -127,9 +132,15 @@ func (s *Server) GetSelf(c *gin.Context) {
 }
 
 func (s *Server) UpdateSelf(c *gin.Context) {
+	// emailを取得
 	var param db.UpdateUserParams
 	var err error
-	param.Email = c.MustGet("email").(string)
+	var status int
+	_, param.Email, err, status = GetRedisInfo(c, s)
+	if err != nil {
+		c.JSON(status, gin.H{"error": err.Error()})
+		return
+	}
 
 	// リクエストボディを構造体にバインド
 	reqb := docs.PutApiUserUsersJSONRequestBody{}
@@ -162,7 +173,12 @@ func (s *Server) UpdateSelf(c *gin.Context) {
 }
 
 func (s *Server) DeleteSelf(c *gin.Context) {
-	email := c.MustGet("email").(string)
+	// emailを取得
+	_, email, err, status := GetRedisInfo(c, s)
+	if err != nil {
+		c.JSON(status, gin.H{"error": err.Error()})
+		return
+	}
 
 	// 削除処理
 	row, err := s.q.DeleteUser(context.Background(), email)
