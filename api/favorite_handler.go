@@ -1,0 +1,115 @@
+package api
+
+import (
+	"context"
+	"net/http"
+
+	db "github.com/aopontann/gin-sqlc/db/sqlc"
+	"github.com/aopontann/gin-sqlc/docs"
+	"github.com/aopontann/gin-sqlc/utils"
+	"github.com/gin-gonic/gin"
+)
+
+func (s *Server) CreateFavoriteRecipe(c *gin.Context) {
+	p := db.CreateFavoriteRecipeParams{}
+	var err error
+	p.RecipeID, err = utils.StrToUUID(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	}
+
+	// usrIdを取得
+	email := c.MustGet("email").(string)
+	p.UsrID, err = s.q.GetUserId(context.Background(), email)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// 新規登録処理
+	row, err := s.q.CreateFavoriteRecipe(context.Background(), p)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// レスポンス型バリデーション
+	err = utils.ValidateStructTwoWay[db.Favoring, docs.CreateFavoriteRecipe](&row)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, row)
+}
+
+func (s *Server) DeleteFavoriteRecipe(c *gin.Context) {
+	p := db.DeleteFavoriteRecipeParams{}
+	var err error
+	p.RecipeID, err = utils.StrToUUID(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	}
+
+	// usrIdを取得
+	email := c.MustGet("email").(string)
+	p.UsrID, err = s.q.GetUserId(context.Background(), email)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// 新規登録処理
+	row, err := s.q.DeleteFavoriteRecipe(context.Background(), p)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// レスポンス型バリデーション
+	err = utils.ValidateStructTwoWay[db.Favoring, docs.DeleteFavoriteRecipe](&row)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, row)
+}
+
+func (s *Server) ExistsFavoriteRecipe(c *gin.Context) {
+	type existsFavoriteResponse struct {
+		Exists bool `json:"exists"`
+	}
+	var response existsFavoriteResponse
+
+	p := db.ExistsFavoriteRecipeParams{}
+	var err error
+	p.RecipeID, err = utils.StrToUUID(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	}
+
+	// usrIdを取得
+	email := c.MustGet("email").(string)
+	p.UsrID, err = s.q.GetUserId(context.Background(), email)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// お気に入りしているか
+	response.Exists, err = s.q.ExistsFavoriteRecipe(context.Background(), p)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// レスポンス型バリデーション
+	err = utils.ValidateStructTwoWay[existsFavoriteResponse, docs.ExistsFavoriteRecipe](&response)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, response)
+}

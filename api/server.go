@@ -102,6 +102,11 @@ func (s *Server) MountHandlers() {
 	usr.DELETE("/follow/users/:id", s.DeleteFollowUser) // 一般シェフのフォローを解除するAPI
 	usr.GET("/follow/users/:id", s.ExistsFollowUser)    // 一般シェフをフォローしているか
 	usr.GET("/follow/users", s.ListFollowUser)          // フォローしている一般シェフの一覧を取得するAPI
+
+	// お気に入りレシピ関連
+	usr.POST("/favorite/recipes/:id", s.CreateFavoriteRecipe)   // レシピお気に入り登録
+	usr.DELETE("/favorite/recipes/:id", s.DeleteFavoriteRecipe) // レシピお気に入り削除
+	usr.GET("/favorite/recipes/:id", s.ExistsFavoriteRecipe)    // レシピがお気に入りか確認
 }
 
 func (s *Server) Start(addr string) error {
