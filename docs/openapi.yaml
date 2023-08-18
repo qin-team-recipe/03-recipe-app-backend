@@ -1102,6 +1102,36 @@ paths:
               schema:
                 $ref: '#/components/schemas/ListFollowUser'
       operationId: get-api-user-follow-users
+  '/api/chefs/{id}/recipes':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+    get:
+      summary: 有名シェフのレシピ一覧を取得
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListRecipe'
+      operationId: get-api-chefs-id-recipes
+  /recipes:
+    get:
+      summary: レシピ一覧を取得
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListRecipe'
+      operationId: get-recipes
 components:
   schemas:
     CreateChef:
@@ -2495,6 +2525,61 @@ components:
               - createdAt
               - updatedAt
               - numRecipe
+      required:
+        - data
+    ListRecipe:
+      type: object
+      x-examples:
+        Example 1:
+          data:
+            - id: c8235d40-6daf-424e-a299-bd7e98aff7fa
+              chefId: 9a0ce94b-d275-4ea6-ae11-914612c79d62
+              name: グラタン
+              servings: 6
+              imageUrl: IMAGE_URL_1
+              introduction: INTRODUCTION_1
+              createdAt: '2023-08-15T12:44:19.09+09:00'
+              updatedAt: '2023-08-16T21:12:05.059812+09:00'
+              numFav: 0
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                format: uuid
+              chefId:
+                type: string
+                format: uuid
+              name:
+                type: string
+                description: レシピ名
+              servings:
+                type: integer
+                description: ＊人前
+              imageUrl:
+                type: string
+                description: 画像
+              introduction:
+                type: string
+                description: レシピの紹介文
+              createdAt:
+                type: string
+              updatedAt:
+                type: string
+              numFav:
+                type: integer
+                description: ファボられ数
+            required:
+              - id
+              - chefId
+              - name
+              - servings
+              - createdAt
+              - updatedAt
+              - numFav
       required:
         - data
     SearchChef:

@@ -72,3 +72,29 @@ func (s *Server) GetRecipe(c *gin.Context) {
 
 	c.JSON(http.StatusOK, row)
 }
+
+func (s *Server) ListRecipe(c *gin.Context) {
+	type listRecipeponse struct {
+		Data []db.ListRecipeRow `json:"data"`
+	}
+	var response listRecipeponse
+
+	var err error
+	response.Data, err = s.q.ListRecipe(context.Background())
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	}
+
+	if response.Data == nil || reflect.ValueOf(response.Data).IsNil() {
+		response.Data = []db.ListRecipeRow{}
+	}
+
+	// レスポンス型バリデーション
+	err = utils.ValidateStructTwoWay[listRecipeponse, docs.ListRecipe](&response)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, response)
+}
