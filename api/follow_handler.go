@@ -22,7 +22,7 @@ func (s *Server) CreateFollowChef(c *gin.Context) {
 
 	// usrIdを取得
 	var status int
-	param.UsrID, _, err, status = GetRedisInfo(c, s)
+	param.UsrID, _, err, status = s.GetRedisInfo(c)
 	if err != nil {
 		c.JSON(status, gin.H{"error": err.Error()})
 		return
@@ -56,7 +56,7 @@ func (s *Server) DeleteFollowChef(c *gin.Context) {
 
 	// usrIdを取得
 	var status int
-	param.UsrID, _, err, status = GetRedisInfo(c, s)
+	param.UsrID, _, err, status = s.GetRedisInfo(c)
 	if err != nil {
 		c.JSON(status, gin.H{"error": err.Error()})
 		return
@@ -95,7 +95,7 @@ func (s *Server) ExistsFollowChef(c *gin.Context) {
 
 	// usrIdを取得
 	var status int
-	param.UsrID, _, err, status = GetRedisInfo(c, s)
+	param.UsrID, _, err, status = s.GetRedisInfo(c)
 	if err != nil {
 		c.JSON(status, gin.H{"error": err.Error()})
 		return
@@ -125,7 +125,7 @@ func (s *Server) ListFollowChef(c *gin.Context) {
 	var response listFollowChefResponse
 
 	// usrIdを取得
-	usrID, _, err, status := GetRedisInfo(c, s)
+	usrID, _, err, status := s.GetRedisInfo(c)
 	if err != nil {
 		c.JSON(status, gin.H{"error": err.Error()})
 		return
@@ -159,7 +159,7 @@ func (s *Server) ListFollowChefNewRecipe(c *gin.Context) {
 	var response followNewRecipeResponse
 
 	// usrIdを取得
-	usrID, _, err, status := GetRedisInfo(c, s)
+	usrID, _, err, status := s.GetRedisInfo(c)
 	if err != nil {
 		c.JSON(status, gin.H{"error": err.Error()})
 		return
@@ -197,7 +197,7 @@ func (s *Server) CreateFollowUser(c *gin.Context) {
 
 	// usrIdを取得
 	var status int
-	param.FollowerID, _, err, status = GetRedisInfo(c, s)
+	param.FollowerID, _, err, status = s.GetRedisInfo(c)
 	if err != nil {
 		c.JSON(status, gin.H{"error": err.Error()})
 		return
@@ -237,7 +237,7 @@ func (s *Server) DeleteFollowUser(c *gin.Context) {
 
 	// usrIdを取得
 	var status int
-	param.FollowerID, _, err, status = GetRedisInfo(c, s)
+	param.FollowerID, _, err, status = s.GetRedisInfo(c)
 	if err != nil {
 		c.JSON(status, gin.H{"error": err.Error()})
 		return
@@ -276,7 +276,7 @@ func (s *Server) ExistsFollowUser(c *gin.Context) {
 
 	// usrIdを取得
 	var status int
-	param.FollowerID, _, err, status = GetRedisInfo(c, s)
+	param.FollowerID, _, err, status = s.GetRedisInfo(c)
 	if err != nil {
 		c.JSON(status, gin.H{"error": err.Error()})
 		return
@@ -306,7 +306,7 @@ func (s *Server) ListFollowUser(c *gin.Context) {
 	var response listFollowUserResponse
 
 	// usrIdを取得
-	followerID, _, err, status := GetRedisInfo(c, s)
+	followerID, _, err, status := s.GetRedisInfo(c)
 	if err != nil {
 		c.JSON(status, gin.H{"error": err.Error()})
 		return

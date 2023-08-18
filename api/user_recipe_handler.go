@@ -21,7 +21,7 @@ func (s *Server) CreateUsrRecipe(c *gin.Context) {
 	}
 
 	// usrIdを取得
-	usrId, _, err, status := GetRedisInfo(c, s)
+	usrId, _, err, status := s.GetRedisInfo(c)
 	if err != nil {
 		c.JSON(status, gin.H{"error": err.Error()})
 		return
@@ -75,7 +75,7 @@ func (s *Server) UpdateUserRecipe(c *gin.Context) {
 	}
 
 	// usrIdを取得
-	usrId, _, err, status := GetRedisInfo(c, s)
+	usrId, _, err, status := s.GetRedisInfo(c)
 	if err != nil {
 		c.JSON(status, gin.H{"error": err.Error()})
 		return
@@ -123,7 +123,7 @@ func (s *Server) DeleteUserRecipe(c *gin.Context) {
 
 	// usrIdを取得
 	var status int
-	param.UsrID, _, err, status = GetRedisInfo(c, s)
+	param.UsrID, _, err, status = s.GetRedisInfo(c)
 	if err != nil {
 		c.JSON(status, gin.H{"error": err.Error()})
 		return
