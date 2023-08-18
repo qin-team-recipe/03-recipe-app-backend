@@ -108,7 +108,7 @@ func (s *Server) GetUser(c *gin.Context) {
 
 func (s *Server) GetSelf(c *gin.Context) {
 	// emailを取得
-	_, email, err, status := s.GetRedisInfo(c)
+	_, email, status, err := s.GetRedisInfo(c)
 	if err != nil {
 		c.JSON(status, gin.H{"error": err.Error()})
 		return
@@ -136,7 +136,7 @@ func (s *Server) UpdateSelf(c *gin.Context) {
 	var param db.UpdateUserParams
 	var err error
 	var status int
-	_, param.Email, err, status = s.GetRedisInfo(c)
+	_, param.Email, status, err = s.GetRedisInfo(c)
 	if err != nil {
 		c.JSON(status, gin.H{"error": err.Error()})
 		return
@@ -174,7 +174,7 @@ func (s *Server) UpdateSelf(c *gin.Context) {
 
 func (s *Server) DeleteSelf(c *gin.Context) {
 	// emailを取得
-	_, email, err, status := s.GetRedisInfo(c)
+	_, email, status, err := s.GetRedisInfo(c)
 	if err != nil {
 		c.JSON(status, gin.H{"error": err.Error()})
 		return

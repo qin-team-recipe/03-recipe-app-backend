@@ -20,7 +20,7 @@ func (s *Server) ListShoppingList(c *gin.Context) {
 	}
 
 	// usrIdを取得
-	usrId, _, err, status := s.GetRedisInfo(c)
+	usrId, _, status, err := s.GetRedisInfo(c)
 	if err != nil {
 		c.JSON(status, gin.H{"error": err.Error()})
 		return
@@ -53,7 +53,7 @@ func (s *Server) GetShoppingList(c *gin.Context) {
 
 	// usrIdを取得
 	var status int
-	param.UsrID, _, err, status = s.GetRedisInfo(c)
+	param.UsrID, _, status, err = s.GetRedisInfo(c)
 	if err != nil {
 		c.JSON(status, gin.H{"error": err.Error()})
 		return
@@ -127,7 +127,7 @@ func (s *Server) CreateShoppingList(c *gin.Context) {
 	// usrIdを取得して設定
 	// usrIdを取得
 	var status int
-	reqb.UsrID, _, err, status = s.GetRedisInfo(c)
+	reqb.UsrID, _, status, err = s.GetRedisInfo(c)
 	if err != nil {
 		c.JSON(status, gin.H{"error": err.Error()})
 		return
@@ -227,7 +227,7 @@ func (s *Server) UpdateShoppingList(c *gin.Context) {
 
 	// usrIdを取得
 	var status int
-	reqb.UsrID, _, err, status = s.GetRedisInfo(c)
+	reqb.UsrID, _, status, err = s.GetRedisInfo(c)
 	if err != nil {
 		c.JSON(status, gin.H{"error": err.Error()})
 		return
@@ -318,7 +318,7 @@ func (s *Server) DeleteShoppingList(c *gin.Context) {
 
 	// usrIdを取得
 	var status int
-	param.UsrID, _, err, status = s.GetRedisInfo(c)
+	param.UsrID, _, status, err = s.GetRedisInfo(c)
 	if err != nil {
 		c.JSON(status, gin.H{"error": err.Error()})
 		return
