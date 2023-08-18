@@ -7,8 +7,6 @@ history AS (
     FROM
         fav_history
     WHERE
-        chef_id IS NOT NULL
-    AND
         CURRENT_TIMESTAMP - INTERVAL '3 days' <= created_at
     GROUP BY
         recipe_id
@@ -26,6 +24,8 @@ INNER JOIN
     recipe
 ON
     recipe.access_level = 1
+AND
+    recipe.chef_id IS NOT NULL
 AND
     history.recipe_id = recipe.id
 ORDER BY

@@ -3,7 +3,6 @@ package api
 import (
 	"context"
 	"encoding/json"
-	"math/rand"
 	"net/http"
 	"reflect"
 
@@ -11,32 +10,24 @@ import (
 	"github.com/aopontann/gin-sqlc/docs"
 	"github.com/aopontann/gin-sqlc/utils"
 	"github.com/gin-gonic/gin"
-	"github.com/mattn/go-gimei"
 )
 
 func (s *Server) ListFeaturedChef(c *gin.Context) {
 	type featuredChefResponse struct {
-		Data []db.FakeListFeaturedChefRow `json:"data"`
+		Data []db.ListFeaturedChefRow `json:"data"`
 	}
 
 	const limit int32 = 10
 	var response featuredChefResponse
 	var err error
-	response.Data, err = s.q.FakeListFeaturedChef(context.Background(), limit)
+	response.Data, err = s.q.ListFeaturedChef(context.Background(), limit)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
 	if response.Data == nil || reflect.ValueOf(response.Data).IsNil() {
-		response.Data = []db.FakeListFeaturedChefRow{}
-	}
-
-	// ダミーデータ作成（本番では消す）
-	for i := 0; i < len(response.Data); i++ {
-		response.Data[i].Name = gimei.NewName().String()
-		response.Data[i].NumFollower = rand.Int31n(1000)
-		response.Data[i].Score = rand.Int31n(100)
+		response.Data = []db.ListFeaturedChefRow{}
 	}
 
 	// レスポンス型バリデーション
