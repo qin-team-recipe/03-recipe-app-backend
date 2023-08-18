@@ -2,6 +2,8 @@ package api
 
 import (
 	"bytes"
+	"github.com/aopontann/gin-sqlc/docs"
+	"github.com/aopontann/gin-sqlc/utils"
 	"io"
 	"net/http"
 	"os"
@@ -94,6 +96,13 @@ func (s *Server) PostImage(c *gin.Context) {
 
 	// WebP画像をwrite
 	if _, err := fo.Write(webp.GetBytes()); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// レスポンス型バリデーション
+	err = utils.ValidateStructTwoWay[postWebpResponse, docs.PostImage](&response)
+	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}

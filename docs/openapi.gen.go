@@ -697,6 +697,12 @@ type ListRecipe struct {
 	} `json:"data"`
 }
 
+// PostImage defines model for PostImage.
+type PostImage struct {
+	// Path 画像Path
+	Path string `json:"Path"`
+}
+
 // SearchChef defines model for SearchChef.
 type SearchChef struct {
 	Data *[]struct {
@@ -1050,6 +1056,12 @@ type PutApiChefsIdJSONBody struct {
 
 	// Profile シェフ紹介
 	Profile *string `json:"profile,omitempty"`
+}
+
+// GetApiImagesParams defines parameters for GetApiImages.
+type GetApiImagesParams struct {
+	// Path 画像ファイル名
+	Path *string `form:"path,omitempty" json:"path,omitempty"`
 }
 
 // PostApiUserListsJSONBody defines parameters for PostApiUserLists.
