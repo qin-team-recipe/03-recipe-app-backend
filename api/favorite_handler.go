@@ -78,3 +78,42 @@ func (s *Server) DeleteFavoriteRecipe(c *gin.Context) {
 
 	c.JSON(http.StatusOK, row)
 }
+
+func (s *Server) ExistsFavoriteRecipe(c *gin.Context) {
+	type existsFavoriteResponse struct {
+		Exists bool `json:"exists"`
+	}
+	var response existsFavoriteResponse
+
+	// パスパラメータ取り出し
+	param := db.ExistsFavoriteRecipeParams{}
+	var err error
+	param.RecipeID, err = utils.StrToUUID(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	}
+
+	// usrIdを取得
+	email := c.MustGet("email").(string)
+	param.UsrID, err = s.q.GetUserId(context.Background(), email)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// 確認処理
+	response.Exists, err = s.q.ExistsFavoriteRecipe(context.Background(), param)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// レスポンス型バリデーション
+	err = utils.ValidateStructTwoWay[existsFavoriteResponse, docs.ExistsFavoriteRecipe](&response)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, response)
+}
