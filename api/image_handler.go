@@ -45,7 +45,7 @@ func (s *Server) PostImage(c *gin.Context) {
 
 	// レスポンス
 	type postWebpResponse struct {
-		Path string `form:"path"`
+		Path string `json:"path"`
 	}
 	var response postWebpResponse
 
