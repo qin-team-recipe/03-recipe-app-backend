@@ -110,16 +110,18 @@ SELECT
 FROM
     recipe
 WHERE
-    EXISTS (
-        SELECT
-            1
-        FROM
-            favoring
-        WHERE
-            recipe_id = recipe.id
-        AND
-            favoring.usr_id = $1
-    )
+    recipe.access_level = 1
+    AND
+        EXISTS (
+            SELECT
+                1
+            FROM
+                favoring
+            WHERE
+                recipe_id = recipe.id
+            AND
+                favoring.usr_id = $1
+        )
 `
 
 type ListFavoriteRecipeRow struct {

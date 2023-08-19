@@ -49,13 +49,15 @@ SELECT
 FROM
     recipe
 WHERE
-    EXISTS (
-        SELECT
-            1
-        FROM
-            favoring
-        WHERE
-            recipe_id = recipe.id
-        AND
-            favoring.usr_id = @usr_id
-    );
+    recipe.access_level = 1
+    AND
+        EXISTS (
+            SELECT
+                1
+            FROM
+                favoring
+            WHERE
+                recipe_id = recipe.id
+            AND
+                favoring.usr_id = @usr_id
+        );
