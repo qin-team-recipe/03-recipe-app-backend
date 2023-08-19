@@ -151,3 +151,65 @@ func (s *Server) SearchChefRecipe(c *gin.Context) {
 
 	c.JSON(http.StatusOK, response)
 }
+
+func (s *Server) ListChefRecipe(c *gin.Context) {
+	// パスパラメータ取り出し
+	id, err := utils.StrToUUID(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	}
+
+	// クエリパラメータ取り出し
+	order := c.Query("order")
+
+	if order == "new" {
+		type listChefRecipeponse struct {
+			Data []db.ListChefRecipeNewRow `json:"data"`
+		}
+		var response listChefRecipeponse
+
+		response.Data, err = s.q.ListChefRecipeNew(context.Background(), id)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		}
+
+		if response.Data == nil || reflect.ValueOf(response.Data).IsNil() {
+			response.Data = []db.ListChefRecipeNewRow{}
+		}
+
+		// レスポンス型バリデーション
+		err = utils.ValidateStructTwoWay[listChefRecipeponse, docs.ListRecipe](&response)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+
+		c.JSON(http.StatusOK, response)
+	} else if order == "fav" {
+		type listChefRecipeponse struct {
+			Data []db.ListChefRecipeFavRow `json:"data"`
+		}
+		var response listChefRecipeponse
+
+		response.Data, err = s.q.ListChefRecipeFav(context.Background(), id)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		}
+
+		if response.Data == nil || reflect.ValueOf(response.Data).IsNil() {
+			response.Data = []db.ListChefRecipeFavRow{}
+		}
+
+		// レスポンス型バリデーション
+		err = utils.ValidateStructTwoWay[listChefRecipeponse, docs.ListRecipe](&response)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+
+		c.JSON(http.StatusOK, response)
+	} else {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Bad Request"})
+		return
+	}
+}

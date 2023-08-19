@@ -20,10 +20,9 @@ func (s *Server) ListShoppingList(c *gin.Context) {
 	}
 
 	// usrIdを取得
-	email := c.MustGet("email").(string)
-	usrId, err := s.q.GetUserId(context.Background(), email)
+	usrId, _, status, err := s.GetRedisInfo(c)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(status, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -53,10 +52,10 @@ func (s *Server) GetShoppingList(c *gin.Context) {
 	var err error
 
 	// usrIdを取得
-	email := c.MustGet("email").(string)
-	param.UsrID, err = s.q.GetUserId(context.Background(), email)
+	var status int
+	param.UsrID, _, status, err = s.GetRedisInfo(c)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(status, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -126,10 +125,11 @@ func (s *Server) CreateShoppingList(c *gin.Context) {
 	}
 
 	// usrIdを取得して設定
-	email := c.MustGet("email").(string)
-	reqb.UsrID, err = s.q.GetUserId(context.Background(), email)
+	// usrIdを取得
+	var status int
+	reqb.UsrID, _, status, err = s.GetRedisInfo(c)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(status, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -225,11 +225,11 @@ func (s *Server) UpdateShoppingList(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
 
-	// usrIdを取得して設定
-	email := c.MustGet("email").(string)
-	reqb.UsrID, err = s.q.GetUserId(context.Background(), email)
+	// usrIdを取得
+	var status int
+	reqb.UsrID, _, status, err = s.GetRedisInfo(c)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(status, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -317,10 +317,10 @@ func (s *Server) DeleteShoppingList(c *gin.Context) {
 	var err error
 
 	// usrIdを取得
-	email := c.MustGet("email").(string)
-	param.UsrID, err = s.q.GetUserId(context.Background(), email)
+	var status int
+	param.UsrID, _, status, err = s.GetRedisInfo(c)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(status, gin.H{"error": err.Error()})
 		return
 	}
 

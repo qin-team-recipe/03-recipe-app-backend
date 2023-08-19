@@ -66,38 +66,118 @@ func (q *Queries) DeleteChefRecipe(ctx context.Context, id pgtype.UUID) (DeleteC
 	return i, err
 }
 
-const getChefRecipes = `-- name: GetChefRecipes :many
+const listChefRecipeFav = `-- name: ListChefRecipeFav :many
 SELECT
-    id, chef_id, usr_id, name, servings, ingredient, method, image_url, introduction, link, access_level, created_at, updated_at, num_fav
+    id,
+    chef_id,
+    name,
+    servings,
+    image_url,
+    introduction,
+    created_at,
+    updated_at,
+    num_fav
 FROM
-    v_recipe
+    recipe
 WHERE
+    access_level = 1
+AND
+    chef_id = $1
+ORDER BY
+    num_fav DESC
+`
+
+type ListChefRecipeFavRow struct {
+	ID           pgtype.UUID        `json:"id"`
+	ChefID       pgtype.UUID        `json:"chefId"`
+	Name         string             `json:"name"`
+	Servings     int32              `json:"servings"`
+	ImageUrl     pgtype.Text        `json:"imageUrl"`
+	Introduction pgtype.Text        `json:"introduction"`
+	CreatedAt    pgtype.Timestamptz `json:"createdAt"`
+	UpdatedAt    pgtype.Timestamptz `json:"updatedAt"`
+	NumFav       int32              `json:"numFav"`
+}
+
+func (q *Queries) ListChefRecipeFav(ctx context.Context, chefID pgtype.UUID) ([]ListChefRecipeFavRow, error) {
+	rows, err := q.db.Query(ctx, listChefRecipeFav, chefID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ListChefRecipeFavRow
+	for rows.Next() {
+		var i ListChefRecipeFavRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.ChefID,
+			&i.Name,
+			&i.Servings,
+			&i.ImageUrl,
+			&i.Introduction,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.NumFav,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listChefRecipeNew = `-- name: ListChefRecipeNew :many
+SELECT
+    id,
+    chef_id,
+    name,
+    servings,
+    image_url,
+    introduction,
+    created_at,
+    updated_at,
+    num_fav
+FROM
+    recipe
+WHERE
+    access_level = 1
+AND
     chef_id = $1
 ORDER BY
     created_at DESC
 `
 
-func (q *Queries) GetChefRecipes(ctx context.Context, chefID pgtype.UUID) ([]VRecipe, error) {
-	rows, err := q.db.Query(ctx, getChefRecipes, chefID)
+type ListChefRecipeNewRow struct {
+	ID           pgtype.UUID        `json:"id"`
+	ChefID       pgtype.UUID        `json:"chefId"`
+	Name         string             `json:"name"`
+	Servings     int32              `json:"servings"`
+	ImageUrl     pgtype.Text        `json:"imageUrl"`
+	Introduction pgtype.Text        `json:"introduction"`
+	CreatedAt    pgtype.Timestamptz `json:"createdAt"`
+	UpdatedAt    pgtype.Timestamptz `json:"updatedAt"`
+	NumFav       int32              `json:"numFav"`
+}
+
+func (q *Queries) ListChefRecipeNew(ctx context.Context, chefID pgtype.UUID) ([]ListChefRecipeNewRow, error) {
+	rows, err := q.db.Query(ctx, listChefRecipeNew, chefID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []VRecipe
+	var items []ListChefRecipeNewRow
 	for rows.Next() {
-		var i VRecipe
+		var i ListChefRecipeNewRow
 		if err := rows.Scan(
 			&i.ID,
 			&i.ChefID,
-			&i.UsrID,
 			&i.Name,
 			&i.Servings,
-			&i.Ingredient,
-			&i.Method,
 			&i.ImageUrl,
 			&i.Introduction,
-			&i.Link,
-			&i.AccessLevel,
 			&i.CreatedAt,
 			&i.UpdatedAt,
 			&i.NumFav,

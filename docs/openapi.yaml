@@ -17,6 +17,12 @@ paths:
           required: true
           schema:
             type: string
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         '200':
           description: OK
@@ -24,6 +30,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetChef'
+      servers:
+        - url: 'http://localhost:8080'
       servers:
         - url: 'http://localhost:8080'
     put:
@@ -43,6 +51,7 @@ paths:
               properties:
                 name:
                   type: string
+                  description: 登録名
                   description: 登録名
                   x-oapi-codegen-extra-tags:
                     binding: required
