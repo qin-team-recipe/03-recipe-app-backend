@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"net/http"
+	"reflect"
 
 	"github.com/aopontann/gin-sqlc/docs"
 	"github.com/aopontann/gin-sqlc/utils"
@@ -110,6 +111,41 @@ func (s *Server) ExistsFavoriteRecipe(c *gin.Context) {
 
 	// レスポンス型バリデーション
 	err = utils.ValidateStructTwoWay[existsFavoriteResponse, docs.ExistsFavoriteRecipe](&response)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, response)
+}
+
+func (s *Server) ListFavoriteRecipe(c *gin.Context) {
+	type listFavoriteRecipeResponse struct {
+		Data []db.ListFavoriteRecipeRow `json:"data"`
+	}
+	var response listFavoriteRecipeResponse
+
+	// usrIdを取得
+	email := c.MustGet("email").(string)
+	usrId, err := s.q.GetUserId(context.Background(), email)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// リスト化
+	response.Data, err = s.q.ListFavoriteRecipe(context.Background(), usrId)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	if response.Data == nil || reflect.ValueOf(response.Data).IsNil() {
+		response.Data = []db.ListFavoriteRecipeRow{}
+	}
+
+	// レスポンス型バリデーション
+	err = utils.ValidateStructTwoWay[listFavoriteRecipeResponse, docs.ListFavoriteRecipe](&response)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

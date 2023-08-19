@@ -95,3 +95,71 @@ func (q *Queries) ExistsFavoriteRecipe(ctx context.Context, arg ExistsFavoriteRe
 	err := row.Scan(&exists)
 	return exists, err
 }
+
+const listFavoriteRecipe = `-- name: ListFavoriteRecipe :many
+SELECT
+    id,
+    chef_id,
+    name,
+    servings,
+    image_url,
+    introduction,
+    created_at,
+    updated_at,
+    num_fav
+FROM
+    recipe
+WHERE
+    EXISTS (
+        SELECT
+            1
+        FROM
+            favoring
+        WHERE
+            recipe_id = recipe.id
+        AND
+            favoring.usr_id = $1
+    )
+`
+
+type ListFavoriteRecipeRow struct {
+	ID           pgtype.UUID        `json:"id"`
+	ChefID       pgtype.UUID        `json:"chefId"`
+	Name         string             `json:"name"`
+	Servings     int32              `json:"servings"`
+	ImageUrl     pgtype.Text        `json:"imageUrl"`
+	Introduction pgtype.Text        `json:"introduction"`
+	CreatedAt    pgtype.Timestamptz `json:"createdAt"`
+	UpdatedAt    pgtype.Timestamptz `json:"updatedAt"`
+	NumFav       int32              `json:"numFav"`
+}
+
+func (q *Queries) ListFavoriteRecipe(ctx context.Context, usrID pgtype.UUID) ([]ListFavoriteRecipeRow, error) {
+	rows, err := q.db.Query(ctx, listFavoriteRecipe, usrID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ListFavoriteRecipeRow
+	for rows.Next() {
+		var i ListFavoriteRecipeRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.ChefID,
+			&i.Name,
+			&i.Servings,
+			&i.ImageUrl,
+			&i.Introduction,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.NumFav,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
