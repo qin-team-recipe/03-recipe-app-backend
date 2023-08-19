@@ -2,7 +2,6 @@ package api
 
 import (
 	"context"
-	"math/rand"
 	"net/http"
 	"reflect"
 
@@ -10,33 +9,24 @@ import (
 	"github.com/aopontann/gin-sqlc/docs"
 	"github.com/aopontann/gin-sqlc/utils"
 	"github.com/gin-gonic/gin"
-	"github.com/mattn/go-gimei"
 )
 
 func (s *Server) ListTrendRecipe(c *gin.Context) {
 	type trendRecipeResponse struct {
-		Data []db.FakeListTrendRecipeRow `json:"data"`
+		Data []db.ListTrendRecipeRow `json:"data"`
 	}
 
 	const limit int32 = 10
 	var response trendRecipeResponse
 	var err error
-	response.Data, err = s.q.FakeListTrendRecipe(context.Background(), limit)
+	response.Data, err = s.q.ListTrendRecipe(context.Background(), limit)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
 	if response.Data == nil || reflect.ValueOf(response.Data).IsNil() {
-		response.Data = []db.FakeListTrendRecipeRow{}
-	}
-
-	// ダミーデータ作成（本番では消す）
-	for i := 0; i < len(response.Data); i++ {
-		response.Data[i].Name = gimei.NewName().First.Katakana()
-		response.Data[i].Introduction = gimei.NewAddress().String() + "。" + gimei.NewAddress().String() + "。" + gimei.NewAddress().String() + "。" + gimei.NewAddress().String() + "。" + gimei.NewAddress().String() + "。"
-		response.Data[i].NumFav = rand.Int31n(1000)
-		response.Data[i].Score = rand.Int31n(100)
+		response.Data = []db.ListTrendRecipeRow{}
 	}
 
 	// レスポンス型バリデーション
@@ -71,4 +61,30 @@ func (s *Server) GetRecipe(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, row)
+}
+
+func (s *Server) ListRecipe(c *gin.Context) {
+	type listRecipeponse struct {
+		Data []db.ListRecipeRow `json:"data"`
+	}
+	var response listRecipeponse
+
+	var err error
+	response.Data, err = s.q.ListRecipe(context.Background())
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	}
+
+	if response.Data == nil || reflect.ValueOf(response.Data).IsNil() {
+		response.Data = []db.ListRecipeRow{}
+	}
+
+	// レスポンス型バリデーション
+	err = utils.ValidateStructTwoWay[listRecipeponse, docs.ListRecipe](&response)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, response)
 }

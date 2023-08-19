@@ -672,6 +672,37 @@ type ListFollowUser struct {
 	} `json:"data"`
 }
 
+// ListRecipe defines model for ListRecipe.
+type ListRecipe struct {
+	Data []struct {
+		ChefId    openapi_types.UUID `json:"chefId"`
+		CreatedAt string             `json:"createdAt"`
+		Id        openapi_types.UUID `json:"id"`
+
+		// ImageUrl 画像
+		ImageUrl *string `json:"imageUrl,omitempty"`
+
+		// Introduction レシピの紹介文
+		Introduction *string `json:"introduction,omitempty"`
+
+		// Name レシピ名
+		Name string `json:"name"`
+
+		// NumFav ファボられ数
+		NumFav int `json:"numFav"`
+
+		// Servings ＊人前
+		Servings  int    `json:"servings"`
+		UpdatedAt string `json:"updatedAt"`
+	} `json:"data"`
+}
+
+// PostImage defines model for PostImage.
+type PostImage struct {
+	// Path 画像Path
+	Path string `json:"Path"`
+}
+
 // SearchChef defines model for SearchChef.
 type SearchChef struct {
 	Data *[]struct {
@@ -1025,6 +1056,12 @@ type PutApiChefsIdJSONBody struct {
 
 	// Profile シェフ紹介
 	Profile *string `json:"profile,omitempty"`
+}
+
+// GetApiImagesParams defines parameters for GetApiImages.
+type GetApiImagesParams struct {
+	// Path 画像ファイル名
+	Path *string `form:"path,omitempty" json:"path,omitempty"`
 }
 
 // PostApiUserListsJSONBody defines parameters for PostApiUserLists.

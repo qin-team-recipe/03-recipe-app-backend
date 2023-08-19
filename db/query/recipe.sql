@@ -7,8 +7,6 @@ history AS (
     FROM
         fav_history
     WHERE
-        chef_id IS NOT NULL
-    AND
         CURRENT_TIMESTAMP - INTERVAL '3 days' <= created_at
     GROUP BY
         recipe_id
@@ -26,6 +24,8 @@ INNER JOIN
     recipe
 ON
     recipe.access_level = 1
+AND
+    recipe.chef_id IS NOT NULL
 AND
     history.recipe_id = recipe.id
 ORDER BY
@@ -51,3 +51,23 @@ SELECT
     *
 FROM
     update_recipe(@id, @data);
+
+-- name: ListRecipe :many
+SELECT
+    id,
+    chef_id,
+    name,
+    servings,
+    image_url,
+    introduction,
+    created_at,
+    updated_at,
+    num_fav
+FROM
+    recipe
+WHERE
+    access_level = 1
+AND
+    chef_id IS NOT NULL
+ORDER BY
+    num_fav DESC;

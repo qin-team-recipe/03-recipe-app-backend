@@ -68,15 +68,17 @@ func (s *Server) MountHandlers() {
 	api.GET("/chefs/recipe/search", s.SearchChefRecipe)        // 有名シェフのレシピを全文検索するAPI
 
 	// 有名シェフ関連
-	api.GET("/chefs/:id", s.GetChef)               // 有名シェフを取得するAPI
-	api.PUT("/chefs/:id", s.UpdateChef)            // 有名シェフを更新するAPI
-	api.DELETE("/chefs/:id", s.DeleteChef)         // 有名シェフを削除するAPI
-	api.POST("/chefs", s.CreateChef)               // 有名シェフを新規登録するAPI
-	api.GET("/chefs/featured", s.ListFeaturedChef) // 注目の有名シェフ一覧を取得するAPI
-	api.GET("/chefs/search", s.SearchChef)         // 有名シェフを全文検索するAPI
+	api.GET("/chefs/:id", s.GetChef)                // 有名シェフを取得するAPI
+	api.GET("/chefs/:id/recipes", s.ListChefRecipe) // 有名シェフのレシピ一覧を取得するAPI
+	api.PUT("/chefs/:id", s.UpdateChef)             // 有名シェフを更新するAPI
+	api.DELETE("/chefs/:id", s.DeleteChef)          // 有名シェフを削除するAPI
+	api.POST("/chefs", s.CreateChef)                // 有名シェフを新規登録するAPI
+	api.GET("/chefs/featured", s.ListFeaturedChef)  // 注目の有名シェフ一覧を取得するAPI
+	api.GET("/chefs/search", s.SearchChef)          // 有名シェフを全文検索するAPI
 
 	// レシピ関連
 	api.GET("/recipes/:id", s.GetRecipe)         // レシピを取得するAPI
+	api.GET("/recipes", s.ListRecipe)            // レシピ一覧を取得するAPI
 	api.GET("/recipes/trend", s.ListTrendRecipe) // 話題のレシピ一覧を取得するAPI
 
 	// 買い物リスト関連

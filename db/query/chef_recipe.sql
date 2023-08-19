@@ -1,13 +1,3 @@
--- name: GetChefRecipes :many
-SELECT
-    *
-FROM
-    v_recipe
-WHERE
-    chef_id = @chef_id
-ORDER BY
-    created_at DESC;
-
 -- name: DeleteChefRecipe :one
 DELETE FROM
     recipe
@@ -52,4 +42,44 @@ OR
 )
 ORDER BY
     pgroonga_score(tableoid, ctid) DESC,
+    num_fav DESC;
+
+-- name: ListChefRecipeNew :many
+SELECT
+    id,
+    chef_id,
+    name,
+    servings,
+    image_url,
+    introduction,
+    created_at,
+    updated_at,
+    num_fav
+FROM
+    recipe
+WHERE
+    access_level = 1
+AND
+    chef_id = @chef_id
+ORDER BY
+    created_at DESC;
+
+-- name: ListChefRecipeFav :many
+SELECT
+    id,
+    chef_id,
+    name,
+    servings,
+    image_url,
+    introduction,
+    created_at,
+    updated_at,
+    num_fav
+FROM
+    recipe
+WHERE
+    access_level = 1
+AND
+    chef_id = @chef_id
+ORDER BY
     num_fav DESC;

@@ -71,6 +71,69 @@ func (q *Queries) GetRecipe(ctx context.Context, id pgtype.UUID) (VRecipe, error
 	return i, err
 }
 
+const listRecipe = `-- name: ListRecipe :many
+SELECT
+    id,
+    chef_id,
+    name,
+    servings,
+    image_url,
+    introduction,
+    created_at,
+    updated_at,
+    num_fav
+FROM
+    recipe
+WHERE
+    access_level = 1
+AND
+    chef_id IS NOT NULL
+ORDER BY
+    num_fav DESC
+`
+
+type ListRecipeRow struct {
+	ID           pgtype.UUID        `json:"id"`
+	ChefID       pgtype.UUID        `json:"chefId"`
+	Name         string             `json:"name"`
+	Servings     int32              `json:"servings"`
+	ImageUrl     pgtype.Text        `json:"imageUrl"`
+	Introduction pgtype.Text        `json:"introduction"`
+	CreatedAt    pgtype.Timestamptz `json:"createdAt"`
+	UpdatedAt    pgtype.Timestamptz `json:"updatedAt"`
+	NumFav       int32              `json:"numFav"`
+}
+
+func (q *Queries) ListRecipe(ctx context.Context) ([]ListRecipeRow, error) {
+	rows, err := q.db.Query(ctx, listRecipe)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ListRecipeRow
+	for rows.Next() {
+		var i ListRecipeRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.ChefID,
+			&i.Name,
+			&i.Servings,
+			&i.ImageUrl,
+			&i.Introduction,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.NumFav,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const listTrendRecipe = `-- name: ListTrendRecipe :many
 WITH
 history AS (
@@ -80,8 +143,6 @@ history AS (
     FROM
         fav_history
     WHERE
-        chef_id IS NOT NULL
-    AND
         CURRENT_TIMESTAMP - INTERVAL '3 days' <= created_at
     GROUP BY
         recipe_id
@@ -99,6 +160,8 @@ INNER JOIN
     recipe
 ON
     recipe.access_level = 1
+AND
+    recipe.chef_id IS NOT NULL
 AND
     history.recipe_id = recipe.id
 ORDER BY
