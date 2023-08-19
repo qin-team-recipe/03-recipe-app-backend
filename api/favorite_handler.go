@@ -22,10 +22,10 @@ func (s *Server) CreateFavoriteRecipe(c *gin.Context) {
 	}
 
 	// usrIdを取得
-	email := c.MustGet("email").(string)
-	param.UsrID, err = s.q.GetUserId(context.Background(), email)
+	var status int
+	param.UsrID, _, status, err = s.GetRedisInfo(c)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(status, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -56,10 +56,10 @@ func (s *Server) DeleteFavoriteRecipe(c *gin.Context) {
 	}
 
 	// usrIdを取得
-	email := c.MustGet("email").(string)
-	param.UsrID, err = s.q.GetUserId(context.Background(), email)
+	var status int
+	param.UsrID, _, status, err = s.GetRedisInfo(c)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(status, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -95,10 +95,10 @@ func (s *Server) ExistsFavoriteRecipe(c *gin.Context) {
 	}
 
 	// usrIdを取得
-	email := c.MustGet("email").(string)
-	param.UsrID, err = s.q.GetUserId(context.Background(), email)
+	var status int
+	param.UsrID, _, status, err = s.GetRedisInfo(c)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(status, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -126,10 +126,9 @@ func (s *Server) ListFavoriteRecipe(c *gin.Context) {
 	var response listFavoriteRecipeResponse
 
 	// usrIdを取得
-	email := c.MustGet("email").(string)
-	usrId, err := s.q.GetUserId(context.Background(), email)
+	usrId, _, status, err := s.GetRedisInfo(c)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(status, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -145,6 +144,7 @@ func (s *Server) ListFavoriteRecipe(c *gin.Context) {
 	}
 
 	// レスポンス型バリデーション
+	// UUID が nil の時はエラーが出る
 	err = utils.ValidateStructTwoWay[listFavoriteRecipeResponse, docs.ListFavoriteRecipe](&response)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
