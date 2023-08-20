@@ -7,7 +7,6 @@ require (
 	github.com/gin-gonic/gin v1.9.1
 	github.com/google/uuid v1.3.0
 	github.com/jinzhu/copier v0.3.5
-	github.com/mattn/go-gimei v0.0.4
 	github.com/redis/go-redis/v9 v9.0.5
 	github.com/rs/xid v1.5.0
 	gocv.io/x/gocv v0.33.0
@@ -30,7 +29,6 @@ require (
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.2 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
-	gopkg.in/yaml.v2 v2.4.0 // indirect
 
 )
 
