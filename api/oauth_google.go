@@ -157,5 +157,6 @@ func (s *Server) Authentication() gin.HandlerFunc {
 		}
 		// 次に実行されるハンドラ関数で取得したメールアドレスを使うための処理
 		c.Set("email", rv.Email)
+		c.Set("id", rv.ID)
 	}
 }
