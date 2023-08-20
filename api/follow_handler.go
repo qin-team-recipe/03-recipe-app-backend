@@ -20,11 +20,11 @@ func (s *Server) CreateFollowChef(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
 
-	// usrIdを取得
-	var status int
-	param.UsrID, _, status, err = s.GetRedisInfo(c)
+	// Authentication()でセットしたUsrIDを取得
+	rv := c.MustGet("rv").(redisValue)
+	param.UsrID, err = utils.StrToUUID(rv.ID)
 	if err != nil {
-		c.JSON(status, gin.H{"error": err.Error()})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -54,11 +54,11 @@ func (s *Server) DeleteFollowChef(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
 
-	// usrIdを取得
-	var status int
-	param.UsrID, _, status, err = s.GetRedisInfo(c)
+	// Authentication()でセットしたUsrIDを取得
+	rv := c.MustGet("rv").(redisValue)
+	param.UsrID, err = utils.StrToUUID(rv.ID)
 	if err != nil {
-		c.JSON(status, gin.H{"error": err.Error()})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -93,11 +93,11 @@ func (s *Server) ExistsFollowChef(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
 
-	// usrIdを取得
-	var status int
-	param.UsrID, _, status, err = s.GetRedisInfo(c)
+	// Authentication()でセットしたUsrIDを取得
+	rv := c.MustGet("rv").(redisValue)
+	param.UsrID, err = utils.StrToUUID(rv.ID)
 	if err != nil {
-		c.JSON(status, gin.H{"error": err.Error()})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -124,10 +124,11 @@ func (s *Server) ListFollowChef(c *gin.Context) {
 	}
 	var response listFollowChefResponse
 
-	// usrIdを取得
-	usrID, _, status, err := s.GetRedisInfo(c)
+	// Authentication()でセットしたUsrIDを取得
+	rv := c.MustGet("rv").(redisValue)
+	usrID, err := utils.StrToUUID(rv.ID)
 	if err != nil {
-		c.JSON(status, gin.H{"error": err.Error()})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -158,10 +159,11 @@ func (s *Server) ListFollowChefNewRecipe(c *gin.Context) {
 	}
 	var response followNewRecipeResponse
 
-	// usrIdを取得
-	usrID, _, status, err := s.GetRedisInfo(c)
+	// Authentication()でセットしたUsrIDを取得
+	rv := c.MustGet("rv").(redisValue)
+	usrID, err := utils.StrToUUID(rv.ID)
 	if err != nil {
-		c.JSON(status, gin.H{"error": err.Error()})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -195,11 +197,11 @@ func (s *Server) CreateFollowUser(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
 
-	// usrIdを取得
-	var status int
-	param.FollowerID, _, status, err = s.GetRedisInfo(c)
+	// Authentication()でセットしたUsrIDを取得
+	rv := c.MustGet("rv").(redisValue)
+	param.FollowerID, err = utils.StrToUUID(rv.ID)
 	if err != nil {
-		c.JSON(status, gin.H{"error": err.Error()})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -235,11 +237,11 @@ func (s *Server) DeleteFollowUser(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
 
-	// usrIdを取得
-	var status int
-	param.FollowerID, _, status, err = s.GetRedisInfo(c)
+	// Authentication()でセットしたUsrIDを取得
+	rv := c.MustGet("rv").(redisValue)
+	param.FollowerID, err = utils.StrToUUID(rv.ID)
 	if err != nil {
-		c.JSON(status, gin.H{"error": err.Error()})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -274,11 +276,11 @@ func (s *Server) ExistsFollowUser(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
 
-	// usrIdを取得
-	var status int
-	param.FollowerID, _, status, err = s.GetRedisInfo(c)
+	// Authentication()でセットしたUsrIDを取得
+	rv := c.MustGet("rv").(redisValue)
+	param.FollowerID, err = utils.StrToUUID(rv.ID)
 	if err != nil {
-		c.JSON(status, gin.H{"error": err.Error()})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -305,10 +307,11 @@ func (s *Server) ListFollowUser(c *gin.Context) {
 	}
 	var response listFollowUserResponse
 
-	// usrIdを取得
-	followerID, _, status, err := s.GetRedisInfo(c)
+	// Authentication()でセットしたUsrIDを取得
+	rv := c.MustGet("rv").(redisValue)
+	followerID, err := utils.StrToUUID(rv.ID)
 	if err != nil {
-		c.JSON(status, gin.H{"error": err.Error()})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
 

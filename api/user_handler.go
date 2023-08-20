@@ -107,12 +107,9 @@ func (s *Server) GetUser(c *gin.Context) {
 }
 
 func (s *Server) GetSelf(c *gin.Context) {
-	// emailを取得
-	_, email, status, err := s.GetRedisInfo(c)
-	if err != nil {
-		c.JSON(status, gin.H{"error": err.Error()})
-		return
-	}
+	// Authentication()でセットしたメールアドレスを取得
+	rv := c.MustGet("rv").(redisValue)
+	email := rv.Email
 
 	// 問い合わせ処理
 	row, err := s.q.GetSelf(context.Background(), email)
@@ -134,13 +131,10 @@ func (s *Server) GetSelf(c *gin.Context) {
 func (s *Server) UpdateSelf(c *gin.Context) {
 	// emailを取得
 	var param db.UpdateUserParams
-	var err error
-	var status int
-	_, param.Email, status, err = s.GetRedisInfo(c)
-	if err != nil {
-		c.JSON(status, gin.H{"error": err.Error()})
-		return
-	}
+
+	// Authentication()でセットしたメールアドレスを取得
+	rv := c.MustGet("rv").(redisValue)
+	param.Email = rv.Email
 
 	// リクエストボディを構造体にバインド
 	reqb := docs.PutApiUserUsersJSONRequestBody{}
@@ -150,6 +144,7 @@ func (s *Server) UpdateSelf(c *gin.Context) {
 	}
 
 	// 構造体からJSONに変換
+	var err error
 	param.Data, err = json.Marshal(&reqb)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -173,12 +168,9 @@ func (s *Server) UpdateSelf(c *gin.Context) {
 }
 
 func (s *Server) DeleteSelf(c *gin.Context) {
-	// emailを取得
-	_, email, status, err := s.GetRedisInfo(c)
-	if err != nil {
-		c.JSON(status, gin.H{"error": err.Error()})
-		return
-	}
+	// Authentication()でセットしたメールアドレスを取得
+	rv := c.MustGet("rv").(redisValue)
+	email := rv.Email
 
 	// 削除処理
 	row, err := s.q.DeleteUser(context.Background(), email)

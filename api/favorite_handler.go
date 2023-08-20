@@ -21,11 +21,11 @@ func (s *Server) CreateFavoriteRecipe(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
 
-	// usrIdを取得
-	var status int
-	param.UsrID, _, status, err = s.GetRedisInfo(c)
+	// Authentication()でセットしたUsrIDを取得
+	rv := c.MustGet("rv").(redisValue)
+	param.UsrID, err = utils.StrToUUID(rv.ID)
 	if err != nil {
-		c.JSON(status, gin.H{"error": err.Error()})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -55,11 +55,11 @@ func (s *Server) DeleteFavoriteRecipe(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
 
-	// usrIdを取得
-	var status int
-	param.UsrID, _, status, err = s.GetRedisInfo(c)
+	// Authentication()でセットしたUsrIDを取得
+	rv := c.MustGet("rv").(redisValue)
+	param.UsrID, err = utils.StrToUUID(rv.ID)
 	if err != nil {
-		c.JSON(status, gin.H{"error": err.Error()})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -94,11 +94,11 @@ func (s *Server) ExistsFavoriteRecipe(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
 
-	// usrIdを取得
-	var status int
-	param.UsrID, _, status, err = s.GetRedisInfo(c)
+	// Authentication()でセットしたUsrIDを取得
+	rv := c.MustGet("rv").(redisValue)
+	param.UsrID, err = utils.StrToUUID(rv.ID)
 	if err != nil {
-		c.JSON(status, gin.H{"error": err.Error()})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -125,10 +125,11 @@ func (s *Server) ListFavoriteRecipe(c *gin.Context) {
 	}
 	var response listFavoriteRecipeResponse
 
-	// usrIdを取得
-	usrId, _, status, err := s.GetRedisInfo(c)
+	// Authentication()でセットしたUsrIDを取得
+	rv := c.MustGet("rv").(redisValue)
+	usrId, err := utils.StrToUUID(rv.ID)
 	if err != nil {
-		c.JSON(status, gin.H{"error": err.Error()})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
 

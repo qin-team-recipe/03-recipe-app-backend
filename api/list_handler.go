@@ -19,10 +19,11 @@ func (s *Server) ListShoppingList(c *gin.Context) {
 		Data []db.ListShoppingListRow `json:"data"`
 	}
 
-	// usrIdを取得
-	usrId, _, status, err := s.GetRedisInfo(c)
+	// Authentication()でセットしたUsrIDを取得
+	rv := c.MustGet("rv").(redisValue)
+	usrId, err := utils.StrToUUID(rv.ID)
 	if err != nil {
-		c.JSON(status, gin.H{"error": err.Error()})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -51,11 +52,11 @@ func (s *Server) GetShoppingList(c *gin.Context) {
 	var param db.GetShoppingListParams
 	var err error
 
-	// usrIdを取得
-	var status int
-	param.UsrID, _, status, err = s.GetRedisInfo(c)
+	// Authentication()でセットしたUsrIDを取得
+	rv := c.MustGet("rv").(redisValue)
+	param.UsrID, err = utils.StrToUUID(rv.ID)
 	if err != nil {
-		c.JSON(status, gin.H{"error": err.Error()})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -124,12 +125,11 @@ func (s *Server) CreateShoppingList(c *gin.Context) {
 		return
 	}
 
-	// usrIdを取得して設定
-	// usrIdを取得
-	var status int
-	reqb.UsrID, _, status, err = s.GetRedisInfo(c)
+	// Authentication()でセットしたUsrIDを取得
+	rv := c.MustGet("rv").(redisValue)
+	reqb.UsrID, err = utils.StrToUUID(rv.ID)
 	if err != nil {
-		c.JSON(status, gin.H{"error": err.Error()})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -225,11 +225,11 @@ func (s *Server) UpdateShoppingList(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
 
-	// usrIdを取得
-	var status int
-	reqb.UsrID, _, status, err = s.GetRedisInfo(c)
+	// Authentication()でセットしたUsrIDを取得
+	rv := c.MustGet("rv").(redisValue)
+	reqb.UsrID, err = utils.StrToUUID(rv.ID)
 	if err != nil {
-		c.JSON(status, gin.H{"error": err.Error()})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -316,11 +316,11 @@ func (s *Server) DeleteShoppingList(c *gin.Context) {
 	var param db.DeleteShoppingListParams
 	var err error
 
-	// usrIdを取得
-	var status int
-	param.UsrID, _, status, err = s.GetRedisInfo(c)
+	// Authentication()でセットしたUsrIDを取得
+	rv := c.MustGet("rv").(redisValue)
+	param.UsrID, err = utils.StrToUUID(rv.ID)
 	if err != nil {
-		c.JSON(status, gin.H{"error": err.Error()})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
 
