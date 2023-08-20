@@ -17,12 +17,6 @@ paths:
           required: true
           schema:
             type: string
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
       responses:
         '200':
           description: OK
@@ -30,8 +24,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetChef'
-      servers:
-        - url: 'http://localhost:8080'
       servers:
         - url: 'http://localhost:8080'
     put:
@@ -51,7 +43,6 @@ paths:
               properties:
                 name:
                   type: string
-                  description: 登録名
                   description: 登録名
                   x-oapi-codegen-extra-tags:
                     binding: required
@@ -165,6 +156,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CreateChef'
+      servers:
+        - url: 'http://localhost:8080'
+    get:
+      summary: ''
+      operationId: get-api-chefs
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListChef'
       servers:
         - url: 'http://localhost:8080'
   /api/chefs/featured:
@@ -1232,6 +1235,58 @@ paths:
                 $ref: '#/components/schemas/ListFollowUser'
       servers:
         - url: 'http://localhost:8080'
+  '/api/chefs/{id}/recipes':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+    get:
+      summary: 有名シェフのレシピ一覧を取得
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListRecipe'
+      operationId: get-api-chefs-id-recipes
+  /recipes:
+    get:
+      summary: レシピ一覧を取得
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListRecipe'
+      operationId: get-recipes
+  /api/images:
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses: {}
+      operationId: get-api-images
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: path
+          description: 画像ファイル名
+    post:
+      summary: ''
+      operationId: post-api-images
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostImage'
   /api/user/favorite/recipes:
     get:
       summary: Your GET endpoint
@@ -1515,6 +1570,88 @@ components:
           updatedAt: '2023-08-09T05:46:08.569996+09:00'
           numRecipe: 0
           numFollower: 0
+    ListChef:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              chefId:
+                type: string
+                description: シェフID
+                format: uuid
+              name:
+                type: string
+                description: シェフ登録名
+              imageUrl:
+                type: string
+                description: プロフィール画像
+              numFollower:
+                type: integer
+                description: フォロワー数
+            required:
+              - chefId
+              - name
+              - numFollower
+      required:
+        - data
+      x-examples:
+        Example 1:
+          data:
+            - chefId: 6083beb0-5543-4a2d-9101-6ce5b7b2d124
+              name: 岩井 優二
+              imageUrl: 'https://source.unsplash.com/random/300x300?v=1'
+              numFollower: 805
+              score: 81
+            - chefId: 4d35e05f-3f72-4e3f-b80f-1e054ee8a7ff
+              name: 大川 優希
+              imageUrl: 'https://source.unsplash.com/random/300x300?v=1'
+              numFollower: 631
+              score: 63
+            - chefId: 5dfebb01-8386-4adb-b76f-fb0c8830155f
+              name: 吉川 正悟
+              imageUrl: 'https://source.unsplash.com/random/300x300?v=1'
+              numFollower: 219
+              score: 59
+            - chefId: e853f33b-be2e-44f0-b904-87dd518cb090
+              name: 吉川 理貴
+              imageUrl: 'https://source.unsplash.com/random/300x300?v=1'
+              numFollower: 618
+              score: 36
+            - chefId: 45552e82-94c0-455d-b220-c65677c4fe9d
+              name: 豊田 登志雄
+              imageUrl: 'https://source.unsplash.com/random/300x300?v=1'
+              numFollower: 194
+              score: 65
+            - chefId: 66a07493-0c05-44dd-8370-eb33c28f4723
+              name: 星 暁
+              imageUrl: 'https://source.unsplash.com/random/300x300?v=1'
+              numFollower: 0
+              score: 90
+            - chefId: 430cb7b4-14c2-460e-9854-8869efa0f3ee
+              name: 熊谷 雄哉
+              imageUrl: 'https://source.unsplash.com/random/300x300?v=1'
+              numFollower: 997
+              score: 90
+            - chefId: 0d6a0431-c4e5-42e3-be82-cbfaebcbbfe4
+              name: 森岡 純奈
+              imageUrl: 'https://source.unsplash.com/random/300x300?v=1'
+              numFollower: 501
+              score: 13
+            - chefId: a37d4629-bcac-416b-9bad-23f509965898
+              name: 荻野 紗芸
+              imageUrl: 'https://source.unsplash.com/random/300x300?v=1'
+              numFollower: 497
+              score: 62
+            - chefId: 18980f30-53a3-47fa-9284-244aec726513
+              name: 長沢 祥太郎
+              imageUrl: 'https://source.unsplash.com/random/300x300?v=1'
+              numFollower: 458
+              score: 2
+      x-tags:
+        - chef
     FeaturedChef:
       type: object
       title: featuredChef
@@ -3295,3 +3432,69 @@ components:
         - recipeId
         - usrId
         - createdAt
+    ListRecipe:
+      type: object
+      x-examples:
+        Example 1:
+          data:
+            - id: c8235d40-6daf-424e-a299-bd7e98aff7fa
+              chefId: 9a0ce94b-d275-4ea6-ae11-914612c79d62
+              name: グラタン
+              servings: 6
+              imageUrl: IMAGE_URL_1
+              introduction: INTRODUCTION_1
+              createdAt: '2023-08-15T12:44:19.09+09:00'
+              updatedAt: '2023-08-16T21:12:05.059812+09:00'
+              numFav: 0
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                format: uuid
+              chefId:
+                type: string
+                format: uuid
+              name:
+                type: string
+                description: レシピ名
+              servings:
+                type: integer
+                description: ＊人前
+              imageUrl:
+                type: string
+                description: 画像
+              introduction:
+                type: string
+                description: レシピの紹介文
+              createdAt:
+                type: string
+              updatedAt:
+                type: string
+              numFav:
+                type: integer
+                description: ファボられ数
+            required:
+              - id
+              - chefId
+              - name
+              - servings
+              - createdAt
+              - updatedAt
+              - numFav
+      required:
+        - data
+    PostImage:
+      type: object
+      x-examples:
+        Example 1:
+          Path: eeb1abab-3291-4604-83ef-3b276b614c99.webp
+      properties:
+        Path:
+          type: string
+          description: 画像Path
+      required:
+        - Path

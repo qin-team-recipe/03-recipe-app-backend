@@ -189,3 +189,31 @@ func (s *Server) SearchChef(c *gin.Context) {
 
 	c.JSON(http.StatusOK, response)
 }
+
+func (s *Server) ListChef(c *gin.Context) {
+	type ListChefResponse struct {
+		Data []db.ListChefRow `json:"data"`
+	}
+
+	const limit int32 = 10
+	var response ListChefResponse
+	var err error
+	response.Data, err = s.q.ListChef(context.Background(), limit)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	if response.Data == nil || reflect.ValueOf(response.Data).IsNil() {
+		response.Data = []db.ListChefRow{}
+	}
+
+	// レスポンス型バリデーション
+	err = utils.ValidateStructTwoWay[ListChefResponse, docs.ListChef](&response)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, response)
+}

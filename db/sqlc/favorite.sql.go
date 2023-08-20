@@ -111,7 +111,7 @@ FROM
     recipe
 WHERE
     recipe.access_level = 1
-    AND
+AND
         EXISTS (
             SELECT
                 1
