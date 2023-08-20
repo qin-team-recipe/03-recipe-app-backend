@@ -145,6 +145,51 @@ func (q *Queries) GetChef(ctx context.Context, id pgtype.UUID) (GetChefRow, erro
 	return i, err
 }
 
+const listChef = `-- name: ListChef :many
+SELECT
+    id,
+    name,
+    image_url,
+    num_follower
+FROM
+    chef
+ORDER BY
+    num_follower DESC
+LIMIT $1
+`
+
+type ListChefRow struct {
+	ID          pgtype.UUID `json:"id"`
+	Name        string      `json:"name"`
+	ImageUrl    pgtype.Text `json:"imageUrl"`
+	NumFollower int32       `json:"numFollower"`
+}
+
+func (q *Queries) ListChef(ctx context.Context, lim int32) ([]ListChefRow, error) {
+	rows, err := q.db.Query(ctx, listChef, lim)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ListChefRow
+	for rows.Next() {
+		var i ListChefRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.ImageUrl,
+			&i.NumFollower,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const listFeaturedChef = `-- name: ListFeaturedChef :many
 WITH
 history AS (

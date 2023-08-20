@@ -108,7 +108,7 @@ ORDER BY
 
 -- name: ListChef :many
 SELECT
-    chef_id,
+    id,
     name,
     image_url,
     num_follower

@@ -616,6 +616,23 @@ type GetUsr struct {
 	UpdatedAt string  `json:"updatedAt"`
 }
 
+// ListChef defines model for ListChef.
+type ListChef struct {
+	Data []struct {
+		// ChefId シェフID
+		ChefId openapi_types.UUID `json:"chefId"`
+
+		// ImageUrl プロフィール画像
+		ImageUrl *string `json:"imageUrl,omitempty"`
+
+		// Name シェフ登録名
+		Name string `json:"name"`
+
+		// NumFollower フォロワー数
+		NumFollower int `json:"numFollower"`
+	} `json:"data"`
+}
+
 // ListFavoriteRecipe defines model for ListFavoriteRecipe.
 type ListFavoriteRecipe struct {
 	Data []struct {
