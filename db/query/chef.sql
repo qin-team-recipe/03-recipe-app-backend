@@ -105,3 +105,15 @@ OR
 ORDER BY
     pgroonga_score(tableoid, ctid) DESC,
     num_follower DESC;
+
+-- name: ListChef :many
+SELECT
+    chef_id,
+    name,
+    image_url,
+    num_follower
+FROM
+    chef
+ORDER BY
+    num_follower DESC
+LIMIT @lim;

@@ -42,6 +42,9 @@ func (s *Server) MountHandlers() {
 	api.POST("/users", s.CreateUser) // ユーザーを新規登録するAPI
 	api.GET("/users/:id", s.GetUser) // ユーザーを取得するAPI
 
+	// 有名シェフ関連
+	// api.GET("/chefs", s.ListChef) // 有名シェフを取得するAPI
+
 	//// 仮で作成　セッションの説明用 ////
 	// グループを作成
 	usr := api.Group("/user")
