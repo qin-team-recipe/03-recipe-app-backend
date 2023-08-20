@@ -108,8 +108,7 @@ func (s *Server) GetUser(c *gin.Context) {
 
 func (s *Server) GetSelf(c *gin.Context) {
 	// Authentication()でセットしたメールアドレスを取得
-	rv := c.MustGet("rv").(redisValue)
-	email := rv.Email
+	email := c.MustGet("email").(string)
 
 	// 問い合わせ処理
 	row, err := s.q.GetSelf(context.Background(), email)
@@ -133,8 +132,7 @@ func (s *Server) UpdateSelf(c *gin.Context) {
 	var param db.UpdateUserParams
 
 	// Authentication()でセットしたメールアドレスを取得
-	rv := c.MustGet("rv").(redisValue)
-	param.Email = rv.Email
+	param.Email = c.MustGet("email").(string)
 
 	// リクエストボディを構造体にバインド
 	reqb := docs.PutApiUserUsersJSONRequestBody{}
@@ -169,8 +167,7 @@ func (s *Server) UpdateSelf(c *gin.Context) {
 
 func (s *Server) DeleteSelf(c *gin.Context) {
 	// Authentication()でセットしたメールアドレスを取得
-	rv := c.MustGet("rv").(redisValue)
-	email := rv.Email
+	email := c.MustGet("email").(string)
 
 	// 削除処理
 	row, err := s.q.DeleteUser(context.Background(), email)
