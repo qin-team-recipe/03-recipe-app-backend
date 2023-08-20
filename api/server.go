@@ -42,9 +42,6 @@ func (s *Server) MountHandlers() {
 	api.POST("/users", s.CreateUser) // ユーザーを新規登録するAPI
 	api.GET("/users/:id", s.GetUser) // ユーザーを取得するAPI
 
-	// 有名シェフ関連
-	api.GET("/chefs", s.ListChef) // 有名シェフを取得するAPI
-
 	//// 仮で作成　セッションの説明用 ////
 	// グループを作成
 	usr := api.Group("/user")
@@ -75,6 +72,7 @@ func (s *Server) MountHandlers() {
 	api.GET("/chefs/:id/recipes", s.ListChefRecipe) // 有名シェフのレシピ一覧を取得するAPI
 	api.PUT("/chefs/:id", s.UpdateChef)             // 有名シェフを更新するAPI
 	api.DELETE("/chefs/:id", s.DeleteChef)          // 有名シェフを削除するAPI
+	api.GET("/chefs", s.ListChef)                   // 有名シェフを取得するAPI
 	api.POST("/chefs", s.CreateChef)                // 有名シェフを新規登録するAPI
 	api.GET("/chefs/featured", s.ListFeaturedChef)  // 注目の有名シェフ一覧を取得するAPI
 	api.GET("/chefs/search", s.SearchChef)          // 有名シェフを全文検索するAPI

@@ -1267,7 +1267,7 @@ paths:
       operationId: get-recipes
   /api/images:
     get:
-      summary: Your GET endpoint
+      summary: 画像を取得
       tags: []
       responses: {}
       operationId: get-api-images
@@ -1278,7 +1278,7 @@ paths:
           name: path
           description: 画像ファイル名
     post:
-      summary: ''
+      summary: 画像を新規登録
       operationId: post-api-images
       responses:
         '200':

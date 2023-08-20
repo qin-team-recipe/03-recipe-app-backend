@@ -15,7 +15,7 @@ import (
 
 func (s *Server) GetImage(c *gin.Context) {
 	// 画像入出力先（TODO：外から与える）
-	dir := "./"
+	dir := "./images"
 
 	// クエリパラメータ
 	path := dir + c.Query("path")
@@ -41,7 +41,7 @@ func (s *Server) GetImage(c *gin.Context) {
 
 func (s *Server) PostImage(c *gin.Context) {
 	// 画像入出力先（TODO：外から与える）
-	dir := "./"
+	dir := "./images"
 
 	// レスポンス
 	type postWebpResponse struct {
