@@ -8,6 +8,10 @@
 - [golang-migrate](https://github.com/golang-migrate/migrate)
 
 ## セットアップ
+- 環境変数
+  ```
+  cp .env.sample .env
+  ```
 - docker compose で起動
   ```
   docker compose up --build
@@ -27,7 +31,8 @@ air
 ```
 
 ## マイグレーション
-スキーマ、テーブルなどを作成
+1. app コンテナのターミナルを開く
+2. 以下のコメントを実行してスキーマ、テーブルなどを作成
 ```
 migrate -database ${POSTGRES_URL} -path db/migrations up
 ```
