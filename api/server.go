@@ -44,21 +44,21 @@ func (s *Server) MountHandlers() {
 
 	//// 仮で作成　セッションの説明用 ////
 	// グループを作成
-	usr := api.Group("/user")
+	usr := api.Group("/users")
 	// /api/user/* リンクにアクセスしたとき、登録したハンドラ関数(ここではGetUserId)を実行する前に Authentication() を実行するようにする処理
 	usr.Use(s.Authentication())
-	// ユーザIDのみ返すAPI
+	// ユーザIDのみ返すAPI(検証用)
 	usr.GET("/id", s.GetUserId)
 
-	usr.GET("/users", s.GetSelf)       // 自分を取得するAPI
-	usr.PUT("/users", s.UpdateSelf)    // 自分を更新するAPI
-	usr.DELETE("/users", s.DeleteSelf) // 自分を削除するAPI
+	usr.GET("/", s.GetSelf)       // 自分を取得するAPI
+	usr.PUT("/", s.UpdateSelf)    // 自分を更新するAPI
+	usr.DELETE("/", s.DeleteSelf) // 自分を削除するAPI
 
 	// ユーザー（= 一般シェフ）のレシピ関連
 	//usr.GET("/users/recipe", s.GetUsrRecipe)
-	usr.PUT("/users/recipe/:recipe_id", s.UpdateUserRecipe)    // 一般シェフのマイレシピを更新するAPI
-	usr.DELETE("/users/recipe/:recipe_id", s.DeleteUserRecipe) // 一般シェフのマイレシピを削除するAPI
-	usr.POST("/users/recipe", s.CreateUsrRecipe)               // 一般シェフのマイレシピを新規登録するAPI
+	usr.PUT("/recipe/:recipe_id", s.UpdateUserRecipe)    // 一般シェフのマイレシピを更新するAPI
+	usr.DELETE("/recipe/:recipe_id", s.DeleteUserRecipe) // 一般シェフのマイレシピを削除するAPI
+	usr.POST("/recipe", s.CreateUsrRecipe)               // 一般シェフのマイレシピを新規登録するAPI
 
 	// 有名シェフのレシピ関連
 	//api.GET("/chefs/:id/recipe", s.GetChefRecipe)
@@ -83,34 +83,42 @@ func (s *Server) MountHandlers() {
 	api.GET("/recipes/trend", s.ListTrendRecipe) // 話題のレシピ一覧を取得するAPI
 
 	// 買い物リスト関連
-	usr.GET("/lists", s.ListShoppingList)                  // ユーザーの買い物リスト一覧を取得するAPI
-	usr.GET("/lists/recipe/:recipe_id", s.GetShoppingList) // 買い物リストを取得するAPI
-	usr.PUT("/lists/:id", s.UpdateShoppingList)            // 買い物リストを更新するAPI
-	usr.DELETE("/lists/:id", s.DeleteShoppingList)         // 買い物リストを削除するAPI
-	usr.POST("/lists", s.CreateShoppingList)               // 買い物リストを新規登録するAPI
+	lists := api.Group("/lists")
+	lists.Use(s.Authentication())
+	lists.GET("/", s.ListShoppingList)                  // ユーザーの買い物リスト一覧を取得するAPI
+	lists.GET("/recipe/:recipe_id", s.GetShoppingList) // 買い物リストを取得するAPI
+	lists.PUT("/:id", s.UpdateShoppingList)            // 買い物リストを更新するAPI
+	lists.DELETE("/:id", s.DeleteShoppingList)         // 買い物リストを削除するAPI
+	lists.POST("/", s.CreateShoppingList)               // 買い物リストを新規登録するAPI
 
 	// 画像関連
 	api.GET("/images", s.GetImage)   // 画像を取得するAPI（webp限定）
 	api.POST("/images", s.PostImage) // 画像を新規登録するAPI（webp形式に変換される）
 
+	// フォローグループを作成
+	follow := api.Group("/follow")
+	follow.Use(s.Authentication())
 	// 有名シェフフォロー関連
-	usr.POST("/follow/chefs/:id", s.CreateFollowChef)           // 有名シェフをフォローするAPI
-	usr.DELETE("/follow/chefs/:id", s.DeleteFollowChef)         // 有名シェフのフォローを解除するAPI
-	usr.GET("/follow/chefs/:id", s.ExistsFollowChef)            // 有名シェフをフォローしているか
-	usr.GET("/follow/chefs", s.ListFollowChef)                  // フォローしている有名シェフの一覧を取得するAPI
-	usr.GET("/follow/chefs/recipes", s.ListFollowChefNewRecipe) // フォローしているシェフの新着レシピ一覧を取得するAPI
+	follow.POST("/chefs/:id", s.CreateFollowChef)           // 有名シェフをフォローするAPI
+	follow.DELETE("/chefs/:id", s.DeleteFollowChef)         // 有名シェフのフォローを解除するAPI
+	follow.GET("/chefs/:id", s.ExistsFollowChef)            // 有名シェフをフォローしているか
+	follow.GET("/chefs", s.ListFollowChef)                  // フォローしている有名シェフの一覧を取得するAPI
+	follow.GET("/chefs/recipes", s.ListFollowChefNewRecipe) // フォローしているシェフの新着レシピ一覧を取得するAPI
 
 	// 一般シェフフォロー関連
-	usr.POST("/follow/users/:id", s.CreateFollowUser)   // 一般シェフをフォローするAPI
-	usr.DELETE("/follow/users/:id", s.DeleteFollowUser) // 一般シェフのフォローを解除するAPI
-	usr.GET("/follow/users/:id", s.ExistsFollowUser)    // 一般シェフをフォローしているか
-	usr.GET("/follow/users", s.ListFollowUser)          // フォローしている一般シェフの一覧を取得するAPI
+	follow.POST("/users/:id", s.CreateFollowUser)   // 一般シェフをフォローするAPI
+	follow.DELETE("/users/:id", s.DeleteFollowUser) // 一般シェフのフォローを解除するAPI
+	follow.GET("/users/:id", s.ExistsFollowUser)    // 一般シェフをフォローしているか
+	follow.GET("/users", s.ListFollowUser)          // フォローしている一般シェフの一覧を取得するAPI
 
+	// フォローグループを作成
+	fav := api.Group("/favorite")
+	fav.Use(s.Authentication())
 	// お気に入りレシピ関連
-	usr.POST("/favorite/recipes/:id", s.CreateFavoriteRecipe)   // お気に入りレシピ登録API
-	usr.DELETE("/favorite/recipes/:id", s.DeleteFavoriteRecipe) // お気に入りレシピ解除API
-	usr.GET("/favorite/recipes/:id", s.ExistsFavoriteRecipe)    // お気に入りレシピとして登録しているか確認API
-	usr.GET("/favorite/recipes", s.ListFavoriteRecipe)          // お気に入りレシピの一覧を取得するAPI
+	fav.POST("/recipes/:id", s.CreateFavoriteRecipe)   // お気に入りレシピ登録API
+	fav.DELETE("/recipes/:id", s.DeleteFavoriteRecipe) // お気に入りレシピ解除API
+	fav.GET("/recipes/:id", s.ExistsFavoriteRecipe)    // お気に入りレシピとして登録しているか確認API
+	fav.GET("/recipes", s.ListFavoriteRecipe)          // お気に入りレシピの一覧を取得するAPI
 }
 
 func (s *Server) Start(addr string) error {

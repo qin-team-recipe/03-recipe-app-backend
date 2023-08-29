@@ -183,7 +183,7 @@ paths:
                 $ref: '#/components/schemas/FeaturedChef'
       servers:
         - url: 'http://localhost:8080'
-  /api/user/users:
+  /api/users:
     get:
       summary: 自分を取得
       operationId: get-api-user-users
@@ -466,7 +466,7 @@ paths:
                 $ref: '#/components/schemas/DeletedRecipe'
       servers:
         - url: 'http://localhost:8080'
-  '/api/user/users/recipe/{recipe_id}':
+  '/api/users/recipe/{recipe_id}':
     put:
       summary: 一般シェフのマイレシピ更新
       operationId: put-api-user-users-recipe-recipe_id
@@ -720,7 +720,7 @@ paths:
                 $ref: '#/components/schemas/CreateChefRecipe'
       servers:
         - url: 'http://localhost:8080'
-  /api/user/users/recipe:
+  /api/users/recipe:
     post:
       summary: 一般シェフのマイレシピ新規登録
       operationId: post-api-user-users-recipe
@@ -842,7 +842,7 @@ paths:
                 $ref: '#/components/schemas/TrendRecipe'
       servers:
         - url: 'http://localhost:8080'
-  /api/user/lists:
+  /api/users/lists:
     get:
       summary: ユーザーの買い物リスト一覧
       operationId: get-api-user-lists
@@ -923,7 +923,7 @@ paths:
                 $ref: '#/components/schemas/CreateShoppingList'
       servers:
         - url: 'http://localhost:8080'
-  '/api/user/lists/recipe/{recipe_id}':
+  '/api/users/lists/recipe/{recipe_id}':
     get:
       summary: 買い物リスト取得
       operationId: get-api-user-lists-recipe-recipe_id
@@ -942,7 +942,7 @@ paths:
                 $ref: '#/components/schemas/GetShoppingList'
       servers:
         - url: 'http://localhost:8080'
-  '/api/user/lists/{id}':
+  '/api/users/lists/{id}':
     delete:
       summary: 買い物リスト削除
       operationId: delete-api-user-lists-id
@@ -1085,7 +1085,7 @@ paths:
                 $ref: '#/components/schemas/SearchChefRecipe'
       servers:
         - url: 'http://localhost:8080'
-  '/api/user/follow/chefs/{id}':
+  '/api/users/follow/chefs/{id}':
     get:
       summary: 有名シェフをフォローしているか
       operationId: get-api-user-follow-chefs-id
@@ -1140,7 +1140,7 @@ paths:
                 $ref: '#/components/schemas/DeletedFollowChef'
       servers:
         - url: 'http://localhost:8080'
-  /api/user/follow/chefs:
+  /api/users/follow/chefs:
     get:
       summary: フォローしている有名シェフの一覧を取得する
       operationId: get-api-user-follow-chefs
@@ -1153,7 +1153,7 @@ paths:
                 $ref: '#/components/schemas/ListFollowChef'
       servers:
         - url: 'http://localhost:8080'
-  /api/user/follow/chefs/recipes:
+  /api/users/follow/chefs/recipes:
     get:
       summary: フォローしているシェフの新着レシピ一覧を取得する
       operationId: get-api-user-follow-chefs-recipes
