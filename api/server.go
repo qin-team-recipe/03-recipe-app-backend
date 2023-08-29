@@ -119,6 +119,9 @@ func (s *Server) MountHandlers() {
 	fav.DELETE("/recipes/:id", s.DeleteFavoriteRecipe) // お気に入りレシピ解除API
 	fav.GET("/recipes/:id", s.ExistsFavoriteRecipe)    // お気に入りレシピとして登録しているか確認API
 	fav.GET("/recipes", s.ListFavoriteRecipe)          // お気に入りレシピの一覧を取得するAPI
+
+	// 管理者グループを作成
+	// admin := api.Group("/admin")
 }
 
 func (s *Server) Start(addr string) error {
