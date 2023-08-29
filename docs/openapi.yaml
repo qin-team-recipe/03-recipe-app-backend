@@ -159,7 +159,7 @@ paths:
       servers:
         - url: 'http://localhost:8080'
     get:
-      summary: ''
+      summary: 有名シェフ一覧を取得
       operationId: get-api-chefs
       responses:
         '200':
@@ -262,6 +262,35 @@ paths:
                 $ref: '#/components/schemas/DeletedUsr'
       servers:
         - url: 'http://localhost:8080'
+    post:
+      summary: ユーザ新規登録
+      operationId: post-api-users
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostUsr'
+      x-stoplight:
+        id: 1edmw8b8h9nq7
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              x-examples:
+                Example 1:
+                  name: aopontan
+              properties:
+                name:
+                  type: string
+              required:
+                - name
+            examples:
+              Example 1:
+                value:
+                  name: aopontan
   '/api/users/{id}':
     get:
       summary: ユーザー取得
@@ -1797,6 +1826,20 @@ components:
           createdAt: '2023-08-08T18:48:40.89562+09:00'
           updatedAt: '2023-08-08T19:56:55.402664+09:00'
           numRecipe: 0
+    PostUsr:
+      type: object
+      properties:
+        email:
+          type: string
+        id:
+          type: string
+        name:
+          type: string
+      x-examples:
+        Example 1:
+          email: aopontan0416@gmail.com
+          id: b1cbb946-0dbd-437d-a2fe-829f2d7709c6
+          name: aopontann
     UpdateUsr:
       type: object
       properties:
