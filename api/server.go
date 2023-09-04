@@ -9,7 +9,7 @@ import (
 )
 
 type Server struct {
-	r   *gin.Engine
+	R   *gin.Engine
 	db  *pgx.Conn
 	q   *db.Queries
 	rbd *redis.Client
@@ -18,7 +18,7 @@ type Server struct {
 func NewServer(conn *pgx.Conn, rdb *redis.Client) *Server {
 	engine := gin.Default()
 	server := &Server{
-		r:   engine,
+		R:   engine,
 		db:  conn,
 		q:   db.New(conn),
 		rbd: rdb,
@@ -27,8 +27,8 @@ func NewServer(conn *pgx.Conn, rdb *redis.Client) *Server {
 }
 
 func (s *Server) MountHandlers() {
-	auth := s.r.Group("/auth")
-	api := s.r.Group("/api")
+	auth := s.R.Group("/auth")
+	api := s.R.Group("/api")
 
 	// api.POST("/users", s.RegisterUser)
 	// api.POST("/users/login", s.LoginUser)
@@ -114,5 +114,5 @@ func (s *Server) MountHandlers() {
 }
 
 func (s *Server) Start(addr string) error {
-	return s.r.Run(addr)
+	return s.R.Run(addr)
 }
