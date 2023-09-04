@@ -17,7 +17,7 @@ func main() {
 		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
 		os.Exit(1)
 	}
-	defer conn.Close(context.Background())
+	// defer conn.Close(context.Background())
 
 	rdb := redis.NewClient(&redis.Options{
         Addr:     "localhost:6379",
