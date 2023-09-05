@@ -2,6 +2,7 @@ package utils
 
 import (
 	"errors"
+	"fmt"
 	"strconv"
 
 	"github.com/jackc/pgx/v5/pgtype"
@@ -22,4 +23,26 @@ func StrToUUID(uuidStr string) (pgtype.UUID, error) {
 		id[i] = byte(b)
 	}
 	return pgtype.UUID{Bytes: id, Valid: true}, nil
+}
+
+func UUID2Str(id pgtype.UUID) string {
+	b := id.Bytes
+	return fmt.Sprintf("%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x",
+		b[0],
+		b[1],
+		b[2],
+		b[3],
+		b[4],
+		b[5],
+		b[6],
+		b[7],
+		b[8],
+		b[9],
+		b[10],
+		b[11],
+		b[12],
+		b[13],
+		b[14],
+		b[15],
+	)
 }

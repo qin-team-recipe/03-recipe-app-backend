@@ -55,27 +55,25 @@ func (s *Server) MountHandlers() {
 	usr.DELETE("/", s.DeleteSelf) // 自分を削除するAPI
 
 	// ユーザー（= 一般シェフ）のレシピ関連
-	//usr.GET("/users/recipe", s.GetUsrRecipe)
 	usr.PUT("/recipe/:recipe_id", s.UpdateUserRecipe)    // 一般シェフのマイレシピを更新するAPI
 	usr.DELETE("/recipe/:recipe_id", s.DeleteUserRecipe) // 一般シェフのマイレシピを削除するAPI
 	usr.POST("/recipe", s.CreateUsrRecipe)               // 一般シェフのマイレシピを新規登録するAPI
 
 	// 有名シェフのレシピ関連
-	//api.GET("/chefs/:id/recipe", s.GetChefRecipe)
 	api.PUT("/chefs/recipe/:recipe_id", s.UpdateChefRecipe)    // 有名シェフのレシピを更新するAPI
 	api.DELETE("/chefs/recipe/:recipe_id", s.DeleteChefRecipe) // 有名シェフのレシピを削除するAPI
 	api.POST("/chefs/:id/recipe", s.CreateChefRecipe)          // 有名シェフのレシピを新規登録するAPI
+	api.GET("/chefs/:id/recipes", s.ListChefRecipe)            // 有名シェフのレシピ一覧を取得するAPI
 	api.GET("/chefs/recipe/search", s.SearchChefRecipe)        // 有名シェフのレシピを全文検索するAPI
 
 	// 有名シェフ関連
-	api.GET("/chefs/:id", s.GetChef)                // 有名シェフを取得するAPI
-	api.GET("/chefs/:id/recipes", s.ListChefRecipe) // 有名シェフのレシピ一覧を取得するAPI
-	api.PUT("/chefs/:id", s.UpdateChef)             // 有名シェフを更新するAPI
-	api.DELETE("/chefs/:id", s.DeleteChef)          // 有名シェフを削除するAPI
-	api.GET("/chefs", s.ListChef)                   // 有名シェフを取得するAPI
-	api.POST("/chefs", s.CreateChef)                // 有名シェフを新規登録するAPI
-	api.GET("/chefs/featured", s.ListFeaturedChef)  // 注目の有名シェフ一覧を取得するAPI
-	api.GET("/chefs/search", s.SearchChef)          // 有名シェフを全文検索するAPI
+	api.GET("/chefs/:id", s.GetChef)               // 有名シェフを取得するAPI
+	api.PUT("/chefs/:id", s.UpdateChef)            // 有名シェフを更新するAPI
+	api.DELETE("/chefs/:id", s.DeleteChef)         // 有名シェフを削除するAPI
+	api.GET("/chefs", s.ListChef)                  // 有名シェフを取得するAPI
+	api.POST("/chefs", s.CreateChef)               // 有名シェフを新規登録するAPI
+	api.GET("/chefs/featured", s.ListFeaturedChef) // 注目の有名シェフ一覧を取得するAPI
+	api.GET("/chefs/search", s.SearchChef)         // 有名シェフを全文検索するAPI
 
 	// レシピ関連
 	api.GET("/recipes/:id", s.GetRecipe)         // レシピを取得するAPI
@@ -85,11 +83,11 @@ func (s *Server) MountHandlers() {
 	// 買い物リスト関連
 	lists := api.Group("/lists")
 	lists.Use(s.Authentication())
-	lists.GET("/", s.ListShoppingList)                  // ユーザーの買い物リスト一覧を取得するAPI
+	lists.GET("/", s.ListShoppingList)                 // ユーザーの買い物リスト一覧を取得するAPI
 	lists.GET("/recipe/:recipe_id", s.GetShoppingList) // 買い物リストを取得するAPI
 	lists.PUT("/:id", s.UpdateShoppingList)            // 買い物リストを更新するAPI
 	lists.DELETE("/:id", s.DeleteShoppingList)         // 買い物リストを削除するAPI
-	lists.POST("/", s.CreateShoppingList)               // 買い物リストを新規登録するAPI
+	lists.POST("/", s.CreateShoppingList)              // 買い物リストを新規登録するAPI
 
 	// 画像関連
 	api.GET("/images", s.GetImage)   // 画像を取得するAPI（webp限定）
@@ -98,6 +96,7 @@ func (s *Server) MountHandlers() {
 	// フォローグループを作成
 	follow := api.Group("/follow")
 	follow.Use(s.Authentication())
+
 	// 有名シェフフォロー関連
 	follow.POST("/chefs/:id", s.CreateFollowChef)           // 有名シェフをフォローするAPI
 	follow.DELETE("/chefs/:id", s.DeleteFollowChef)         // 有名シェフのフォローを解除するAPI
@@ -114,6 +113,7 @@ func (s *Server) MountHandlers() {
 	// フォローグループを作成
 	fav := api.Group("/favorite")
 	fav.Use(s.Authentication())
+
 	// お気に入りレシピ関連
 	fav.POST("/recipes/:id", s.CreateFavoriteRecipe)   // お気に入りレシピ登録API
 	fav.DELETE("/recipes/:id", s.DeleteFavoriteRecipe) // お気に入りレシピ解除API
@@ -131,6 +131,11 @@ func (s *Server) MountHandlers() {
 	// admin.POST("/chefs/recipes", )
 	// admin.PUT("/chefs/recipes", )
 	// admin.DELETE("/chefs/recipes", )
+
+	// 開発者用
+	dev := api.Group("/dev")
+	dev.POST("/chefs", s.CreateChefData) // 有名シェフ＆レシピのテストデータを作成するAPI
+	dev.POST("/users", s.CreateUserData) // 自分でないユーザー（一般シェフ）＆レシピのテストデータを作成するAPI
 }
 
 func (s *Server) Start(addr string) error {
