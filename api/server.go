@@ -122,6 +122,15 @@ func (s *Server) MountHandlers() {
 
 	// 管理者グループを作成
 	// admin := api.Group("/admin")
+	// admin.Use() TODO: 管理者用のミドルウェアを作成する
+	// admin.POST("/chefs", )
+	// admin.PUT("/chefs", )
+	// admin.DELETE("/chefs", )
+
+	// admin.GET("/chefs/recipes", )
+	// admin.POST("/chefs/recipes", )
+	// admin.PUT("/chefs/recipes", )
+	// admin.DELETE("/chefs/recipes", )
 }
 
 func (s *Server) Start(addr string) error {
