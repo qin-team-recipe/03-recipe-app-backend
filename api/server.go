@@ -55,13 +55,11 @@ func (s *Server) MountHandlers() {
 	usr.DELETE("/", s.DeleteSelf) // 自分を削除するAPI
 
 	// ユーザー（= 一般シェフ）のレシピ関連
-	//usr.GET("/users/recipe", s.GetUsrRecipe)
 	usr.PUT("/recipe/:recipe_id", s.UpdateUserRecipe)    // 一般シェフのマイレシピを更新するAPI
 	usr.DELETE("/recipe/:recipe_id", s.DeleteUserRecipe) // 一般シェフのマイレシピを削除するAPI
 	usr.POST("/recipe", s.CreateUsrRecipe)               // 一般シェフのマイレシピを新規登録するAPI
 
 	// 有名シェフのレシピ関連
-	//api.GET("/chefs/:id/recipe", s.GetChefRecipe)
 	api.PUT("/chefs/recipe/:recipe_id", s.UpdateChefRecipe)    // 有名シェフのレシピを更新するAPI
 	api.DELETE("/chefs/recipe/:recipe_id", s.DeleteChefRecipe) // 有名シェフのレシピを削除するAPI
 	api.POST("/chefs/:id/recipe", s.CreateChefRecipe)          // 有名シェフのレシピを新規登録するAPI

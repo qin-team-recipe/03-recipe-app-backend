@@ -120,7 +120,7 @@ func (s *Server) CreateUserData(c *gin.Context) {
 	}
 	var param db.UpdateUserParams
 	param.Email = createUserParams.Email
-	param.Data = []byte(fmt.Sprintf(`
+	param.Data = []byte(`
 		{
 			"name": "ユーザー名",
 			"imageUrl": "1e902068-d0cf-4fa5-a957-de5c49762179.webp",
@@ -135,7 +135,7 @@ func (s *Server) CreateUserData(c *gin.Context) {
 					"url": "http://www.yahoo.co.jp"
 				}
 			]
-		}`))
+		}`)
 	response, err := s.q.UpdateUser(context.Background(), param)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
