@@ -159,7 +159,7 @@ paths:
       servers:
         - url: 'http://localhost:8080'
     get:
-      summary: ''
+      summary: 有名シェフ一覧を取得
       operationId: get-api-chefs
       responses:
         '200':
@@ -183,7 +183,7 @@ paths:
                 $ref: '#/components/schemas/FeaturedChef'
       servers:
         - url: 'http://localhost:8080'
-  /api/user/users:
+  /api/users:
     get:
       summary: 自分を取得
       operationId: get-api-user-users
@@ -262,6 +262,35 @@ paths:
                 $ref: '#/components/schemas/DeletedUsr'
       servers:
         - url: 'http://localhost:8080'
+    post:
+      summary: ユーザ新規登録
+      operationId: post-api-users
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostUsr'
+      x-stoplight:
+        id: 1edmw8b8h9nq7
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              x-examples:
+                Example 1:
+                  name: aopontan
+              properties:
+                name:
+                  type: string
+              required:
+                - name
+            examples:
+              Example 1:
+                value:
+                  name: aopontan
   '/api/users/{id}':
     get:
       summary: ユーザー取得
@@ -466,7 +495,7 @@ paths:
                 $ref: '#/components/schemas/DeletedRecipe'
       servers:
         - url: 'http://localhost:8080'
-  '/api/user/users/recipe/{recipe_id}':
+  '/api/users/recipe/{recipe_id}':
     put:
       summary: 一般シェフのマイレシピ更新
       operationId: put-api-user-users-recipe-recipe_id
@@ -720,7 +749,7 @@ paths:
                 $ref: '#/components/schemas/CreateChefRecipe'
       servers:
         - url: 'http://localhost:8080'
-  /api/user/users/recipe:
+  /api/users/recipe:
     post:
       summary: 一般シェフのマイレシピ新規登録
       operationId: post-api-user-users-recipe
@@ -842,7 +871,7 @@ paths:
                 $ref: '#/components/schemas/TrendRecipe'
       servers:
         - url: 'http://localhost:8080'
-  /api/user/lists:
+  /api/lists:
     get:
       summary: ユーザーの買い物リスト一覧
       operationId: get-api-user-lists
@@ -855,6 +884,8 @@ paths:
                 $ref: '#/components/schemas/GetShoppingLists'
       servers:
         - url: 'http://localhost:8080'
+      x-stoplight:
+        id: dihzvraxcb0f7
     post:
       summary: 買い物リスト登録
       operationId: post-api-user-lists
@@ -923,7 +954,10 @@ paths:
                 $ref: '#/components/schemas/CreateShoppingList'
       servers:
         - url: 'http://localhost:8080'
-  '/api/user/lists/recipe/{recipe_id}':
+      x-stoplight:
+        id: 8zeq8glcm1fcu
+    parameters: []
+  '/api/lists/recipe/{recipe_id}':
     get:
       summary: 買い物リスト取得
       operationId: get-api-user-lists-recipe-recipe_id
@@ -942,7 +976,15 @@ paths:
                 $ref: '#/components/schemas/GetShoppingList'
       servers:
         - url: 'http://localhost:8080'
-  '/api/user/lists/{id}':
+      x-stoplight:
+        id: sob0sv5df984v
+    parameters:
+      - schema:
+          type: string
+        name: recipe_id
+        in: path
+        required: true
+  '/api/lists/{id}':
     delete:
       summary: 買い物リスト削除
       operationId: delete-api-user-lists-id
@@ -961,6 +1003,8 @@ paths:
                 $ref: '#/components/schemas/DeletedShoppingList'
       servers:
         - url: 'http://localhost:8080'
+      x-stoplight:
+        id: k1jokcw8ev1kz
     put:
       summary: 買い物リスト更新
       operationId: put-api-user-lists-id
@@ -1046,6 +1090,14 @@ paths:
                 $ref: '#/components/schemas/UpdateShoppingList'
       servers:
         - url: 'http://localhost:8080'
+      x-stoplight:
+        id: ujmqhibecln9c
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
   /api/chefs/search:
     get:
       summary: 有名シェフを全文検索
@@ -1068,7 +1120,7 @@ paths:
         - url: 'http://localhost:8080'
   /api/chefs/recipe/search:
     get:
-      summary: 名シェフのレシピを全文検索
+      summary: 有名シェフのレシピを全文検索
       operationId: get-api-chefs-recipe-search
       parameters:
         - name: q
@@ -1085,7 +1137,7 @@ paths:
                 $ref: '#/components/schemas/SearchChefRecipe'
       servers:
         - url: 'http://localhost:8080'
-  '/api/user/follow/chefs/{id}':
+  '/api/follow/chefs/{id}':
     get:
       summary: 有名シェフをフォローしているか
       operationId: get-api-user-follow-chefs-id
@@ -1104,6 +1156,8 @@ paths:
                 $ref: '#/components/schemas/ExistsFollowChef'
       servers:
         - url: 'http://localhost:8080'
+      x-stoplight:
+        id: irpf8y0n1n7vy
     post:
       summary: 有名シェフをフォローする
       operationId: post-api-user-follow-chefs-id
@@ -1122,6 +1176,8 @@ paths:
                 $ref: '#/components/schemas/CreateFollowChef'
       servers:
         - url: 'http://localhost:8080'
+      x-stoplight:
+        id: nqznkgzvc6kwg
     delete:
       summary: 有名シェフのフォローを解除する
       operationId: delete-api-user-follow-chefs-id
@@ -1140,7 +1196,15 @@ paths:
                 $ref: '#/components/schemas/DeletedFollowChef'
       servers:
         - url: 'http://localhost:8080'
-  /api/user/follow/chefs:
+      x-stoplight:
+        id: 6a6zr7smbz0dg
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+  /api/follow/chefs:
     get:
       summary: フォローしている有名シェフの一覧を取得する
       operationId: get-api-user-follow-chefs
@@ -1153,7 +1217,10 @@ paths:
                 $ref: '#/components/schemas/ListFollowChef'
       servers:
         - url: 'http://localhost:8080'
-  /api/user/follow/chefs/recipes:
+      x-stoplight:
+        id: n900ju5bq0flk
+    parameters: []
+  /api/follow/chefs/recipes:
     get:
       summary: フォローしているシェフの新着レシピ一覧を取得する
       operationId: get-api-user-follow-chefs-recipes
@@ -1166,7 +1233,10 @@ paths:
                 $ref: '#/components/schemas/ListFollowChefRecipe'
       servers:
         - url: 'http://localhost:8080'
-  '/api/user/follow/users/{id}':
+      x-stoplight:
+        id: hmd5y27i5foeu
+    parameters: []
+  '/api/follow/users/{id}':
     get:
       summary: 一般シェフをフォローしているか
       operationId: get-api-user-follow-users-id
@@ -1185,6 +1255,8 @@ paths:
                 $ref: '#/components/schemas/ExistsFollowUser'
       servers:
         - url: 'http://localhost:8080'
+      x-stoplight:
+        id: pim80p2knsd8h
     post:
       summary: 一般シェフをフォローする
       operationId: post-api-user-follow-users-id
@@ -1204,6 +1276,8 @@ paths:
           description: OK
       servers:
         - url: 'http://localhost:8080'
+      x-stoplight:
+        id: e0xv29puugdgj
     delete:
       summary: 一般シェフのフォローを解除する
       operationId: delete-api-user-follow-users-id
@@ -1222,7 +1296,15 @@ paths:
                 $ref: '#/components/schemas/DeletedFollowUser'
       servers:
         - url: 'http://localhost:8080'
-  /api/user/follow/users:
+      x-stoplight:
+        id: ve2r4t47pevis
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+  /api/follow/users:
     get:
       summary: フォローしている一般シェフの一覧を取得する
       operationId: get-api-user-follow-users
@@ -1235,6 +1317,9 @@ paths:
                 $ref: '#/components/schemas/ListFollowUser'
       servers:
         - url: 'http://localhost:8080'
+      x-stoplight:
+        id: 41jxoe4c4fhc3
+    parameters: []
   '/api/chefs/{id}/recipes':
     parameters:
       - schema:
@@ -1287,9 +1372,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PostImage'
-  /api/user/favorite/recipes:
+  /api/favorite/recipes:
     get:
-      summary: Your GET endpoint
+      summary: お気に入りのレシピ一覧を取得
       operationId: get-api-favorite-recipes
       responses:
         '200':
@@ -1300,9 +1385,12 @@ paths:
                 $ref: '#/components/schemas/ListFavoriteRecipe'
       servers:
         - url: 'http://localhost:8080'
-  '/api/user/favorite/recipes/{id}':
+      x-stoplight:
+        id: tendug5zdpty8
+    parameters: []
+  '/api/favorite/recipes/{id}':
     get:
-      summary: Your GET endpoint
+      summary: お気に入りしたレシピを取得
       operationId: get-api-favorite-recipes-id
       parameters:
         - name: id
@@ -1319,8 +1407,10 @@ paths:
                 $ref: '#/components/schemas/ExistsFavoriteRecipe'
       servers:
         - url: 'http://localhost:8080'
+      x-stoplight:
+        id: ad6cro6ztevwy
     post:
-      summary: ''
+      summary: レシピをお気に入り登録
       operationId: post-api-user-favorite-recipes-id
       parameters:
         - name: id
@@ -1337,8 +1427,10 @@ paths:
                 $ref: '#/components/schemas/CreateFavoriteRecipe'
       servers:
         - url: 'http://localhost:8080'
+      x-stoplight:
+        id: k1zq4a70um24w
     delete:
-      summary: ''
+      summary: レシピのお気に入り解除
       description: ''
       operationId: delete-api-user-favorite-recipes-id
       parameters:
@@ -1356,6 +1448,14 @@ paths:
                 $ref: '#/components/schemas/DeleteFavoriteRecipe'
       servers:
         - url: 'http://localhost:8080'
+      x-stoplight:
+        id: e0zkghtkx8v0z
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
 components:
   schemas:
     GetChef:
@@ -1797,6 +1897,20 @@ components:
           createdAt: '2023-08-08T18:48:40.89562+09:00'
           updatedAt: '2023-08-08T19:56:55.402664+09:00'
           numRecipe: 0
+    PostUsr:
+      type: object
+      properties:
+        email:
+          type: string
+        id:
+          type: string
+        name:
+          type: string
+      x-examples:
+        Example 1:
+          email: aopontan0416@gmail.com
+          id: b1cbb946-0dbd-437d-a2fe-829f2d7709c6
+          name: aopontann
     UpdateUsr:
       type: object
       properties:
