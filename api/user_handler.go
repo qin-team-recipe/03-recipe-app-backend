@@ -22,7 +22,7 @@ func (s *Server) CreateUser(c *gin.Context) {
 	// リクエストボディを構造体にバインド
 	reqb := createUserReqBody{}
 	if err := c.ShouldBind(&reqb); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"title": "リクエストボディを構造体にバインドするのに失敗しました。", "error": err.Error()})
 		return
 	}
 
@@ -30,14 +30,14 @@ func (s *Server) CreateUser(c *gin.Context) {
 	sid, _ := c.Cookie("session_id")
 	data, err := s.rbd.Get(context.Background(), sid).Result()
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		c.JSON(http.StatusUnauthorized, gin.H{"title": "redis から情報を引き出すのに失敗しました。", "error": err.Error()})
 		return
 	}
 
 	// redisから取得したユーザ情報を構造体に変換する
 	var uInfo userInfo
 	if err := json.Unmarshal([]byte(data), &uInfo); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"title": "ユーザ情報を構造体に変換するのに失敗しました。", "error": err.Error()})
 		return
 	}
 
@@ -48,14 +48,14 @@ func (s *Server) CreateUser(c *gin.Context) {
 		authServer = "google"
 	} else {
 		// google 以外のメールアドレスだった場合
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"title": "gmail 以外のメールが入力されました。", "error": err.Error()})
 		return
 	}
 
 	// DBにユーザ情報を保存する
 	res, err := s.q.CreateUser(context.Background(), db.CreateUserParams{Name: reqb.Name, Email: uInfo.Email, AuthServer: authServer, AuthUserinfo: []byte(data)})
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"title": "SQLの処理に失敗しました。", "error": err.Error()})
 		return
 	}
 
@@ -67,7 +67,7 @@ func (s *Server) CreateUser(c *gin.Context) {
 	}
 	s.rbd.Set(context.Background(), sid, b, 24*time.Hour)
 
-	c.JSON(http.StatusOK, gin.H{"id": res.ID, "name": res.Name, "email": res.Email})
+	c.JSON(http.StatusCreated, gin.H{"id": res.ID, "name": res.Name, "email": res.Email})
 }
 
 // 仮で作成したハンドラ関数
@@ -76,7 +76,7 @@ func (s *Server) GetUserId(c *gin.Context) {
 	email := c.MustGet("email").(string)
 	uid, err := s.q.GetUserId(context.Background(), email)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"title": "認証に失敗しました。", "error": err.Error()})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"id": uid, "email": email})
@@ -86,20 +86,20 @@ func (s *Server) GetUser(c *gin.Context) {
 	// パスパラメータ取り出し
 	id, err := utils.StrToUUID(c.Param("id"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"title": "パスパラメータ取り出しに失敗しました。", "error": err.Error()})
 	}
 
 	// 問い合わせ処理
 	row, err := s.q.GetUser(context.Background(), id)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"title": "SQLの処理に失敗しました。", "error": err.Error()})
 		return
 	}
 
 	// レスポンス型バリデーション
 	err = utils.ValidateStructTwoWay[db.GetUserRow, docs.GetUsr](&row)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"title": "型のバリデーションが失敗しました。", "error": err.Error()})
 		return
 	}
 
@@ -113,14 +113,14 @@ func (s *Server) GetSelf(c *gin.Context) {
 	// 問い合わせ処理
 	row, err := s.q.GetSelf(context.Background(), email)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"title": "SQLの処理に失敗しました。", "error": err.Error()})
 		return
 	}
 
 	// レスポンス型バリデーション
 	err = utils.ValidateStructTwoWay[db.GetSelfRow, docs.GetUsr](&row)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"title": "型のバリデーションが失敗しました。", "error": err.Error()})
 		return
 	}
 
@@ -137,7 +137,7 @@ func (s *Server) UpdateSelf(c *gin.Context) {
 	// リクエストボディを構造体にバインド
 	reqb := docs.PutApiUserUsersJSONRequestBody{}
 	if err := c.ShouldBind(&reqb); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"title": "リクエストボディを構造体に変換を失敗しました。", "error": err.Error()})
 		return
 	}
 
@@ -145,20 +145,20 @@ func (s *Server) UpdateSelf(c *gin.Context) {
 	var err error
 	param.Data, err = json.Marshal(&reqb)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"title": "構造体からJSONに変換を失敗しました。", "error": err.Error()})
 	}
 
 	// 更新処理
 	row, err := s.q.UpdateUser(context.Background(), param)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"title": "SQLの処理に失敗しました。", "error": err.Error()})
 		return
 	}
 
 	// レスポンス型バリデーション
 	err = utils.ValidateStructTwoWay[db.UpdateUserRow, docs.UpdateUsr](&row)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"title": "型のバリデーションが失敗しました。", "error": err.Error()})
 		return
 	}
 
@@ -172,16 +172,16 @@ func (s *Server) DeleteSelf(c *gin.Context) {
 	// 削除処理
 	row, err := s.q.DeleteUser(context.Background(), email)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"title": "SQLの処理に失敗しました。", "error": err.Error()})
 		return
 	}
 
 	// レスポンス型バリデーション
 	err = utils.ValidateStructTwoWay[db.DeleteUserRow, docs.DeletedUsr](&row)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"title": "型のバリデーションが失敗しました。", "error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, row)
+	c.JSON(http.StatusNoContent, row)
 }

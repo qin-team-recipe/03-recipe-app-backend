@@ -23,14 +23,14 @@ func (s *Server) ListShoppingList(c *gin.Context) {
 	rv := c.MustGet("rv").(redisValue)
 	usrId, err := utils.StrToUUID(rv.ID)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		c.JSON(http.StatusUnauthorized, gin.H{"title": "認証が失敗しました。", "error": err.Error()})
 		return
 	}
 
 	var response shoppingListResponse
 	response.Data, err = s.q.ListShoppingList(context.Background(), usrId)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"title": "SQLの処理が失敗しました。", "error": err.Error()})
 		return
 	}
 
@@ -41,7 +41,7 @@ func (s *Server) ListShoppingList(c *gin.Context) {
 	// レスポンス型バリデーション
 	err = utils.ValidateStructTwoWay[shoppingListResponse, docs.GetShoppingLists](&response)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"title": "型のバリデーションが失敗しました。", "error": err.Error()})
 		return
 	}
 
@@ -56,27 +56,27 @@ func (s *Server) GetShoppingList(c *gin.Context) {
 	rv := c.MustGet("rv").(redisValue)
 	param.UsrID, err = utils.StrToUUID(rv.ID)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		c.JSON(http.StatusUnauthorized, gin.H{"title": "認証が失敗しました。", "error": err.Error()})
 		return
 	}
 
 	// パスパラメータ取り出し
 	param.RecipeID, err = utils.StrToUUID(c.Param("recipe_id"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"title": "パスパラメーtの取り出しが失敗しました。", "error": err.Error()})
 	}
 
 	// 問い合わせ処理
 	row, err := s.q.GetShoppingList(context.Background(), param)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"title": "SQLの処理が失敗しました。", "error": err.Error()})
 		return
 	}
 
 	// レスポンス型バリデーション
 	err = utils.ValidateStructTwoWay[db.GetShoppingListRow, docs.GetShoppingList](&row)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"title": "型のバリデーションが失敗しました。", "error": err.Error()})
 		return
 	}
 
@@ -87,14 +87,14 @@ func (s *Server) CreateShoppingList(c *gin.Context) {
 	// リクエストボディをJSONに変換
 	jsn, err := c.GetRawData()
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"title": "リクエストボディをJSONに変換するのが失敗しました。", "error": err.Error()})
 		return
 	}
 
 	// リクエストボディJSONのバリデーション
 	err = utils.ValidateStruct[docs.PostApiUserListsJSONRequestBody](jsn)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"title": "リクエストボディJSONのバリデーションが失敗しました。", "error": err.Error()})
 		return
 	}
 
@@ -121,7 +121,7 @@ func (s *Server) CreateShoppingList(c *gin.Context) {
 	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&reqb)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"title": "バリデーション済のJSONをreqb変数に変換するのが失敗しました。", "error": err.Error()})
 		return
 	}
 
@@ -129,7 +129,7 @@ func (s *Server) CreateShoppingList(c *gin.Context) {
 	rv := c.MustGet("rv").(redisValue)
 	reqb.UsrID, err = utils.StrToUUID(rv.ID)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		c.JSON(http.StatusUnauthorized, gin.H{"title": "認証が失敗しました。", "error": err.Error()})
 		return
 	}
 
@@ -144,7 +144,7 @@ func (s *Server) CreateShoppingList(c *gin.Context) {
 	// 買い物リストテーブルへの新規登録
 	*resp.Alias2, err = qtx.CreateShoppingList(context.Background(), *reqb.Alias1)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"title": "SQLの処理が失敗しました。", "error": err.Error()})
 		return
 	}
 
@@ -154,7 +154,7 @@ func (s *Server) CreateShoppingList(c *gin.Context) {
 		reqb.Item[i].Idx = int32(i + 1)
 		itemRow, err := qtx.InnerCreateShoppingItem(context.Background(), reqb.Item[i])
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			c.JSON(http.StatusInternalServerError, gin.H{"title": "SQLの処理が失敗しました。", "error": err.Error()})
 			return
 		}
 		resp.Item = append(resp.Item, itemRow)
@@ -163,32 +163,32 @@ func (s *Server) CreateShoppingList(c *gin.Context) {
 	// レスポンス型バリデーション
 	err = utils.ValidateStructTwoWay[response, docs.CreateShoppingList](&resp)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"title": "レスポンス型バリデーションが失敗しました。", "error": err.Error()})
 		return
 	}
 
 	// トランザクション終了
 	err = tx.Commit(c)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"title": "トランザクションに失敗しました。", "error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, resp)
+	c.JSON(http.StatusCreated, resp)
 }
 
 func (s *Server) UpdateShoppingList(c *gin.Context) {
 	// リクエストボディをJSONに変換
 	jsn, err := c.GetRawData()
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"title": "リクエストボディをJSONに変換するのに失敗しました。", "error": err.Error()})
 		return
 	}
 
 	// リクエストボディJSONのバリデーション
 	err = utils.ValidateStruct[docs.PutApiUserListsIdJSONRequestBody](jsn)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"title": "リクエストボディJSONのバリデーションに失敗しました。", "error": err.Error()})
 		return
 	}
 
@@ -215,21 +215,21 @@ func (s *Server) UpdateShoppingList(c *gin.Context) {
 	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&reqb)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"title": "JSONを変数に代入するのに失敗しました。", "error": err.Error()})
 		return
 	}
 
 	// パスパラメータ取り出し
 	reqb.ID, err = utils.StrToUUID(c.Param("id"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"title": "パスパラメータの取り出しに失敗しました。", "error": err.Error()})
 	}
 
 	// Authentication()でセットしたUsrIDを取得
 	rv := c.MustGet("rv").(redisValue)
 	reqb.UsrID, err = utils.StrToUUID(rv.ID)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		c.JSON(http.StatusUnauthorized, gin.H{"title": "認証に失敗しました。", "error": err.Error()})
 		return
 	}
 
@@ -259,7 +259,7 @@ func (s *Server) UpdateShoppingList(c *gin.Context) {
 	// 買い物リストテーブルの更新
 	*resp.Alias2, err = qtx.UpdateShoppingList(context.Background(), *reqb.Alias1)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"title": "SQLの処理に失敗しました。", "error": err.Error()})
 		return
 	}
 
@@ -270,7 +270,7 @@ func (s *Server) UpdateShoppingList(c *gin.Context) {
 			// 買い物明細テーブルの更新
 			itemRow, err := qtx.InnerUpdateShoppingItem(context.Background(), reqb.Item[i])
 			if err != nil {
-				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+				c.JSON(http.StatusInternalServerError, gin.H{"title": "SQLの処理に失敗しました。", "error": err.Error()})
 				return
 			}
 			resp.Item = append(resp.Item, itemRow)
@@ -278,17 +278,17 @@ func (s *Server) UpdateShoppingList(c *gin.Context) {
 			// 買い物明細テーブルへの新規登録
 			var param db.InnerCreateShoppingItemParams
 			if err := copier.Copy(&param, &reqb.Item[i]); err != nil {
-				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+				c.JSON(http.StatusInternalServerError, gin.H{"title": "SQLの処理に失敗しました。", "error": err.Error()})
 				return
 			}
 			itemRow, err := qtx.InnerCreateShoppingItem(context.Background(), param)
 			if err != nil {
-				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+				c.JSON(http.StatusInternalServerError, gin.H{"title": "SQLの処理に失敗しました。", "error": err.Error()})
 				return
 			}
 			var itemRow2 db.InnerUpdateShoppingItemRow
 			if err := copier.Copy(&itemRow2, &itemRow); err != nil {
-				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+				c.JSON(http.StatusInternalServerError, gin.H{"title": "SQLの処理に失敗しました。", "error": err.Error()})
 				return
 			}
 			resp.Item = append(resp.Item, itemRow2)
@@ -298,14 +298,14 @@ func (s *Server) UpdateShoppingList(c *gin.Context) {
 	// レスポンス型バリデーション
 	err = utils.ValidateStructTwoWay[response, docs.UpdateShoppingList](&resp)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"title": "型のバリデーションが失敗しました。", "error": err.Error()})
 		return
 	}
 
 	// トランザクション終了
 	err = tx.Commit(c)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"title": "トランザクションに失敗しました。", "error": err.Error()})
 		return
 	}
 
@@ -320,29 +320,29 @@ func (s *Server) DeleteShoppingList(c *gin.Context) {
 	rv := c.MustGet("rv").(redisValue)
 	param.UsrID, err = utils.StrToUUID(rv.ID)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		c.JSON(http.StatusUnauthorized, gin.H{"title": "認証に失敗しました。", "error": err.Error()})
 		return
 	}
 
 	// パスパラメータ取り出し
 	param.ID, err = utils.StrToUUID(c.Param("id"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"title": "パスパラメータの取り出しに失敗しました。", "error": err.Error()})
 	}
 
 	// 問い合わせ処理
 	row, err := s.q.DeleteShoppingList(context.Background(), param)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"title": "SQLの処理に失敗しました。", "error": err.Error()})
 		return
 	}
 
 	// レスポンス型バリデーション
 	err = utils.ValidateStructTwoWay[db.ShoppingList, docs.DeletedShoppingList](&row)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"title": "型のバリデーションが失敗しました。", "error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, row)
+	c.JSON(http.StatusNoContent, row)
 }

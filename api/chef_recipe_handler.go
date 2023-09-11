@@ -17,14 +17,14 @@ func (s *Server) CreateChefRecipe(c *gin.Context) {
 	// リクエストボディを構造体にバインド
 	reqb := docs.PostApiChefsChefIdRecipeJSONRequestBody{}
 	if err := c.ShouldBind(&reqb); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"title": "リクエストボディを構造体にバインドできませんでした。", "error": err.Error()})
 		return
 	}
 
 	// パスパラメータ取り出し
 	chefId, err := utils.StrToUUID(c.Param("id"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"title": "パスパラメータに異常があります。", "error": err.Error()})
 	}
 
 	// 構造体にchefIdを追加してJSONに変換
@@ -37,24 +37,24 @@ func (s *Server) CreateChefRecipe(c *gin.Context) {
 		Alias:  (*Alias)(&reqb),
 	})
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"title": "構造体をJSONに変更できませんでした。", "error": err.Error()})
 	}
 
 	// 新規登録処理
 	row, err := s.q.CreateRecipe(context.Background(), jsn)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"title": "SQLの処理が上手くいきませんでした。", "error": err.Error()})
 		return
 	}
 
 	// レスポンス型バリデーション
 	err = utils.ValidateStructTwoWay[db.VRecipe, docs.CreateChefRecipe](&row)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"title": "型のバリデーションが失敗しました。", "error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, row)
+	c.JSON(http.StatusCreated, row)
 }
 
 func (s *Server) UpdateChefRecipe(c *gin.Context) {
@@ -64,33 +64,33 @@ func (s *Server) UpdateChefRecipe(c *gin.Context) {
 	// パスパラメータ取り出し
 	param.ID, err = utils.StrToUUID(c.Param("recipe_id"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"title": "パスパラメータに異常があります。", "error": err.Error()})
 	}
 
 	// リクエストボディを構造体にバインド
 	reqb := docs.PutApiChefsRecipeRecipeIdJSONRequestBody{}
 	if err := c.ShouldBind(&reqb); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"title": "リクエストボディを構造体にバインドできませんでした。", "error": err.Error()})
 		return
 	}
 
 	// 構造体からJSONに変換
 	param.Data, err = json.Marshal(&reqb)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"title": "構造体からJSONに変換できませんでした。", "error": err.Error()})
 	}
 
 	// 更新処理
 	row, err := s.q.UpdateRecipe(context.Background(), param)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"title": "SQLの処理が上手くいきませんでした。", "error": err.Error()})
 		return
 	}
 
 	// レスポンス型バリデーション
 	err = utils.ValidateStructTwoWay[db.VRecipe, docs.UpdateRecipe](&row)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"title": "型のバリデーションが失敗しました。", "error": err.Error()})
 		return
 	}
 
@@ -101,24 +101,24 @@ func (s *Server) DeleteChefRecipe(c *gin.Context) {
 	// パスパラメータ取り出し
 	id, err := utils.StrToUUID(c.Param("recipe_id"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"title": "パスパラメータに異常があります。", "error": err.Error()})
 	}
 
 	// 問い合わせ処理
 	row, err := s.q.DeleteChefRecipe(context.Background(), id)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"title": "SQLの処理が上手くいきませんでした。", "error": err.Error()})
 		return
 	}
 
 	// レスポンス型バリデーション
 	err = utils.ValidateStructTwoWay[db.DeleteChefRecipeRow, docs.DeletedRecipe](&row)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"title": "型のバリデーションが失敗しました。", "error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, row)
+	c.JSON(http.StatusNoContent, row)
 }
 
 func (s *Server) SearchChefRecipe(c *gin.Context) {
@@ -134,7 +134,7 @@ func (s *Server) SearchChefRecipe(c *gin.Context) {
 	var err error
 	response.Data, err = s.q.SearchChefRecipe(context.Background(), query)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"title": "SQLの処理が上手くいきませんでした。", "error": err.Error()})
 		return
 	}
 
@@ -145,7 +145,7 @@ func (s *Server) SearchChefRecipe(c *gin.Context) {
 	// レスポンス型バリデーション
 	err = utils.ValidateStructTwoWay[searchChefRecipeResponse, docs.SearchChefRecipe](&response)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"title": "型のバリデーションが失敗しました。", "error": err.Error()})
 		return
 	}
 
@@ -170,7 +170,7 @@ func (s *Server) ListChefRecipe(c *gin.Context) {
 
 		response.Data, err = s.q.ListChefRecipeNew(context.Background(), id)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			c.JSON(http.StatusInternalServerError, gin.H{"title": "SQLの処理が上手くいきませんでした。", "error": err.Error()})
 		}
 
 		if response.Data == nil || reflect.ValueOf(response.Data).IsNil() {
@@ -180,7 +180,7 @@ func (s *Server) ListChefRecipe(c *gin.Context) {
 		// レスポンス型バリデーション
 		err = utils.ValidateStructTwoWay[listChefRecipeponse, docs.ListRecipe](&response)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			c.JSON(http.StatusInternalServerError, gin.H{"title": "型のバリデーションが失敗しました。", "error": err.Error()})
 			return
 		}
 
@@ -193,7 +193,7 @@ func (s *Server) ListChefRecipe(c *gin.Context) {
 
 		response.Data, err = s.q.ListChefRecipeFav(context.Background(), id)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			c.JSON(http.StatusInternalServerError, gin.H{"title": "SQLの処理が上手くいきませんでした。", "error": err.Error()})
 		}
 
 		if response.Data == nil || reflect.ValueOf(response.Data).IsNil() {
@@ -203,13 +203,13 @@ func (s *Server) ListChefRecipe(c *gin.Context) {
 		// レスポンス型バリデーション
 		err = utils.ValidateStructTwoWay[listChefRecipeponse, docs.ListRecipe](&response)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			c.JSON(http.StatusInternalServerError, gin.H{"title": "型のバリデーションが失敗しました。", "error": err.Error()})
 			return
 		}
 
 		c.JSON(http.StatusOK, response)
 	} else {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Bad Request"})
+		c.JSON(http.StatusBadRequest, gin.H{"title": "orderがnew, fav以外のエラーが起きました。", "error": "Bad Request"})
 		return
 	}
 }

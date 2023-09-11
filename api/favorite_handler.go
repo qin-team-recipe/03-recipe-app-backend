@@ -18,28 +18,28 @@ func (s *Server) CreateFavoriteRecipe(c *gin.Context) {
 	var err error
 	param.RecipeID, err = utils.StrToUUID(c.Param("id"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"title": "パスパラメータが取得できませんでした。", "error": err.Error()})
 	}
 
 	// Authentication()でセットしたUsrIDを取得
 	rv := c.MustGet("rv").(redisValue)
 	param.UsrID, err = utils.StrToUUID(rv.ID)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		c.JSON(http.StatusUnauthorized, gin.H{"title": "認証が許可されていません。", "error": err.Error()})
 		return
 	}
 
 	// 新規登録処理
 	row, err := s.q.CreateFavoriteRecipe(context.Background(), param)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"title": "SQLの処理が上手くいきませんでした。", "error": err.Error()})
 		return
 	}
 
 	// レスポンス型バリデーション
 	err = utils.ValidateStructTwoWay[db.Favoring, docs.CreateFavoriteRecipe](&row)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"title": "型のバリデーションが失敗しました。", "error": err.Error()})
 		return
 	}
 
@@ -112,7 +112,7 @@ func (s *Server) ExistsFavoriteRecipe(c *gin.Context) {
 	// レスポンス型バリデーション
 	err = utils.ValidateStructTwoWay[existsFavoriteResponse, docs.ExistsFavoriteRecipe](&response)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"title": "型のバリデーションが失敗しました。", "error": err.Error()})
 		return
 	}
 
@@ -148,7 +148,7 @@ func (s *Server) ListFavoriteRecipe(c *gin.Context) {
 	// UUID が nil の時はエラーが出る
 	err = utils.ValidateStructTwoWay[listFavoriteRecipeResponse, docs.ListFavoriteRecipe](&response)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"title": "型のバリデーションが失敗しました。", "error": err.Error()})
 		return
 	}
 
