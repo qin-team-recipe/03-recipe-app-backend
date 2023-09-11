@@ -145,14 +145,14 @@ func (s *Server) Authentication() gin.HandlerFunc {
 		sid, _ := c.Cookie("session_id")
 		data, err := s.rbd.Get(context.Background(), sid).Result()
 		if err != nil {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+			c.JSON(http.StatusUnauthorized, gin.H{"title": "redisからメールアドレス取得に失敗しました。", "error": err.Error()})
 			c.Abort()
 		}
 
 		// redisから取得したユーザ情報を構造体に変換する
 		var rv redisValue
 		if err := json.Unmarshal([]byte(data), &rv); err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			c.JSON(http.StatusInternalServerError, gin.H{"title": "ユーザ情報を構造体に変換するのに失敗しました。", "error": err.Error()})
 			return
 		}
 		// 次に実行されるハンドラ関数で取得したメールアドレスを使うための処理

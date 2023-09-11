@@ -2,10 +2,11 @@ package api
 
 import (
 	"context"
-	"github.com/aopontann/gin-sqlc/docs"
-	"github.com/aopontann/gin-sqlc/utils"
 	"net/http"
 	"reflect"
+
+	"github.com/aopontann/gin-sqlc/docs"
+	"github.com/aopontann/gin-sqlc/utils"
 
 	db "github.com/aopontann/gin-sqlc/db/sqlc"
 	"github.com/gin-gonic/gin"
@@ -38,7 +39,7 @@ func (s *Server) CreateFollowChef(c *gin.Context) {
 	// レスポンス型バリデーション
 	err = utils.ValidateStructTwoWay[db.FollowingChef, docs.CreateFollowChef](&row)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"title": "型のバリデーションが失敗しました。", "error": err.Error()})
 		return
 	}
 
@@ -72,7 +73,7 @@ func (s *Server) DeleteFollowChef(c *gin.Context) {
 	// レスポンス型バリデーション
 	err = utils.ValidateStructTwoWay[db.FollowingChef, docs.DeletedFollowChef](&row)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"title": "型のバリデーションが失敗しました。", "error": err.Error()})
 		return
 	}
 
@@ -111,7 +112,7 @@ func (s *Server) ExistsFollowChef(c *gin.Context) {
 	// レスポンス型バリデーション
 	err = utils.ValidateStructTwoWay[existsFollowResponse, docs.ExistsFollowChef](&response)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"title": "型のバリデーションが失敗しました。", "error": err.Error()})
 		return
 	}
 
@@ -146,7 +147,7 @@ func (s *Server) ListFollowChef(c *gin.Context) {
 	// レスポンス型バリデーション
 	err = utils.ValidateStructTwoWay[listFollowChefResponse, docs.ListFollowChef](&response)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"title": "型のバリデーションが失敗しました。", "error": err.Error()})
 		return
 	}
 
@@ -181,7 +182,7 @@ func (s *Server) ListFollowChefNewRecipe(c *gin.Context) {
 	// レスポンス型バリデーション
 	err = utils.ValidateStructTwoWay[followNewRecipeResponse, docs.ListFollowChefRecipe](&response)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"title": "型のバリデーションが失敗しました。", "error": err.Error()})
 		return
 	}
 
@@ -221,7 +222,7 @@ func (s *Server) CreateFollowUser(c *gin.Context) {
 	// レスポンス型バリデーション
 	err = utils.ValidateStructTwoWay[db.FollowingUser, docs.CreateFollowUser](&row)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"title": "型のバリデーションが失敗しました。", "error": err.Error()})
 		return
 	}
 
@@ -255,7 +256,7 @@ func (s *Server) DeleteFollowUser(c *gin.Context) {
 	// レスポンス型バリデーション
 	err = utils.ValidateStructTwoWay[db.FollowingUser, docs.DeletedFollowUser](&row)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"title": "型のバリデーションが失敗しました。", "error": err.Error()})
 		return
 	}
 
@@ -294,7 +295,7 @@ func (s *Server) ExistsFollowUser(c *gin.Context) {
 	// レスポンス型バリデーション
 	err = utils.ValidateStructTwoWay[existsFollowResponse, docs.ExistsFollowUser](&response)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"title": "型のバリデーションが失敗しました。", "error": err.Error()})
 		return
 	}
 
@@ -329,7 +330,7 @@ func (s *Server) ListFollowUser(c *gin.Context) {
 	// レスポンス型バリデーション
 	err = utils.ValidateStructTwoWay[listFollowUserResponse, docs.ListFollowUser](&response)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"title": "型のバリデーションが失敗しました。", "error": err.Error()})
 		return
 	}
 

@@ -21,7 +21,7 @@ func (s *Server) ListTrendRecipe(c *gin.Context) {
 	var err error
 	response.Data, err = s.q.ListTrendRecipe(context.Background(), limit)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"title": "SQLの実行中に失敗しました。", "error": err.Error()})
 		return
 	}
 
@@ -32,7 +32,7 @@ func (s *Server) ListTrendRecipe(c *gin.Context) {
 	// レスポンス型バリデーション
 	err = utils.ValidateStructTwoWay[trendRecipeResponse, docs.TrendRecipe](&response)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"title": "型のバリデーションが失敗しました。", "error": err.Error()})
 		return
 	}
 
@@ -43,20 +43,20 @@ func (s *Server) GetRecipe(c *gin.Context) {
 	// パスパラメータ取り出し
 	id, err := utils.StrToUUID(c.Param("id"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"title": "パスパラメータの取り出しに失敗しました。", "error": err.Error()})
 	}
 
 	// 問い合わせ処理
 	row, err := s.q.GetRecipe(context.Background(), id)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"title": "SQLの実行中に失敗しました。", "error": err.Error()})
 		return
 	}
 
 	// レスポンス型バリデーション
 	err = utils.ValidateStructTwoWay[db.VRecipe, docs.GetRecipe](&row)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"title": "型のバリデーションが失敗しました。", "error": err.Error()})
 		return
 	}
 
@@ -72,7 +72,7 @@ func (s *Server) ListRecipe(c *gin.Context) {
 	var err error
 	response.Data, err = s.q.ListRecipe(context.Background())
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"title": "SQLの実行中に失敗しました。", "error": err.Error()})
 	}
 
 	if response.Data == nil || reflect.ValueOf(response.Data).IsNil() {
@@ -82,7 +82,7 @@ func (s *Server) ListRecipe(c *gin.Context) {
 	// レスポンス型バリデーション
 	err = utils.ValidateStructTwoWay[listRecipeponse, docs.ListRecipe](&response)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"title": "型のバリデーションが失敗しました。", "error": err.Error()})
 		return
 	}
 

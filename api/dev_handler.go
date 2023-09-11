@@ -3,10 +3,11 @@ package api
 import (
 	"context"
 	"fmt"
-	db "github.com/aopontann/gin-sqlc/db/sqlc"
-	"github.com/google/uuid"
 	"net/http"
 	"strconv"
+
+	db "github.com/aopontann/gin-sqlc/db/sqlc"
+	"github.com/google/uuid"
 
 	"github.com/aopontann/gin-sqlc/utils"
 	"github.com/gin-gonic/gin"
@@ -15,7 +16,7 @@ import (
 func (s *Server) CreateChefData(c *gin.Context) {
 	numRecipe, err := strconv.Atoi(c.Query("num_recipe"))
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"title": "クエリパラメータが取得できませんでした。", "error": err.Error()})
 		return
 	}
 
@@ -38,7 +39,7 @@ func (s *Server) CreateChefData(c *gin.Context) {
 		}`)
 	response, err := s.q.CreateChef(context.Background(), jsn)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"title": "SQLの処理が上手くいきませんでした。", "error": err.Error()})
 		return
 	}
 	chefId := utils.UUID2Str(response.ID)
@@ -91,18 +92,18 @@ func (s *Server) CreateChefData(c *gin.Context) {
 			}`, chefId, i, i))
 		_, err := s.q.CreateRecipe(context.Background(), jsn)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			c.JSON(http.StatusInternalServerError, gin.H{"title": "SQLの処理が上手くいきませんでした。", "error": err.Error()})
 			return
 		}
 	}
 
-	c.JSON(http.StatusOK, response)
+	c.JSON(http.StatusCreated, response)
 }
 
 func (s *Server) CreateUserData(c *gin.Context) {
 	numRecipe, err := strconv.Atoi(c.Query("num_recipe"))
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"title": "クエリパラメータが取得できませんでした。", "error": err.Error()})
 		return
 	}
 
@@ -115,7 +116,7 @@ func (s *Server) CreateUserData(c *gin.Context) {
 	createUserParams.AuthUserinfo = []byte("{}")
 	_, err = s.q.CreateUser(context.Background(), createUserParams)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"title": "SQL の処理が上手くいきませんでした。", "error": err.Error()})
 		return
 	}
 	var param db.UpdateUserParams
@@ -138,7 +139,7 @@ func (s *Server) CreateUserData(c *gin.Context) {
 		}`)
 	response, err := s.q.UpdateUser(context.Background(), param)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"title": "SQLの処理が上手くいきませんでした。", "error": err.Error()})
 		return
 	}
 	usrId := utils.UUID2Str(response.ID)
@@ -191,10 +192,10 @@ func (s *Server) CreateUserData(c *gin.Context) {
 			}`, usrId, i, i))
 		_, err := s.q.CreateRecipe(context.Background(), jsn)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			c.JSON(http.StatusInternalServerError, gin.H{"title": "SQLの処理が上手くいきませんでした。", "error": err.Error()})
 			return
 		}
 	}
 
-	c.JSON(http.StatusOK, response)
+	c.JSON(http.StatusCreated, response)
 }

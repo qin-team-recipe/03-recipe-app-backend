@@ -2,11 +2,12 @@ package api
 
 import (
 	"bytes"
-	"github.com/aopontann/gin-sqlc/docs"
-	"github.com/aopontann/gin-sqlc/utils"
 	"io"
 	"net/http"
 	"os"
+
+	"github.com/aopontann/gin-sqlc/docs"
+	"github.com/aopontann/gin-sqlc/utils"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -103,7 +104,7 @@ func (s *Server) PostImage(c *gin.Context) {
 	// レスポンス型バリデーション
 	err = utils.ValidateStructTwoWay[postWebpResponse, docs.PostImage](&response)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"title": "型のバリデーションが失敗しました。", "error": err.Error()})
 		return
 	}
 
