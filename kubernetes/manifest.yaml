@@ -1,0 +1,139 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: app
+  annotations: 
+    cloud.google.com/l4-rbs: "enabled"
+spec:
+  type: LoadBalancer
+  selector:
+    app: app
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8080
+    protocol: TCP
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app
+  labels:
+    app: app
+spec:
+  selector:
+    matchLabels:
+      app: app
+  template:
+    metadata:
+      labels:
+        app: app
+    spec:
+      containers:
+      - name: app
+        image: ${DOCKER_IMAGE}
+        envFrom:
+        - configMapRef:
+            name: app-env
+        volumes:
+        - name: workspaces
+          hostPath:
+            path: ./workspaces
+            type: DirectoryOrCreate
+        ports:
+        - containerPort: 8080
+        command: ["air", "--", "-buildvcs=false"]
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-env
+data:
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: password
+  POSTGRES_DB: postgres
+  POSTGRES_HOSTNAME: localhost
+  POSTGRES_URL: postgres://postgres:password@db:5432/postgres?sslmode=disable
+
+---
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: db
+spec:
+  selector:
+    matchLabels:
+      app: db
+  template:
+    metadata:
+      labels:
+        app: db
+    spec:
+      containers:
+      - name: db
+        image: groonga/pgroonga:3.0.8-alpine-15-slim
+        volumes:
+        - name: postgres-data
+          persistentVolumeClaim:
+            claimName: postgres-data
+        envFrom:
+        - configMapRef:
+            name: app-env
+        ports:
+        - containerPort: 5432
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-data
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: standard
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: db
+spec:
+  selector:
+    app: db
+  ports:
+  - name: postgresql
+    port: 5432
+    targetPort: 5432
+    protocol: TCP
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+spec:
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      nodeName: app
+      containers:
+      - name: redis
+        image: redis:latest
+        ports:
+        - containerPort: 6379
