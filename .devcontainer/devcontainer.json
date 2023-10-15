@@ -6,7 +6,7 @@
 	"service": "app",
 	"workspaceFolder": "/workspaces",
 	"features": {
-		"ghcr.io/devcontainers-contrib/features/postgres-asdf:1": {},
+		// "ghcr.io/devcontainers-contrib/features/postgres-asdf:1": {},
 		"ghcr.io/devcontainers-contrib/features/redis-homebrew:1": {}
 	},
 
